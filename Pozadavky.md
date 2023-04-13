@@ -2,9 +2,13 @@
 
 #### Strážce
  - Jako strážce si chci zaznamenat poèet odpracovaných hodin na urèitý den, protože musím tuto informaci pøedat nadøízenému.
-
+ 
+ - Jako strážce chci zaznamenat, jestli mám odpracované nìjaké hodiny na den v rámci JPO - Jednotky požární ochrany, protože je to separátní èinnost a tyto hodiny se poèítají oddìlenì.
+ 
  - Jako strážce chci, aby se odpracované hodiny zaznamenané o víkendech nebo svátcích zapoèítaly do náhradního volna, protože chci vìdìt, kolik hodin náhradního volna mohu využít v budoucnu.
 
+ - Jako strážce chci, abych si mohl zaznamenat hodiny pøesèasù, a abych si je mohl také vybírat, pokud potøeba, protože chci mít pøehled o mých pøesèasech a chci si sám flexibilnì plánovat pracovní dobu.
+ 
  - Jako strážce chci zaznamenat dùvod, proè v daný den nepracuji (nemoc, náhradní volno, dovolená), protože musím tuto informaci pøedat nadøízenému.
 
  - Jako strážce si chci na urèitý den naplánovat množinu tras, kterou projdu, aby mùj nadøízený vìdìl, kam mám v plánu jít a aby si moji kolegové nenaplánovali stejné trasy jako já.
