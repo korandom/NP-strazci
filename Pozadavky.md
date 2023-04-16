@@ -9,13 +9,13 @@
 
  - Jako strážce chci, abych si mohl zaznamenat hodiny pøesèasù, a abych si je mohl také vybírat, pokud potøeba, protože chci mít pøehled o mých pøesèasech a chci si sám flexibilnì plánovat pracovní dobu.
  
- - Jako strážce chci zaznamenat dùvod, proè v daný den nepracuji (nemoc, náhradní volno, dovolená), protože musím tuto informaci pøedat nadøízenému.
+ - Jako strážce si chci naplánovat náhradní volno nebo dovolenou, protože potøebuji schválení od nadøízeného.
 
  - Jako strážce si chci na urèitý den naplánovat množinu tras, kterou projdu, aby mùj nadøízený vìdìl, kam mám v plánu jít a aby si moji kolegové nenaplánovali stejné trasy jako já.
 
  - Jako strážce chci vidìt naplánované trasy mých kolegù, protože si nechci naplánovat stejné trasy.
 
- - Jako strážce chci mít možnost ohodnotit týden ve formì poznámky, protože chci poznamenat události, které se staly a pøedat zajímavé informace nadøízenému.
+ - Jako strážce chci mít možnost ohodnotit den ve formì poznámky, protože chci poznamenat události, které se staly a pøedat zajímavé informace nadøízenému.
 
  #### Nadøízený strážce
  - Jako nadøízený strážce chci mít možnost upravit naplánované trasy strážcù a uzamknout zmìny tak, aby strážci do zmìn nemohli zasahovat, protože pokud nejsem spokojen s naplánovými trasami, chci, aby moje zmìny byli následovány.
@@ -29,6 +29,8 @@
  - Jako nadøízený strážce chci vidìt poèet odpracovaných hodin jednotlivých strážcù v rámci mìsíce i v jednotlivé dny, protože musím mít pøehled o mých podøízených.
 
  - Jako nadøízený strážce chci mít možnost exportovat všechna data ve formátu excelové tabulky, abych mohl ve vyjmeèných situacích s daty pracovat, vytváøet si grafy.
+
+ - Jako nadøízený strážce chci mít možnost pøiøadit nìjakému strážci na den nìjaké auto, protože aut je omezené množství a musím je rozdìlovat podle potøeby.
 
  ### Požadavky kvality
 
