@@ -1,7 +1,7 @@
-### Plánovací kalendáø pro stráce NP Šumava
-Mobilní aplikace na záznam pracovní doby a naplánovanıch tras pro stráce. 
-Jako stráce si mohu naplánovat trasy (trasy jsou reprezentovány èíselnımi kódy, tedy mnoina èíselnıch kódù)  na urèitı den a zaznamenat pracovní dobu. Jako stráce mám monost na konci tıdne zhodnotit tıden ve formì poznámky. 
-Jako nadøízenı stráce mohu strácùm upravit naplánované trasy a zamknout zmìny tak, aby sám stráce ji do plánu nezasahoval, ale já sám mohu zámek odemknout a plán zmìnit pokud je tøeba. Jako nadøízenı mohu také generovat statistiky pro jednotlivé trasy za urèité období, neboli filtrovat podle tras. Mohu také kontrolovat odpracované doby pro jednotlivé stráce v rámci mìsíce. Všechny data by mìli bıt uloené zpùsobem, aby se dali exportovat ve formátu excelové tabulky. 
+### PlÃ¡novacÃ­ kalendÃ¡Å™ pro strÃ¡Å¾ce NP Å umava
+MobilnÃ­ aplikace na zÃ¡znam pracovnÃ­ doby a naplÃ¡novanÃ½ch tras pro strÃ¡Å¾ce. 
+Jako strÃ¡Å¾ce si mohu naplÃ¡novat trasy (trasy jsou reprezentovÃ¡ny ÄÃ­selnÃ½mi kÃ³dy, tedy mnoÅ¾ina ÄÃ­selnÃ½ch kÃ³dÅ¯)  na urÄitÃ½ den a zaznamenat pracovnÃ­ dobu. Jako strÃ¡Å¾ce mÃ¡m moÅ¾nost na konci tÃ½dne zhodnotit tÃ½den ve formÄ› poznÃ¡mky. 
+Jako nadÅ™Ã­zenÃ½ strÃ¡Å¾ce mohu strÃ¡Å¾cÅ¯m upravit naplÃ¡novanÃ© trasy a zamknout zmÄ›ny tak, aby sÃ¡m strÃ¡Å¾ce jiÅ¾ do plÃ¡nu nezasahoval, ale jÃ¡ sÃ¡m mohu zÃ¡mek odemknout a plÃ¡n zmÄ›nit pokud je tÅ™eba. Jako nadÅ™Ã­zenÃ½ mohu takÃ© generovat statistiky pro jednotlivÃ© trasy za urÄitÃ© obdobÃ­, neboli filtrovat podle tras. Mohu takÃ© kontrolovat odpracovanÃ© doby pro jednotlivÃ© strÃ¡Å¾ce v rÃ¡mci mÄ›sÃ­ce. VÅ¡echny data by mÄ›li bÃ½t uloÅ¾enÃ© zpÅ¯sobem, aby se dali exportovat ve formÃ¡tu excelovÃ© tabulky. 
 
 ___
-[Design pro mobilní aplikaci](Figma-mobile.pdf)
+[Design pro mobilnÃ­ aplikaci]([Figma-mobile.pdf](https://www.figma.com/file/B96k04ObDK4yaycN5ulT1I/NP-strazci?node-id=0%3A1&t=VeApoPs8S3MXuRlP-1))
