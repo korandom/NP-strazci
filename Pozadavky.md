@@ -1,37 +1,41 @@
-### Funkèní poadavky
+### FunkÄnÃ­ poÅ¾adavky
 
-#### Stráce
- - Jako stráce si chci zaznamenat poèet odpracovanıch hodin na urèitı den, protoe musím tuto informaci pøedat nadøízenému.
+#### StrÃ¡Å¾ce
+ - Jako strÃ¡Å¾ce si chci zaznamenat poÄet odpracovanÃ½ch hodin na urÄitÃ½ den, protoÅ¾e musÃ­m tuto informaci pÅ™edat nadÅ™Ã­zenÃ©mu.
  
- - Jako stráce chci zaznamenat, jestli mám odpracované nìjaké hodiny na den v rámci JPO - Jednotky poární ochrany, protoe je to separátní èinnost a tyto hodiny se poèítají oddìlenì.
+ - Jako strÃ¡Å¾ce chci zaznamenat, jestli mÃ¡m odpracovanÃ© nÄ›jakÃ© hodiny na den v rÃ¡mci JPO - Jednotky poÅ¾Ã¡rnÃ­ ochrany, protoÅ¾e je to separÃ¡tnÃ­ Äinnost a tyto hodiny se poÄÃ­tajÃ­ oddÄ›lenÄ›.
  
- - Jako stráce chci, aby se odpracované hodiny zaznamenané o víkendech nebo svátcích zapoèítaly do náhradního volna, protoe chci vìdìt, kolik hodin náhradního volna mohu vyuít v budoucnu.
+ - Jako strÃ¡Å¾ce chci, aby se odpracovanÃ© hodiny zaznamenanÃ© o vÃ­kendech nebo svÃ¡tcÃ­ch zapoÄÃ­taly do nÃ¡hradnÃ­ho volna, protoÅ¾e chci vÄ›dÄ›t, kolik hodin nÃ¡hradnÃ­ho volna mohu vyuÅ¾Ã­t v budoucnu.
 
- - Jako stráce chci, abych si mohl zaznamenat hodiny pøesèasù, a abych si je mohl také vybírat, pokud potøeba, protoe chci mít pøehled o mıch pøesèasech a chci si sám flexibilnì plánovat pracovní dobu.
+ - Jako strÃ¡Å¾ce chci, abych si mohl zaznamenat hodiny pÅ™esÄasÅ¯, a abych si je mohl takÃ© vybÃ­rat, pokud potÅ™eba, protoÅ¾e chci mÃ­t pÅ™ehled o mÃ½ch pÅ™esÄasech a chci si sÃ¡m flexibilnÄ› plÃ¡novat pracovnÃ­ dobu.
  
- - Jako stráce si chci naplánovat náhradní volno nebo dovolenou, protoe potøebuji schválení od nadøízeného.
+ - Jako strÃ¡Å¾ce si chci naplÃ¡novat nÃ¡hradnÃ­ volno nebo dovolenou, protoÅ¾e potÅ™ebuji schvÃ¡lenÃ­ od nadÅ™Ã­zenÃ©ho.
 
- - Jako stráce si chci na urèitı den naplánovat mnoinu tras, kterou projdu, aby mùj nadøízenı vìdìl, kam mám v plánu jít a aby si moji kolegové nenaplánovali stejné trasy jako já.
+ - Jako strÃ¡Å¾ce si chci na urÄitÃ½ den naplÃ¡novat mnoÅ¾inu tras, kterou projdu, aby mÅ¯j nadÅ™Ã­zenÃ½ vÄ›dÄ›l, kam mÃ¡m v plÃ¡nu jÃ­t a aby si moji kolegovÃ© nenaplÃ¡novali stejnÃ© trasy jako jÃ¡.
 
- - Jako stráce chci vidìt naplánované trasy mıch kolegù, protoe si nechci naplánovat stejné trasy.
+ - Jako strÃ¡Å¾ce chci vidÄ›t naplÃ¡novanÃ© trasy mÃ½ch kolegÅ¯, protoÅ¾e si nechci naplÃ¡novat stejnÃ© trasy.
 
- - Jako stráce chci mít monost ohodnotit den ve formì poznámky, protoe chci poznamenat události, které se staly a pøedat zajímavé informace nadøízenému.
+ - Jako strÃ¡Å¾ce chci mÃ­t moÅ¾nost ohodnotit den ve formÄ› poznÃ¡mky, protoÅ¾e chci poznamenat udÃ¡losti, kterÃ© se staly a pÅ™edat zajÃ­mavÃ© informace nadÅ™Ã­zenÃ©mu.
 
- #### Nadøízenı stráce
- - Jako nadøízenı stráce chci mít monost upravit naplánované trasy strácù a uzamknout zmìny tak, aby stráci do zmìn nemohli zasahovat, protoe pokud nejsem spokojen s naplánovımi trasami, chci, aby moje zmìny byli následovány.
-
- - Jako nadøízenı stráce chci mít monost zámek na plánech odemknout a provést další zmìny, protoe mùe nastat neèekaná situace, pøi které to bude potøeba.
+ #### NadÅ™Ã­zenÃ½ strÃ¡Å¾ce
+ - Jako nadÅ™Ã­zenÃ½ strÃ¡Å¾ce chci mÃ­t moÅ¾nost upravit naplÃ¡novanÃ© trasy strÃ¡Å¾cÅ¯ a uzamknout zmÄ›ny tak, aby strÃ¡Å¾ci do zmÄ›n nemohli zasahovat, protoÅ¾e pokud nejsem spokojen s naplÃ¡novÃ½mi trasami, chci, aby moje zmÄ›ny byli nÃ¡sledovÃ¡ny.
  
- - Jako nadøízenı stráce chci dát informaci strácùm o dùleitosti tras, protoe dùleitost tras se mìní a pokud stráci ví, jaké trasy jsou dùleité, naplánují si trasy správnìji.
+ - Jako nadÅ™Ã­zenÃ½ strÃ¡Å¾ce chci mÃ­t moÅ¾nost ve vÃ½jmeÄnÃ© situaci urÄit a zmÄ›nit, kterÃ¡ trasa je kontrolnÃ­ a v jakÃ©m Äase probÃ­hÃ¡ kontrola, protoÅ¾e poÅ¾adavky na kontrolnÃ­ mÃ­sta se mohou zmÄ›nit.
 
- - Jako nadøízenı stráce chci dìlat statistiky na prošlé trasy v rámci urèitého období, protoe chci vìdìt frekvenci procházení urèitıch tras.
+ - Jako nadÅ™Ã­zenÃ½ strÃ¡Å¾ce chci mÃ­t moÅ¾nost zÃ¡mek na plÃ¡nech odemknout a provÃ©st dalÅ¡Ã­ zmÄ›ny, protoÅ¾e mÅ¯Å¾e nastat neÄekanÃ¡ situace, pÅ™i kterÃ© to bude potÅ™eba.
+ 
+ - Jako nadÅ™Ã­zenÃ½ strÃ¡Å¾ce chci dÃ¡t informaci strÃ¡Å¾cÅ¯m o dÅ¯leÅ¾itosti tras, protoÅ¾e dÅ¯leÅ¾itost tras se mÄ›nÃ­ a pokud strÃ¡Å¾ci vÃ­, jakÃ© trasy jsou dÅ¯leÅ¾itÃ©, naplÃ¡nujÃ­ si trasy sprÃ¡vnÄ›ji.
 
- - Jako nadøízenı stráce chci vidìt poèet odpracovanıch hodin jednotlivıch strácù v rámci mìsíce i v jednotlivé dny, protoe musím mít pøehled o mıch podøízenıch.
+ - Jako nadÅ™Ã­zenÃ½ strÃ¡Å¾ce chci dÄ›lat statistiky na proÅ¡lÃ© trasy v rÃ¡mci urÄitÃ©ho obdobÃ­, protoÅ¾e chci vÄ›dÄ›t frekvenci prochÃ¡zenÃ­ urÄitÃ½ch tras.
 
- - Jako nadøízenı stráce chci mít monost exportovat všechna data ve formátu excelové tabulky, abych mohl ve vyjmeènıch situacích s daty pracovat, vytváøet si grafy.
+ - Jako nadÅ™Ã­zenÃ½ strÃ¡Å¾ce chci vidÄ›t poÄet odpracovanÃ½ch hodin jednotlivÃ½ch strÃ¡Å¾cÅ¯ v rÃ¡mci mÄ›sÃ­ce i v jednotlivÃ© dny, protoÅ¾e musÃ­m mÃ­t pÅ™ehled o mÃ½ch podÅ™Ã­zenÃ½ch.
 
- - Jako nadøízenı stráce chci mít monost pøiøadit nìjakému stráci na den nìjaké auto, protoe aut je omezené mnoství a musím je rozdìlovat podle potøeby.
+ - Jako nadÅ™Ã­zenÃ½ strÃ¡Å¾ce chci mÃ­t moÅ¾nost exportovat vÅ¡echna data ve formÃ¡tu excelovÃ© tabulky, abych mohl ve vyjmeÄnÃ½ch situacÃ­ch s daty pracovat, vytvÃ¡Å™et si grafy.
 
- ### Poadavky kvality
+ - Jako nadÅ™Ã­zenÃ½ strÃ¡Å¾ce chci mÃ­t moÅ¾nost pÅ™iÅ™adit nÄ›jakÃ©mu strÃ¡Å¾ci na den nÄ›jakÃ© auto, protoÅ¾e aut je omezenÃ© mnoÅ¾stvÃ­ a musÃ­m je rozdÄ›lovat podle potÅ™eby.
+ 
+ - Jako nadÅ™Ã­zenÃ½ strÃ¡Å¾ce chci mÃ­t moÅ¾nost pÅ™idat nebo smazat auto z kolekce aut, protoÅ¾e aktuÃ¡lnÃ­ poÄet nebo druh auta se mÅ¯Å¾e zmÄ›nit.
 
- - Mobilní uivatelské rozhraní musí bıt intuitivní, s dostateènì velkım textem, aby se dalo ovládat s minimálním zauèením i pro netechnicky zaloené lidi. 
+ ### PoÅ¾adavky kvality
+
+ - MobilnÃ­ uÅ¾ivatelskÃ© rozhranÃ­ musÃ­ bÃ½t intuitivnÃ­, s dostateÄnÄ› velkÃ½m textem, aby se dalo ovlÃ¡dat s minimÃ¡lnÃ­m zauÄenÃ­m i pro netechnicky zaloÅ¾enÃ© lidi. 
