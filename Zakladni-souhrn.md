@@ -1,56 +1,56 @@
-### Plánovací kalendáø pro stráce NP Šumava
-Mobilní aplikace na záznam pracovní doby a naplánovanıch tras pro stráce. 
-Jako stráce si mohu naplánovat trasy (trasy jsou reprezentovány èíselnımi kódy, tedy mnoina èíselnıch kódù)  na urèitı den a zaznamenat pracovní dobu. Jako stráce mám monost na konci tıdne zhodnotit tıden ve formì poznámky. 
-Jako nadøízenı stráce mohu strácùm upravit naplánované trasy a zamknout zmìny tak, aby sám stráce ji do plánu nezasahoval, ale já sám mohu zámek odemknout a plán zmìnit pokud je tøeba. Jako nadøízenı mohu také generovat statistiky pro jednotlivé trasy za urèité období, neboli filtrovat podle tras. Mohu také kontrolovat odpracované doby pro jednotlivé stráce v rámci mìsíce. Všechny data by mìli bıt uloené zpùsobem, aby se dali exportovat ve formátu excelové tabulky. 
+### PlÃ¡novacÃ­ kalendÃ¡Å™ pro strÃ¡Å¾ce NP Å umava
+MobilnÃ­ aplikace na zÃ¡znam pracovnÃ­ doby a naplÃ¡novanÃ½ch tras pro strÃ¡Å¾ce. 
+Jako strÃ¡Å¾ce si mohu naplÃ¡novat trasy (trasy jsou reprezentovÃ¡ny ÄÃ­selnÃ½mi kÃ³dy, tedy mnoÅ¾ina ÄÃ­selnÃ½ch kÃ³dÅ¯)  na urÄitÃ½ den a zaznamenat pracovnÃ­ dobu. Jako strÃ¡Å¾ce mÃ¡m moÅ¾nost na konci tÃ½dne zhodnotit tÃ½den ve formÄ› poznÃ¡mky. 
+Jako nadÅ™Ã­zenÃ½ strÃ¡Å¾ce mohu strÃ¡Å¾cÅ¯m upravit naplÃ¡novanÃ© trasy a zamknout zmÄ›ny tak, aby sÃ¡m strÃ¡Å¾ce jiÅ¾ do plÃ¡nu nezasahoval, ale jÃ¡ sÃ¡m mohu zÃ¡mek odemknout a plÃ¡n zmÄ›nit pokud je tÅ™eba. Jako nadÅ™Ã­zenÃ½ mohu takÃ© generovat statistiky pro jednotlivÃ© trasy za urÄitÃ© obdobÃ­, neboli filtrovat podle tras. Mohu takÃ© kontrolovat odpracovanÃ© doby pro jednotlivÃ© strÃ¡Å¾ce v rÃ¡mci mÄ›sÃ­ce. VÅ¡echny data by mÄ›li bÃ½t uloÅ¾enÃ© zpÅ¯sobem, aby se dali exportovat ve formÃ¡tu excelovÃ© tabulky. 
 
 ___
-[Design pro mobilní aplikaci](Figma-mobile.pdf)
+[Design pro mobilnÃ­ aplikaci](https://www.figma.com/file/B96k04ObDK4yaycN5ulT1I/NP-strazci?node-id=0%3A1&t=VeApoPs8S3MXuRlP-1)
 
 ---
-#### Doménovı model
-[Doménovı model](prilohy/domenovy_model.png)
+#### DomÃ©novÃ½ model
+[DomÃ©novÃ½ model](prilohy/domenovy_model.png)
 ```plantuml
 @startuml
-class "Nadøízenı stráce"
-class Stráce {
-  jméno
-  pøíjmení
+class "NadÅ™Ã­zenÃ½ strÃ¡Å¾ce"
+class StrÃ¡Å¾ce {
+  jmÃ©no
+  pÅ™Ã­jmenÃ­
 }
-class "Plán Tras"
-class Poznámka {
+class "PlÃ¡n Tras"
+class PoznÃ¡mka {
   text
 }
 class Trasa{
-  jméno
-  èíslo
-  bool kontrolní
+  jmÃ©no
+  ÄÃ­slo
+  bool kontrolnÃ­
 }
 class Kontrola{
-  èas
-  místo
+  Äas
+  mÃ­sto
 }
-class "Pøiøazení auta" 
+class "PÅ™iÅ™azenÃ­ auta" 
 class Auto {
   id
   model
 }
 class Den  
 
-"Nadøízenı stráce" <|-U-  Stráce
+"NadÅ™Ã­zenÃ½ strÃ¡Å¾ce" <|-U-  StrÃ¡Å¾ce
 
-"Nadøízenı stráce" "1" -- "0..*"  "Pøiøazení auta" : > zaøídit
-"Nadøízenı stráce" "1" -- "0..*"  "Plán Tras" : > zmìnit/zamknout
+"NadÅ™Ã­zenÃ½ strÃ¡Å¾ce" "1" -- "0..*"  "PÅ™iÅ™azenÃ­ auta" : > zaÅ™Ã­dit
+"NadÅ™Ã­zenÃ½ strÃ¡Å¾ce" "1" -- "0..*"  "PlÃ¡n Tras" : > zmÄ›nit/zamknout
 
-Den "0..*" -- "1"  Poznámka  : < na
-Den "1" -- "0..*"  "Plán Tras" : < na
+Den "0..*" -- "1"  PoznÃ¡mka  : < na
+Den "1" -- "0..*"  "PlÃ¡n Tras" : < na
 
-"Plán Tras" "0..*" -- "0..*" Trasa : > 
-"Pøiøazení auta" "0..*" -- "1"  Den : > na
-"Pøiøazení auta" "0..*" -- "1"  Auto : >
+"PlÃ¡n Tras" "0..*" -- "0..*" Trasa : > 
+"PÅ™iÅ™azenÃ­ auta" "0..*" -- "1"  Den : > na
+"PÅ™iÅ™azenÃ­ auta" "0..*" -- "1"  Auto : >
 Trasa "1" -- "0..1" Kontrola : > na
 
-Stráce "1" -- "0..*"  Poznámka : > editovat
-Stráce "1" -- "0..*"  "Plán Tras" : > zmìnit
-Stráce "1" -- "0..*"  "Plán Tras" : < pøiøazen
+StrÃ¡Å¾ce "1" -- "0..*"  PoznÃ¡mka : > editovat
+StrÃ¡Å¾ce "1" -- "0..*"  "PlÃ¡n Tras" : > zmÄ›nit
+StrÃ¡Å¾ce "1" -- "0..*"  "PlÃ¡n Tras" : < pÅ™iÅ™azen
 @enduml
 ```
