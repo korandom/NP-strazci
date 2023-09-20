@@ -5,3 +5,52 @@ Jako nadøízený strážce mohu strážcùm upravit naplánované trasy a zamknout zmìny 
 
 ___
 [Design pro mobilní aplikaci](Figma-mobile.pdf)
+
+---
+#### Doménový model
+[Doménový model](prilohy/domenovy_model.png)
+```plantuml
+@startuml
+class "Nadøízený strážce"
+class Strážce {
+  jméno
+  pøíjmení
+}
+class "Plán Tras"
+class Poznámka {
+  text
+}
+class Trasa{
+  jméno
+  èíslo
+  bool kontrolní
+}
+class Kontrola{
+  èas
+  místo
+}
+class "Pøiøazení auta" 
+class Auto {
+  id
+  model
+}
+class Den  
+
+"Nadøízený strážce" <|-U-  Strážce
+
+"Nadøízený strážce" "1" -- "0..*"  "Pøiøazení auta" : > zaøídit
+"Nadøízený strážce" "1" -- "0..*"  "Plán Tras" : > zmìnit/zamknout
+
+Den "0..*" -- "1"  Poznámka  : < na
+Den "1" -- "0..*"  "Plán Tras" : < na
+
+"Plán Tras" "0..*" -- "0..*" Trasa : > 
+"Pøiøazení auta" "0..*" -- "1"  Den : > na
+"Pøiøazení auta" "0..*" -- "1"  Auto : >
+Trasa "1" -- "0..1" Kontrola : > na
+
+Strážce "1" -- "0..*"  Poznámka : > editovat
+Strážce "1" -- "0..*"  "Plán Tras" : > zmìnit
+Strážce "1" -- "0..*"  "Plán Tras" : < pøiøazen
+@enduml
+```
