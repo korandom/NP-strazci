@@ -11,46 +11,52 @@ ___
 [Doménový model](prilohy/domenovy_model.png)
 ```plantuml
 @startuml
+
 class "Nadřízený strážce"
+
 class Strážce {
   jméno
   příjmení
 }
-class "Plán Tras"
-class Poznámka {
-  text
-}
+
 class Trasa{
   jméno
   číslo
-  bool kontrolní
 }
-class Kontrola{
+
+class "Kontrolní trasa"{
   čas
   místo
 }
+
 class "Přiřazení auta" 
+
+class Den  {
+  datum
+}
+
 class Auto {
   id
   model
 }
-class Den  
 
-"Nadřízený strážce" <|-U-  Strážce
+class Poznámka {
+  text
+}
 
-"Nadřízený strážce" "1" -- "0..*"  "Přiřazení auta" : > zařídit
-"Nadřízený strážce" "1" -- "0..*"  "Plán Tras" : > změnit/zamknout
+Strážce <|--  "Nadřízený strážce"
+Trasa <|-- "Kontrolní trasa" 
 
-Den "0..*" -- "1"  Poznámka  : < na
-Den "1" -- "0..*"  "Plán Tras" : < na
+"Nadřízený strážce" "1" -- "0..*"  "Přiřazení auta" 
+"Nadřízený strážce" "1" -- "0..*"  Trasa 
 
-"Plán Tras" "0..*" -- "0..*" Trasa : > 
-"Přiřazení auta" "0..*" -- "1"  Den : > na
-"Přiřazení auta" "0..*" -- "1"  Auto : >
-Trasa "1" -- "0..1" Kontrola : > na
+Den "0..*" -- "1"  Poznámka  : <
+Den "1" -- "0..*"  Trasa : <
+ 
+"Přiřazení auta" "0..*" -- "1"  Den : > 
+"Přiřazení auta" "0..*" -- "1"  Auto 
 
-Strážce "1" -- "0..*"  Poznámka : > editovat
-Strážce "1" -- "0..*"  "Plán Tras" : > změnit
-Strážce "1" -- "0..*"  "Plán Tras" : < přiřazen
+Strážce "1" -- "0..*"  Poznámka 
+Strážce "1" -- "0..*"  "Trasa" 
 @enduml
 ```
