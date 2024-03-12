@@ -85,9 +85,9 @@ Mobilní a webová aplikace na záznam pracovní doby a plánování tras pro st
  
  - Jako **vedoucí strážního obvodu** chci mít možnost přidat nebo smazat dopravní prostředek z kolekce, protože aktuální počet nebo jejich druh se může změnit. ([issue #16](https://github.com/korandom/NP-strazci/issues/16))
  
- - ! Jako **vedoucí strážního obvodu** chci mít možnost přidat nebo smazat nebo editovat informace okrsků, nastavit barvy, aby informace o okrskách byli aktuální a barvy byli podle mých představ.
+ - ! Jako **vedoucí strážního obvodu** chci mít možnost přidat nebo smazat nebo editovat informace okrsků, nastavit barvy, aby informace o okrskách byli aktuální a barvy byli podle mých představ. ([issue #21](https://github.com/korandom/NP-strazci/issues/21))
 
- - ! Jako **vedoucí strážního obvodu** chci mít možnost přidávat a mazat strážce z mého obvodu.
+-  Jako **vedoucí strážního obvodu** chci mít možnost přidávat a mazat strážce z mého obvodu. ([issue #20](https://github.com/korandom/NP-strazci/issues/20))
 
  ## Požadavky kvality
 
