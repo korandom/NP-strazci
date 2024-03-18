@@ -40,8 +40,8 @@ workspace "Planovací kalendář"  {
             Backend -> MobileApp "posílá data"
             MobileApp -> Backend "volá API"
             
-            strazce -> MobileApp "Zaznamenává docházku, zobrazuje a plánuje trasy"
-            vedouciObvodu -> WebFrontend "Vytváří plán tras, kontroluje docházku a spravuje objekty"
+            strazce -> MobileApp "Zobrazuje a plánuje trasy"
+            vedouciObvodu -> WebFrontend "Vytváří plán tras a spravuje objekty"
             vedouciObvodu -> WebApp "Načtení frontendu aplikace" "" "internal"
         }
     }
