@@ -3,26 +3,46 @@ workspace "Planovací kalendář"  {
     model {
         strazce = person "Strážce" 
         vedouciObvodu = person "Vedoucí strážního obvoudu"
-        vedouciSluzby = person "Vedoucí strážní služby"
         kalendar = softwareSystem "Plánovací kalendář"  {
             Webapp = container "Webová aplikace" "Poskytne front-end webové aplikace klientovi"
-            WebFrontend = container "Webová aplikace Front-end" "" "" "Web Front-End" 
+            WebFrontend = container "Single-page Webová aplikace Front-end" "" "" "Web Front-End" 
             MobileApp = container "Mobilní aplikace" 
-            Backend = container "Backend aplikace" 
             Database = container "Databáze" "" "" "Database"
+            Backend = container "Backend aplikace" {
+                StrazceModel = component "Model Strážců" 
+                TrasaModel = component "Model Tras a okrsků"
+                DopravaModel = component "Model Dopravních prostředků"
+                PlanovaniModel = component "Model Plánů"
+                SpravaController = component "Controller Správy zdrojů"
+                PlanovaniController = component "Controller Plánování tras"
+                
+                // Controller + Model vztahy
+                SpravaController -> StrazceModel "reprezentace dat strážců"
+                SpravaController -> TrasaModel "reprezentace dat tras a okrsků"
+                SpravaController -> DopravaModel "reprezentace dat dopravních prostředků"
+                PlanovaniController -> PlanovaniModel "reprezentace dat plánů tras"
+                
+                // vztahy s databází
+                StrazceModel -> Database "zapisuje, čte"
+                TrasaModel -> Database "zapisuje, čte"
+                DopravaModel -> Database "zapisuje, čte"
+                PlanovaniModel -> Database "zapisuje, čte"
+                
+                // vztahy s Frontendem
+                 WebFrontend -> SpravaController "volá API"
+                 SpravaController -> WebFrontend "posílá data"
+                 WebFrontend -> PlanovaniController "volá API"
+                 PlanovaniController -> WebFrontend "posílá data"
+            }
+            
             
             Webapp -> WebFrontend 
-            WebFrontend -> Backend "volá API"
-            Backend -> WebFrontend "posílá data"
             Backend -> MobileApp "posílá data"
             MobileApp -> Backend "volá API"
-            Backend -> Database "zapisuje, čte"
             
             strazce -> MobileApp "Zaznamenává docházku, zobrazuje a plánuje trasy"
             vedouciObvodu -> WebFrontend "Vytváří plán tras, kontroluje docházku a spravuje objekty"
-            vedouciSluzby -> WebFrontend "Zobrazuje si informace o umístění strážců"
             vedouciObvodu -> WebApp "Načtení frontendu aplikace" "" "internal"
-            vedouciSluzby -> WebApp "Načtení frontendu aplikace" "" "internal"
         }
     }
     
@@ -39,6 +59,10 @@ workspace "Planovací kalendář"  {
             filtered "kalendarSystemContext" exclude "internal"
             
             container kalendar "kalendarContainer" "Diagram kontejnerů" {
+                include *
+                //autoLayout lr
+            }
+            component Backend "Backend" {
                 include *
                 //autoLayout lr
             }
