@@ -1,15 +1,15 @@
 # Plánovací Kalendář pro strážce NP Šumava
 ## Obsah
-1. [Základní souhrn](#z-kladn-souhrn)
-2. [Uživatelé](#u-ivatel)
-3. [Funkční požadavky](#funk-n-po-adavky)
-    - [Docházka](#doch-zka)
-    - [Plánování tras](#pl-nov-n-tras)
-    - [Statistiky tras](#statistiky-tras-issue-8-https-github-com-korandom-np-strazci-issues-8)
-    - [Správa objektů a zdrojů](#spr-va-objekt-a-zdroj-)
-4. [Požadavky kvality](#po-adavky-kvality)
-5. [Případné rozšíření](#p-padn-roz-en-)
-6. [Doménový model](#dom-nov-model)
+1. [Základní souhrn](#základní-souhrn)
+2. [Uživatelé](#uživatelé)
+3. [Funkční požadavky](#funkční-požadavky)
+    - [Docházka](#docházka)
+    - [Plánování tras](#plánování-tras)
+    - [Statistiky tras](#statistiky-tras)
+    - [Správa objektů a zdrojů](#správa-objektů-a-zdrojů)
+4. [Požadavky kvality](#požadavky-kvality)
+5. [Případné rozšíření](#případné-rozšíření)
+6. [Doménový model](#doménový-model)
 ## Základní souhrn
 Mobilní a webová aplikace na záznam pracovní doby a plánování tras pro strážce. 
 1. **Mobilní rozhraní**
