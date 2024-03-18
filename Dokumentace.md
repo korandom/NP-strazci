@@ -1,6 +1,15 @@
 # Plánovací Kalendář pro strážce NP Šumava
 ## Obsah
-[[toc]]
+1. [Základní souhrn](#z-kladn-souhrn)
+2. [Uživatelé](#u-ivatel)
+3. [Funkční požadavky](#funk-n-po-adavky)
+    - [Docházka](#doch-zka)
+    - [Plánování tras](#pl-nov-n-tras)
+    - [Statistiky tras](#statistiky-tras-issue-8-https-github-com-korandom-np-strazci-issues-8)
+    - [Správa objektů a zdrojů](#spr-va-objekt-a-zdroj-)
+4. [Požadavky kvality](#po-adavky-kvality)
+5. [Případné rozšíření](#p-padn-roz-en-)
+6. [Doménový model](#dom-nov-model)
 ## Základní souhrn
 Mobilní a webová aplikace na záznam pracovní doby a plánování tras pro strážce. 
 1. **Mobilní rozhraní**
@@ -16,9 +25,6 @@ Mobilní a webová aplikace na záznam pracovní doby a plánování tras pro st
 
 
 ## Uživatelé 
-1. Dobrovolný strážce
-    - Dobrovolný strážce nepatří mezi zaměstnance národního parku, na základě domluvy s vedoucím strážního obvodu se stává součástí plánování tras.
-    - Nemá přístup k žádným datům aplikace, nijak s aplikací nepracuje.
 1. Strážce
     - Strážce je zaměstnanec národního parku, který má za úkol chránit přírodní území národního parku.
     - Má povinnost zaznamenávat svou pracovní dobu, účastnit se plánování tras a předávat informace z terénu pomocí denní poznámky.
@@ -34,7 +40,7 @@ Mobilní a webová aplikace na záznam pracovní doby a plánování tras pro st
 ------------------------
 ## Funkční požadavky
 
-### Docházka - TODO prace vedouciho s daty, export dat
+### Docházka 
  - Jako **strážce** si chci zaznamenat počet odpracovaných hodin na určitý den, protože musím tuto informaci předat vedoucímu. ([issue #1](https://github.com/korandom/NP-strazci/issues/1))
  
  - Jako **strážce** chci zaznamenat, jestli mám odpracované nějaké hodiny na den v rámci JPO - Jednotky požární ochrany, protože je to separátní činnost a tyto hodiny se počítají odděleně. ([issue #12](https://github.com/korandom/NP-strazci/issues/12))
@@ -62,8 +68,6 @@ Mobilní a webová aplikace na záznam pracovní doby a plánování tras pro st
  - Jako **strážce** chci vidět naplánované trasy mých kolegů, protože si nechci naplánovat stejné trasy. ([issue #4](https://github.com/korandom/NP-strazci/issues/4))
 
  - Jako **vedoucí strážního obvodu** chci mít možnost upravit naplánované trasy strážců a uzamknout změny tak, aby strážci do změn nemohli zasahovat, protože pokud nejsem spokojen s naplánovými trasami, chci, aby moje změny byli následovány. ([issue #6](https://github.com/korandom/NP-strazci/issues/6))
- 
- - Jako **vedoucí strážního obvodu** chci mít možnost ve výjmečné situaci určit a změnit, která trasa je kontrolní a v jakém čase probíhá kontrola, protože požadavky na kontrolní místa se mohou změnit. ([issue #9](https://github.com/korandom/NP-strazci/issues/9))
 
  - Jako **vedoucí strážního obvodu** chci mít možnost zámek na plánech odemknout a provést další změny, protože může nastat nečekaná situace, při které to bude potřeba. ([issue #6](https://github.com/korandom/NP-strazci/issues/6))
  
@@ -85,10 +89,11 @@ Mobilní a webová aplikace na záznam pracovní doby a plánování tras pro st
  
  - Jako **vedoucí strážního obvodu** chci mít možnost přidat nebo smazat dopravní prostředek z kolekce, protože aktuální počet nebo jejich druh se může změnit. ([issue #16](https://github.com/korandom/NP-strazci/issues/16))
  
- - ! Jako **vedoucí strážního obvodu** chci mít možnost přidat nebo smazat nebo editovat informace okrsků, nastavit barvy, aby informace o okrskách byli aktuální a barvy byli podle mých představ. ([issue #21](https://github.com/korandom/NP-strazci/issues/21))
+ - Jako **vedoucí strážního obvodu** chci mít možnost přidat nebo smazat nebo editovat informace okrsků, nastavit barvy, aby informace o okrskách byli aktuální a barvy byli podle mých představ. ([issue #21](https://github.com/korandom/NP-strazci/issues/21))
 
--  Jako **vedoucí strážního obvodu** chci mít možnost přidávat a mazat strážce z mého obvodu. ([issue #20](https://github.com/korandom/NP-strazci/issues/20))
+ -  Jako **vedoucí strážního obvodu** chci mít možnost přidávat a mazat strážce z mého obvodu. ([issue #20](https://github.com/korandom/NP-strazci/issues/20))
 
+ - Jako **vedoucí strážního obvodu** chci mít možnost ve výjmečné situaci určit a změnit, která trasa je kontrolní a v jakém čase probíhá kontrola, protože požadavky na kontrolní místa se mohou změnit. ([issue #9](https://github.com/korandom/NP-strazci/issues/9))
  ## Požadavky kvality
 
  - Mobilní uživatelské rozhraní musí být intuitivní, s dostatečně velkým textem, aby se dalo ovládat s minimálním zaučením i pro netechnicky založené lidi. 
@@ -113,56 +118,6 @@ Mobilní a webová aplikace na záznam pracovní doby a plánování tras pro st
  - Slouží pro posouzení potřeby a užití vybavení.
 
  ## Doménový model
-[Doménový model verze 1](prilohy/domenovy_model.png) 
-```plantuml
-@startuml
+ - [Doménový model verze](prilohy/domenovy_model.svg)
 
-class "Nadřízený strážce"
 
-class Strážce {
-  jméno
-  příjmení
-}
-
-class Trasa{
-  jméno
-  číslo
-}
-
-class "Kontrolní trasa"{
-  čas
-  místo
-}
-
-class "Přiřazení auta" 
-
-class Den  {
-  datum
-}
-
-class Auto {
-  id
-  model
-}
-
-class Poznámka {
-  text
-}
-
-Strážce <|--  "Nadřízený strážce"
-Trasa <|-- "Kontrolní trasa" 
-
-"Nadřízený strážce" "1" -- "0..*"  "Přiřazení auta" 
-"Nadřízený strážce" "1" -- "0..*"  Trasa 
-
-Den "0..*" -- "1"  Poznámka  : <
-Den "1" -- "0..*"  Trasa : <
- 
-"Přiřazení auta" "0..*" -- "1"  Den : > 
-"Přiřazení auta" "0..*" -- "1"  Auto 
-
-Strážce "1" -- "0..*"  Poznámka 
-Strážce "1" -- "0..*"  "Trasa" 
-@enduml
-```
-2. [Doménový model verze 2](prilohy/domenovy_model.svg)
