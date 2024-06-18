@@ -13,9 +13,10 @@ namespace App.Server
             // Add services to the container.
 
             builder.Services.AddControllers();
+
             builder.Services.AddDbContext<PlannerNPContext>(options =>
             {
-                var connectionString = builder.Configuration.GetConnectionString("StudentsConnection");
+                var connectionString = builder.Configuration.GetConnectionString("DebugConnection") ?? throw new InvalidOperationException("Connection string    not found.");
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             });
 
