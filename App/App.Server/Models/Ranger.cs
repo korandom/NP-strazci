@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using App.Server.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.Server.Models
 {
@@ -12,5 +13,20 @@ namespace App.Server.Models
         public ICollection<Plan> Plans { get; } = new List<Plan>();
         public District District { get; set; }
         public int DistrictId { get; set; }
+    }
+
+    public static class RangerExtensions
+    {
+        public static RangerDto ToDto(this Ranger ranger)
+        {
+            return new RangerDto
+            {
+                Id = ranger.Id,
+                FirstName = ranger.FirstName,
+                LastName = ranger.LastName,
+                Email = ranger.Email,
+                DistrictId = ranger.DistrictId
+            };
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using App.Server.Models;
+using App.Server.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -17,12 +18,6 @@ namespace App.Server.Repositories
             _dbSet = _context.Set<T>();
         }
 
-        public void Delete(object id)
-        {   
-            T entityToDelete = _dbSet.Find(id);
-            _dbSet.Remove(entityToDelete);
-        }
-
         public void Delete(T entityToDelete)
         {
             if (_context.Entry(entityToDelete).State == EntityState.Detached)
@@ -32,7 +27,7 @@ namespace App.Server.Repositories
             _dbSet.Remove(entityToDelete);
         }
 
-        public IEnumerable<T> Get(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = "")
+        public async Task<IEnumerable<T>> Get(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = "")
         {
             IQueryable<T> query = _dbSet;
 
@@ -49,20 +44,20 @@ namespace App.Server.Repositories
 
             if (orderBy != null)
             {
-                return orderBy(query).ToList();
+                return await orderBy(query).ToListAsync();
             }
             else
             {
-                return query.ToList();
+                return await query.ToListAsync();
             }
         }
 
-        public T GetById(object id)
+        public virtual async Task<T?> GetById(params object[] id)
         {
-            return _dbSet.Find(id);
+                return await _dbSet.FindAsync(id);
         }
 
-        public void Insert(T entity)
+        public void Add(T entity)
         {
             _dbSet.Add(entity);
         }

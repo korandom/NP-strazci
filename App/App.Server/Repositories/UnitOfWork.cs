@@ -1,18 +1,19 @@
 ﻿using App.Server.Models;
+using App.Server.Repositories.Interfaces;
 
 namespace App.Server.Repositories
 {
-    public class WorkOfUnit : IWorkOfUnit
+    public class UnitOfWork : IUnitOfWork
     {
-        PlannerNPContext _context;
+        private PlannerNPContext _context;
         private GenericRepository<District>? districtRepository;
         private GenericRepository<Sector>? sectorRepository;
         private GenericRepository<Models.Route>? routeRepository;
         private GenericRepository<Vehicle>? vehicleRepository;
-        private GenericRepository<Ranger> rangerRepository;
-        private GenericRepository<Plan>? planRepository;
+        private GenericRepository<Ranger>? rangerRepository;
+        private PlanRepository? planRepository;
 
-        public WorkOfUnit(PlannerNPContext context)
+        public UnitOfWork(PlannerNPContext context)
         {
             _context = context;
         }
@@ -77,20 +78,20 @@ namespace App.Server.Repositories
             }
         }
 
-        public GenericRepository<Plan> PlanRepository
+        public PlanRepository PlanRepository
         {
             get
             {
                 if (this.planRepository == null)
                 {
-                    this.planRepository = new GenericRepository<Plan>(_context);
+                    this.planRepository = new PlanRepository(_context);
                 }
                 return planRepository;
             }
         }
-        public void Save()
+        public async Task SaveAsync()
         {
-            throw new NotImplementedException();
+           await _context.SaveChangesAsync();
         }
     }
 }
