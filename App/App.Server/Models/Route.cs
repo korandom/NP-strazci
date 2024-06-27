@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using App.Server.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.Server.Models
 {
@@ -19,5 +20,18 @@ namespace App.Server.Models
         public string ControlTime { get; set; }
         public string ControlPlaceDescription { get; set; }
     }
-
+    public static class RouteExtensions
+    {
+        public static RouteDto ToDto(this Route route)
+        {
+            return new RouteDto
+            {
+                Id = route.Id,
+                Name = route.Name,
+                Priority = route.Priority,
+                ControlPlace = route.ControlPlace,
+                SectorId = route.SectorId,
+            };
+        }
+    }
 }

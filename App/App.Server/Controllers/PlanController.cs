@@ -143,39 +143,21 @@ namespace App.Server.Controllers
         }
 
         // TODO:: authorized, lock multiple? range
-        // Lock the plan
+        // Lock or unlock the plan
         [HttpPut("lock/{date}/{rangerId}")]
-        public async Task<IActionResult> LockPlan(DateOnly date, int rangerId)
+        public async Task<IActionResult> LockPlan(DateOnly date, int rangerId, bool is_locked)
         {
             var plan = await _unitOfWork.PlanRepository.GetById(date, rangerId);
 
             if (plan == null)
                 return NotFound("Plan not found.");
 
-            plan.Locked = true;
+            plan.Locked = is_locked;
 
             _unitOfWork.PlanRepository.Update(plan);
             await _unitOfWork.SaveAsync();
 
-            return Ok("Successfully locked the plan.");
-        }
-
-        // TODO authorized, unlock multiple?
-        // Unlock the plan
-        [HttpPut("unlock/{date}/{rangerId}")]
-        public async Task<IActionResult> UnlockPlan(DateOnly date, int rangerId)
-        {
-            var plan = await _unitOfWork.PlanRepository.GetById(date, rangerId);
-
-            if (plan == null)
-                return NotFound("Plan not found.");
-
-            plan.Locked = false;
-
-            _unitOfWork.PlanRepository.Update(plan);
-            await _unitOfWork.SaveAsync();
-
-            return Ok("Successfully unlocked the plan.");
+            return Ok("Successfully updated lock of the plan.");
         }
 
         // TODO finish - by district, 

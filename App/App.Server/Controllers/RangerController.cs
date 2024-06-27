@@ -50,7 +50,7 @@ namespace App.Server.Controllers
             return Ok(ranger.ToDto());
         }
 
-        [HttpPost("delete")]
+        [HttpDelete("delete")]
         public async  Task<ActionResult> Delete(int RangerId)
         {
             var ranger = await _unitOfWork.RangerRepository.GetById(RangerId);
@@ -60,22 +60,28 @@ namespace App.Server.Controllers
             }
 
             _unitOfWork.RangerRepository.Delete(ranger);
+            await _unitOfWork.SaveAsync();
             return Ok("Succesfully deleted ranger");
         }
 
         [HttpPut("update")]
         public async Task<ActionResult<RangerDto>> Update(RangerDto rangerDto)
         {
-            Ranger ranger = new()
+            var ranger = await _unitOfWork.RangerRepository.GetById(rangerDto.Id);
+            if (ranger == null)
             {
-                FirstName = rangerDto.FirstName,
-                LastName = rangerDto.LastName,
-                Email = rangerDto.Email,
-                DistrictId = rangerDto.DistrictId,
-            };
+                return NotFound("Ranger not found");
+            }
+
+            ranger.FirstName = rangerDto.FirstName;
+            ranger.LastName = rangerDto.LastName;
+            ranger.Email = rangerDto.Email;
+            ranger.DistrictId = rangerDto.DistrictId;
 
             _unitOfWork.RangerRepository.Update(ranger);
-            return Ok(ranger.ToDto());
+            await _unitOfWork.SaveAsync();
+
+            return Ok(ranger.ToDto());  
         }
     }
 }
