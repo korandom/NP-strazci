@@ -16,9 +16,9 @@ namespace App.Server.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        private async Task<Plan> Create(DateOnly date, int rangerId ) 
+        private async Task<Plan> Create(DateOnly date, int rangerId)
         {
-            Ranger? ranger =  await _unitOfWork.RangerRepository.GetById(rangerId) 
+            Ranger? ranger = await _unitOfWork.RangerRepository.GetById(rangerId)
                 ?? throw new InvalidOperationException("Ranger id not found.");
 
             var plan = new Plan(date, ranger);
@@ -31,7 +31,7 @@ namespace App.Server.Controllers
         [HttpGet("{date}/{rangerId}")]
         public async Task<ActionResult<PlanDto>> GetById(DateOnly date, int rangerId)
         {
-            var plan = await _unitOfWork.PlanRepository.GetById (date,rangerId);
+            var plan = await _unitOfWork.PlanRepository.GetById(date, rangerId);
 
             if (plan == null)
             {
@@ -55,7 +55,7 @@ namespace App.Server.Controllers
                 {
                     plan = await Create(date, rangerId);
                 }
-                catch(InvalidOperationException e)
+                catch (InvalidOperationException e)
                 {
                     return BadRequest(e.Message);
                 }
@@ -74,6 +74,36 @@ namespace App.Server.Controllers
             await _unitOfWork.SaveAsync();
 
             return Ok("Succesfully added route to plan.");
+        }
+
+        // authorize
+        [HttpPut("remove-route/{date}/{rangerId}")]
+        public async Task<IActionResult> RemoveRoute(DateOnly date, int rangerId, int routeId)
+        {
+            var plan = await _unitOfWork.PlanRepository.GetById(date, rangerId);
+
+            if (plan == null)
+                return NotFound("Plan not found.");
+
+            var route = await _unitOfWork.RouteRepository.GetById(routeId);
+            if (route == null)
+                return BadRequest("Route id not found.");
+
+            // remove route from plan
+            plan.Routes.Remove(route);
+            route.Plans.Remove(plan);
+
+            _unitOfWork.PlanRepository.Update(plan);
+
+            // Check if the plan has no routes and no vehicles
+            if (plan.Routes.Count == 0 && plan.Vehicles.Count == 0)
+            {
+                _unitOfWork.PlanRepository.Delete(plan);
+            }
+
+            await _unitOfWork.SaveAsync();
+
+            return Ok("Successfully removed route from plan.");
         }
 
         // TODO: head of rangers for district authorized
@@ -142,7 +172,7 @@ namespace App.Server.Controllers
             return Ok("Successfully removed vehicle from plan.");
         }
 
-        // TODO:: authorized, lock multiple? range
+        // TODO:: authorized, lock multiple? for a date for district
         // Lock or unlock the plan
         [HttpPut("lock/{date}/{rangerId}")]
         public async Task<IActionResult> LockPlan(DateOnly date, int rangerId, bool is_locked)
@@ -165,12 +195,16 @@ namespace App.Server.Controllers
         [HttpGet("by-dates/{startDate}/{endDate}")]
         public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDateRange(DateOnly startDate, DateOnly endDate)
         {
-            var plans = await _unitOfWork.PlanRepository.Get(plan=> plan.Date >= startDate && plan.Date<= endDate, null, "Routes,Vehicles");
+            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Date >= startDate && plan.Date <= endDate, null, "Routes,Vehicles");
 
-            if (plans == null || !plans.Any())
-            {
-                return NotFound("No plans found for the given date range.");
-            }
+            var planDtos = plans.Select(plan => plan.ToDto()).ToList();
+            return Ok(planDtos);
+        }
+
+        [HttpGet("{date}")]
+        public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDate(DateOnly date)
+        {
+            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Date == date, null, "Routes,Vehicles,Ranger");
 
             var planDtos = plans.Select(plan => plan.ToDto()).ToList();
             return Ok(planDtos);

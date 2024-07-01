@@ -1,0 +1,41 @@
+.planRecord {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border: 2px solid black; 
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.planRecord > p {
+    margin: 0;
+    padding: 0 0 10px 0;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+}
+
+.vehicles-container {
+    flex: 0 1 auto; 
+    margin-right: 10px; 
+}
+
+.routes-container {
+    flex: 1; 
+}
+
+.route {
+    margin-bottom: 5px;
+    padding: 4px;
+    background-color: lightgray;
+    box-sizing: border-box; 
+}
+
+.vehicle {
+    margin-bottom: 5px;
+    padding: 4px;
+    background-color: lightblue;
+    box-sizing: border-box;
+}

@@ -32,10 +32,10 @@ namespace App.Server.Models
             return new PlanDto
             {
                 Date = plan.Date,
-                RangerId = plan.RangerId,
+                Ranger = plan.Ranger.ToDto(),
                 Locked = plan.Locked,
-                Routes = plan.Routes.Select(r => new RouteDto { Id = r.Id, Name = r.Name, ControlPlace = r.ControlPlace, Priority = r.Priority, SectorId = r.SectorId }).ToList(),
-                Vehicles = plan.Vehicles.Select(v => new VehicleDto { Id = v.Id, Name = v.Name, Type = v.Type, DistrictId = v.DistrictId }).ToList()
+                Routes = plan.Routes.Select(r => r.ToDto()).ToList(),
+                Vehicles = plan.Vehicles.Select(v => v.ToDto()).ToList()
             };
         }
     }
