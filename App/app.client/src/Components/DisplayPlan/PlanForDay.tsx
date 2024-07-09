@@ -4,17 +4,13 @@ import PlanRecord from '../PlanRecord/PlanRecord';
 import { Plan } from '../../Services/PlanService';
 
 interface PlanForDayProps {
-    date: string;
     recordsData: Plan[];
 }
 
 // Zobrazení plánu strážcù na urèitý den
-const PlanForDay: React.FC<PlanForDayProps> = ({ date, recordsData }) => {
+const PlanForDay: React.FC<PlanForDayProps> = ({ recordsData }) => {
     return (
         <div className="plan-for-day">
-            <div className="date-header">
-                {date}
-            </div>
             <div className="records">
                 {recordsData.map((item, index) => (
                     <PlanRecord

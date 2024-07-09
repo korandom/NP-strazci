@@ -1,0 +1,46 @@
+.menu-wrapper {
+    background: lightgray;
+    padding: 1.1rem;
+    display: grid;
+    align-items: center;
+}
+.menu-up {
+    display: flex;
+    flex-direction: inherit;
+    justify-content: space-between;
+    flex: 0.6;
+    max-width: 500px;
+}
+.menu-down{
+    display:flex;
+    flex-direction: inherit;
+    justify-content: end;
+}
+.toggle-menu{
+    display:none;
+}
+.menu, .menu-open {
+    display: flex;
+    flex-direction:row;
+    justify-content: space-around;
+}
+
+@media screen and (max-width: 560px) {
+    .toggle-menu {
+        display: block;
+        font-size: 20px;
+        float: right;
+        cursor: pointer;
+        text-align: right;
+    }
+
+    .menu-open {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+
+    .menu {
+        display: none;
+    }
+}
