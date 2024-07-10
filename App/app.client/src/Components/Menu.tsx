@@ -13,9 +13,11 @@ const Menu = () => {
     }
 
     return (
-        <div className="menu-wrapper" >
-            <div className="toggle-menu" onClick={toggleMenu}>&#9776;</div>
-            <div className={isOpen ? "menu-open" : "menu"}>
+        <div className={isOpen ? "menu-wrapper whole-screen" : "menu-wrapper"} >
+            <div className="toggle-menu" onClick={toggleMenu}>
+                {isOpen ? '✕' : '☰'}
+            </div>
+            <div className={isOpen ? "menu open" : "menu"}>
                 <nav className="menu-up">
 
                         <Link to="/" onClick={closeMenu}>Plán Dne</Link>

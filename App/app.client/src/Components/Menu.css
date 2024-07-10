@@ -1,13 +1,14 @@
 .menu-wrapper {
     background: lightgray;
     padding: 1.1rem;
-    display: grid;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 .menu-up {
     display: flex;
     flex-direction: inherit;
-    justify-content: space-between;
+    justify-content: space-around;
     flex: 0.6;
     max-width: 500px;
 }
@@ -19,7 +20,7 @@
 .toggle-menu{
     display:none;
 }
-.menu, .menu-open {
+.menu {
     display: flex;
     flex-direction:row;
     justify-content: space-around;
@@ -29,18 +30,29 @@
     .toggle-menu {
         display: block;
         font-size: 20px;
-        float: right;
         cursor: pointer;
         text-align: right;
     }
 
-    .menu-open {
+    .menu.open {
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
+        flex: 1;
+        padding: 1em;
+        justify-content: space-between;
     }
 
     .menu {
         display: none;
+    }
+
+    .menu-wrapper.whole-screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        box-sizing: border-box;
     }
 }
