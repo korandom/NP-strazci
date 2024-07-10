@@ -16,6 +16,8 @@ const PlanForDay: React.FC<PlanForDayProps> = ({ recordsData }) => {
                     <PlanRecord
                         key={index}
                         plan={item}
+                        includeDetails={false}
+                        includeRangerName={true}
                     />
                 ))}
             </div>
