@@ -1,9 +1,19 @@
 import React from 'react';
+import { useState } from 'react';
 import './PlanRecord.css';
 import { Plan } from '../../Services/PlanService';
 
-// KonkrÈtnÌ z·znam pl·nu jednoho str·ûce, bez detail˘
-const PlanRecord: React.FC<{ plan : Plan, includeRangerName: boolean, includeDetails: boolean }> = ({ plan, includeRangerName, includeDetails}) => {
+// Konkr√©tn√≠ z√°znam pl√°nu jednoho str√°≈æce, bez detail≈Ø
+const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable: boolean }> = ({ plan, includeRangerName, isEditable }) => {
+    const [includeDetails, setIncludeDetails] = useState(false);
+    const toggleDetails = () => {
+        setIncludeDetails(!includeDetails);
+    };
+    const [editing, setEditing] = useState(isEditable ? true : false);
+
+    const toggleEdit = () => {
+        isEditable ? setEditing(!editing) : null;
+    }
     return (
         <div className='planRecord'>
             {includeRangerName ? <p ><strong>{plan.ranger.firstName} {plan.ranger.lastName}</strong></p> : null}
@@ -16,6 +26,13 @@ const PlanRecord: React.FC<{ plan : Plan, includeRangerName: boolean, includeDet
                             {includeDetails ? vehicle.name : null }
                         </div>
                     ))}
+                    {
+                        editing ?
+                            <div className="add-vehicle">
+                                
+                            </div>
+                        : null
+                    }
                 </div>
                 {/* add not only routes, but other actions as well?*/}
                 <div className='routes-container'>
@@ -27,6 +44,17 @@ const PlanRecord: React.FC<{ plan : Plan, includeRangerName: boolean, includeDet
                             ) : null}
                         </div>
                     ))}
+                </div>
+            </div>
+            <div className='tools'>
+                <div className='edit' onClick={toggleEdit}>
+                    {/*more advanced when authorization is implemented - if its the rangers or if user is the head*/}
+                    {isEditable && !plan.locked ?
+                         editing ? '‚úé' : 'x'
+                    : null}
+                </div>
+                <div className='expand-details' onClick={toggleDetails}>
+                    {includeDetails ? '‚á±' : '‚á≤' }
                 </div>
             </div>
         </div>

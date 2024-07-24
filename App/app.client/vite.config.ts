@@ -46,7 +46,12 @@ export default defineConfig({
             '^/api/Plan': {
                 target,
                 secure: false
-            }
+            },
+            '^/api/Ranger': {
+                target,
+                secure: false
+            },
+            
         },
         port: 5173,
         https: {

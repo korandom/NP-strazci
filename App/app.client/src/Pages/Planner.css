@@ -1,0 +1,47 @@
+.planner-container{
+    padding: 1em;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.month-picker{
+    align-self:center;
+}
+.date-header {
+    background-color: #f2f2f2;
+}
+.table-container{
+    overflow-x: auto;
+    max-width:100%;
+}
+.plan-table {
+    width:100%;
+    height:100%;
+    border-collapse: collapse;
+}
+
+.sticky {
+    position: sticky;
+    left: 0;
+    background-color: #f2f2f2;
+    z-index: 2;
+}
+
+.weekend {
+    background-color: #ECFFE9;
+}
+
+.plan{
+    height: 100%;
+    width: 100%;
+    min-width: 50px;
+}
+.add {
+    height: 100%;
+    width: 100%;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+

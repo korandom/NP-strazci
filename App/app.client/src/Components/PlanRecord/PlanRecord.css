@@ -2,27 +2,34 @@
     display: flex;
     width: 100%;
     border: 2px solid black; 
-    padding: 10px;
     box-sizing: border-box;
+    height: 100px;
 }
 
-.planRecord > p {
-    margin: 0;
-    padding: 0 0 10px 0;
-}
+    .planRecord > p {
+        margin: 0;
+        padding: 10px 0 10px 10px;
+    }
 
 .container {
     display: flex;
     width: 100%;
+    padding: 10px;
 }
 
 .vehicles-container {
-    flex: 0 1 auto; 
-    margin-right: 10px; 
+    flex: 0 1 auto;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .routes-container {
-    flex: 0 1 auto; 
+    flex: 0 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .route {
@@ -37,4 +44,11 @@
     padding: 4px;
     background-color: lightblue;
     box-sizing: border-box;
+}
+
+.tools{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 4px;
 }

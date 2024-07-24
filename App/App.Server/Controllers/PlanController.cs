@@ -195,8 +195,11 @@ namespace App.Server.Controllers
         [HttpGet("by-dates/{startDate}/{endDate}")]
         public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDateRange(DateOnly startDate, DateOnly endDate)
         {
-            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Date >= startDate && plan.Date <= endDate, null, "Routes,Vehicles");
-
+            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Date >= startDate && plan.Date <= endDate, null, "Routes,Vehicles,Ranger");
+            if(plans == null)
+            {
+                return NotFound("No plans found in range");
+            }
             var planDtos = plans.Select(plan => plan.ToDto()).ToList();
             return Ok(planDtos);
         }
