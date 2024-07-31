@@ -9,8 +9,8 @@ namespace App.Server.Models
         public string Name { get; set; }
         public int Priority { get; set; }
         public ControlPlace? ControlPlace { get; set; }
-        public int SectorId { get; set; }
-        public Sector Sector { get; set; }
+        public int DistrictId { get; set; }
+        public District District { get; set; }
         public ICollection<Plan> Plans { get; } = new List<Plan>();
     }
 
@@ -30,7 +30,7 @@ namespace App.Server.Models
                 Name = route.Name,
                 Priority = route.Priority,
                 ControlPlace = route.ControlPlace,
-                SectorId = route.SectorId,
+                DistrictId = route.DistrictId,
             };
         }
     }

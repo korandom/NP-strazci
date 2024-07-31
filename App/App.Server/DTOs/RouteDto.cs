@@ -8,6 +8,6 @@ namespace App.Server.DTOs
         public string Name { get; set; }
         public int Priority { get; set; }
         public ControlPlace? ControlPlace { get; set; }
-        public int SectorId { get; set; }
+        public int DistrictId { get; set; }
     }
 }

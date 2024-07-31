@@ -25,8 +25,22 @@ export const fetchPlansByDate = async (date: string): Promise<Plan[]> => {
 export const fetchPlansByDateRange = async (start: string, end: string): Promise<Plan[]> => {
     const response = await fetch(`${BASE_URL}/by-dates/${start}/${end}`);
     if (!response.ok) {
-        throw new Error('Failed to fetchp plans');
+        throw new Error('Failed to fetch plans');
     }
     const result = await response.json();
     return result;
 };
+
+export const addRoute = async (date: string, rangerId: number, routeId: number) => {
+    const response = await fetch(`${BASE_URL}/add-route/${date}/${rangerId.toString()}?routeId=${routeId.toString()}`, {method: 'PUT'})
+    if (!response.ok) {
+        throw new Error('Failed to add route to plan');
+    }
+}
+
+export const removeRoute = async (date: string, rangerId: number, routeId: number) => {
+    const response = await fetch(`${BASE_URL}/remove-route/${date}/${rangerId.toString()}?routeId=${routeId.toString()}`, { method: 'PUT' })
+    if (!response.ok) {
+        throw new Error('Failed to remove route to plan');
+    }
+}

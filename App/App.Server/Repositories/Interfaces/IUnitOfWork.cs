@@ -1,13 +1,10 @@
 ﻿using App.Server.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace App.Server.Repositories.Interfaces
 {
     public interface IUnitOfWork
     {
         public GenericRepository<District> DistrictRepository { get; }
-
-        public GenericRepository<Sector> SectorRepository { get; }
 
         public GenericRepository<Models.Route> RouteRepository { get; }
 

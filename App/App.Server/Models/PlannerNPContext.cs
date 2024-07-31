@@ -12,7 +12,6 @@ namespace App.Server.Models
         public DbSet<Plan> Plans { get; set; }
         public DbSet<Route> Routes { get; set; }
         public DbSet<District> Districts { get; set; }
-        public DbSet<Sector> Sectors { get; set; }
 
         public PlannerNPContext(DbContextOptions options) : base(options) {}
 

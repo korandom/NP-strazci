@@ -18,7 +18,7 @@ namespace App.Server.Controllers
         [HttpGet("in-district/{DistrictId}")]
         public async Task<ActionResult<IEnumerable<RouteDto>>> GetRoutesInDistrict(int DistrictId)
         {
-            var routes = await _unitOfWork.RouteRepository.Get(route => route.Sector.DistrictId == DistrictId, null, "Sector");
+            var routes = await _unitOfWork.RouteRepository.Get(route => route.DistrictId == DistrictId);
             if (routes == null || !routes.Any())
             {
                 return NotFound("No routes found in district");
@@ -30,10 +30,10 @@ namespace App.Server.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<RouteDto>> Create(RouteDto routeDto)
         {
-            var sector = await _unitOfWork.SectorRepository.GetById(routeDto.SectorId);
+            var sector = await _unitOfWork.DistrictRepository.GetById(routeDto.DistrictId);
             if (sector == null)
             {
-                return BadRequest("Sector id not found");
+                return BadRequest("District id not found");
             }
             Models.Route route = new()
             {
@@ -41,7 +41,7 @@ namespace App.Server.Controllers
                 Name = routeDto.Name,
                 Priority = routeDto.Priority,
                 ControlPlace = routeDto.ControlPlace,
-                SectorId = routeDto.SectorId,
+                DistrictId = routeDto.DistrictId,
             };
 
             _unitOfWork.RouteRepository.Add(route);
@@ -75,7 +75,7 @@ namespace App.Server.Controllers
             route.Name = routeDto.Name;
             route.Priority = routeDto.Priority;
             route.ControlPlace = routeDto.ControlPlace;
-            route.SectorId = routeDto.SectorId;
+            route.DistrictId = routeDto.DistrictId;
 
             _unitOfWork.RouteRepository.Update(route);
             await _unitOfWork.SaveAsync();

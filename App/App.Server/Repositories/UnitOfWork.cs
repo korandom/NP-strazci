@@ -7,7 +7,6 @@ namespace App.Server.Repositories
     {
         private PlannerNPContext _context;
         private GenericRepository<District>? districtRepository;
-        private GenericRepository<Sector>? sectorRepository;
         private GenericRepository<Models.Route>? routeRepository;
         private GenericRepository<Vehicle>? vehicleRepository;
         private GenericRepository<Ranger>? rangerRepository;
@@ -27,18 +26,6 @@ namespace App.Server.Repositories
                     this.districtRepository = new GenericRepository<District>(_context);
                 }
                 return districtRepository;
-            }
-        }
-
-        public GenericRepository<Sector> SectorRepository
-        {
-            get
-            {
-                if (this.sectorRepository == null)
-                {
-                    this.sectorRepository = new GenericRepository<Sector>(_context);
-                }
-                return sectorRepository;
             }
         }
 
