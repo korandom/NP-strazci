@@ -41,7 +41,7 @@
     justify-content: space-between;
 }
 
-.route > p {
+.route-identification > p {
         margin: 0;
         width: max-content;
 }

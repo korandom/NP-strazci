@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './PlanRecord.css';
 import { Plan, addRoute, removeRoute } from '../../Services/PlanService';
 import routeService from '../../Services/RouteService'
@@ -26,6 +26,10 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
         setSelectedRouteId(selectedId);
     };
     const [plannedRoutes, setPlannedRoutes] = useState(plan.routes);
+    useEffect(() => {
+        setPlannedRoutes(plan.routes);
+    }, [plan.routes]);
+
     const addRouteToPlan = () => {
         if (selectedRouteId != undefined) {
             const selectedRoute = routes.find(route => route.id === selectedRouteId);
@@ -64,11 +68,12 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
                 <div className='routes-container'>
                     {plannedRoutes.map((route, index) => (
                         <div className='route' key={index}>
-                            <p>{route.name}</p>
-                            {includeDetails && route.controlTime && route.controlTime.trim() !== "" ? (
-                                <p>{route.controlTime}  {route.controlPlaceDescription}</p>
-                            ) : null}
-
+                            <div className='route-identification'>
+                                <p>{route.name}</p>
+                                {includeDetails && route.controlPlace &&
+                                    <p>{route.controlPlace.controlTime}  {route.controlPlace.controlPlaceDescription}</p>
+                                }
+                            </div>
                             {
                                 editing &&
                                 <button onClick={() => deleteRouteFromPlan(route.id)}>×</button>

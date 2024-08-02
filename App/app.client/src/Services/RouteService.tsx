@@ -1,11 +1,15 @@
 
 const BASE_URL = '/api/Route';
+
+type controlPlace = {
+    controlTime: string;
+    controlPlaceDescription: string;
+}
 export interface Route {
     id: number;
     name: string;
     priority: number;
-    controlTime: string;
-    controlPlaceDescription: string;
+    controlPlace: controlPlace;
     districtId: number;
 }
 

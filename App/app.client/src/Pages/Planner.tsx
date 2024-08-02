@@ -118,19 +118,16 @@ const Planner: React.FC = () => {
                                     {dateArray.map((date, index) => {
                                         const Weekend = date.getDay() == 0 || date.getDay() == 6;
                                         const stringDate = formatDate(date);
-                                        const plan = plans.find(plan => (plan.ranger.id === ranger.id && plan.date === stringDate));
+                                        const plan = plans.find(p => (p.ranger.id === ranger.id && p.date === stringDate));
+                                        const locked = plans.find(p => p.date === stringDate)?.locked ?? false;
                                         return (
                                             
                                             <td className={Weekend ? "weekend plan" : "plan"} key={index}>
-                                                {plan ? (
-                                                    <PlanRecord
-                                                        plan={plan}
-                                                        isEditable={true}
-                                                        includeRangerName={false}
-                                                    />
-                                                ) : (
-                                                        <div className="add">+</div>
-                                                )}
+                                                <PlanRecord
+                                                    plan={plan ?  plan  : { date: stringDate, ranger: ranger, routes: [], vehicles: [], locked: locked }}
+                                                    isEditable={true}
+                                                    includeRangerName={false}
+                                                />
                                             </td>
                                         );
                                     })}
