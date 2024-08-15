@@ -1,7 +1,7 @@
 ﻿using App.Server.DTOs;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Server.Models
+namespace App.Server.Models.AppData
 {
     public class Route
     {

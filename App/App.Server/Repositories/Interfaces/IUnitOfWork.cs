@@ -1,4 +1,4 @@
-﻿using App.Server.Models;
+﻿using App.Server.Models.AppData;
 
 namespace App.Server.Repositories.Interfaces
 {
@@ -6,7 +6,7 @@ namespace App.Server.Repositories.Interfaces
     {
         public GenericRepository<District> DistrictRepository { get; }
 
-        public GenericRepository<Models.Route> RouteRepository { get; }
+        public GenericRepository<Models.AppData.Route> RouteRepository { get; }
 
         public GenericRepository<Vehicle> VehicleRepository { get; }
 

@@ -1,4 +1,4 @@
-﻿using App.Server.Models;
+﻿using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;

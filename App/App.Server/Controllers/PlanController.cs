@@ -2,19 +2,21 @@
 using App.Server.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using App.Server.Repositories.Interfaces;
+using App.Server.Models.AppData;
+using Microsoft.AspNetCore.Authorization;
+using App.Server.Services.Authentication;
+using App.Server.Services.Authorization;
 
 
 namespace App.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PlanController : ControllerBase
+    public class PlanController(IUnitOfWork unitOfWork, IAppAuthenticationService authenticationService, IAppAuthorizationService authorizationService) : ControllerBase
     {
-        private IUnitOfWork _unitOfWork;
-        public PlanController(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IAppAuthenticationService _authenticationService = authenticationService;
+        private readonly IAppAuthorizationService _authorizationService = authorizationService;
 
         private async Task<Plan> Create(DateOnly date, int rangerId)
         {
@@ -28,6 +30,7 @@ namespace App.Server.Controllers
             return plan;
         }
 
+        /* NOT NEEDED SO FAR
         [HttpGet("{date}/{rangerId}")]
         public async Task<ActionResult<PlanDto>> GetById(DateOnly date, int rangerId)
         {
@@ -40,12 +43,20 @@ namespace App.Server.Controllers
 
             return Ok(plan.ToDto());
         }
+        */
 
-
-        // TODO authorization - ranger has to be authorized - same rangerId or head of the district
+        [Authorize(Roles = "Ranger,HeadOfDistrict")]
         [HttpPut("add-route/{date}/{rangerId}")]
         public async Task<IActionResult> AddRoute(DateOnly date, int rangerId, int routeId)
         {
+            var user = await _authenticationService.GetUserAsync(User);
+            // if user is not authorized
+            if (user == null 
+            || ( !_authorizationService.IsUserOwner(user, rangerId) && !await _authorizationService.IsInRoleAsync(user, "HeadOfDistrict"))
+            ){
+                return Unauthorized();
+            }
+
             var plan = await _unitOfWork.PlanRepository.GetById(date, rangerId);
 
             // if plan not yet created, try to create
@@ -76,10 +87,20 @@ namespace App.Server.Controllers
             return Ok("Succesfully added route to plan.");
         }
 
-        // authorize
+        [Authorize(Roles = "Ranger,HeadOfDistrict")]
         [HttpPut("remove-route/{date}/{rangerId}")]
         public async Task<IActionResult> RemoveRoute(DateOnly date, int rangerId, int routeId)
         {
+            var user = await _authenticationService.GetUserAsync(User);
+
+            // if user is not authorized
+            if (user == null
+            || (!_authorizationService.IsUserOwner(user, rangerId) && !await _authorizationService.IsInRoleAsync(user, "HeadOfDistrict"))
+            )
+            {
+                return Unauthorized();
+            }
+
             var plan = await _unitOfWork.PlanRepository.GetById(date, rangerId);
 
             if (plan == null)
@@ -106,8 +127,8 @@ namespace App.Server.Controllers
             return Ok("Successfully removed route from plan.");
         }
 
-        // TODO: head of rangers for district authorized
         // Add a vehicle to the plan
+        [Authorize(Roles = "HeadOfDistrict")]
         [HttpPut("add-vehicle/{date}/{rangerId}")]
         public async Task<IActionResult> AddVehicle(DateOnly date, int rangerId, int vehicleId)
         {
@@ -141,8 +162,8 @@ namespace App.Server.Controllers
             return Ok("Successfully added vehicle to plan.");
         }
 
-        // TODO: authorized
         // Remove a vehicle from the plan
+        [Authorize(Roles = "HeadOfDistrict")]
         [HttpPut("remove-vehicle/{date}/{rangerId}")]
         public async Task<IActionResult> RemoveVehicle(DateOnly date, int rangerId, int vehicleId)
         {
@@ -172,8 +193,9 @@ namespace App.Server.Controllers
             return Ok("Successfully removed vehicle from plan.");
         }
 
-        // TODO:: authorized, lock multiple? for a date for district
+        // TODO locking per days per district?
         // Lock or unlock the plan
+        [Authorize(Roles = "HeadOfDistrict")]
         [HttpPut("lock/{date}/{rangerId}")]
         public async Task<IActionResult> LockPlan(DateOnly date, int rangerId, bool is_locked)
         {
@@ -192,6 +214,7 @@ namespace App.Server.Controllers
 
         // TODO finish - by district, 
         // Get plans by date range
+        [Authorize(Roles = "Ranger,HeadOfDistrict")]
         [HttpGet("by-dates/{startDate}/{endDate}")]
         public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDateRange(DateOnly startDate, DateOnly endDate)
         {
@@ -203,7 +226,8 @@ namespace App.Server.Controllers
             var planDtos = plans.Select(plan => plan.ToDto()).ToList();
             return Ok(planDtos);
         }
-
+        // TODO finish - by district
+        [Authorize(Roles = "Ranger,HeadOfDistrict")]
         [HttpGet("{date}")]
         public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDate(DateOnly date)
         {

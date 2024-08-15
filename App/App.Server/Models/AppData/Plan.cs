@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace App.Server.Models
+namespace App.Server.Models.AppData
 {
     [PrimaryKey(nameof(Date), nameof(RangerId))]
     public class Plan

@@ -1,4 +1,4 @@
-﻿namespace App.Server.Models
+﻿namespace App.Server.Models.AppData
 {
     public class District
     {

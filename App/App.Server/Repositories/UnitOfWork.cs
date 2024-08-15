@@ -1,42 +1,31 @@
-﻿using App.Server.Models;
+﻿using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
 
 namespace App.Server.Repositories
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork(PlannerNPContext context) : IUnitOfWork
     {
-        private PlannerNPContext _context;
+        private PlannerNPContext _context = context;
         private GenericRepository<District>? districtRepository;
-        private GenericRepository<Models.Route>? routeRepository;
+        private GenericRepository<Models.AppData.Route>? routeRepository;
         private GenericRepository<Vehicle>? vehicleRepository;
         private GenericRepository<Ranger>? rangerRepository;
         private PlanRepository? planRepository;
-
-        public UnitOfWork(PlannerNPContext context)
-        {
-            _context = context;
-        }
 
         public GenericRepository<District> DistrictRepository
         {
             get
             {
-                if (this.districtRepository == null)
-                {
-                    this.districtRepository = new GenericRepository<District>(_context);
-                }
+                this.districtRepository ??= new GenericRepository<District>(_context);
                 return districtRepository;
             }
         }
 
-        public GenericRepository<Models.Route> RouteRepository
+        public GenericRepository<Models.AppData.Route> RouteRepository
         {
             get 
             {
-                if (this.routeRepository == null)
-                {
-                    this.routeRepository = new GenericRepository<Models.Route>(_context);
-                }
+                this.routeRepository ??= new GenericRepository<Models.AppData.Route>(_context);
                 return routeRepository;
             }
         }
@@ -45,10 +34,7 @@ namespace App.Server.Repositories
         {
             get
             {
-                if (this.vehicleRepository == null)
-                {
-                    this.vehicleRepository = new GenericRepository<Vehicle>(_context);
-                }
+                this.vehicleRepository ??= new GenericRepository<Vehicle>(_context);
                 return vehicleRepository;
             }
         }
@@ -57,10 +43,7 @@ namespace App.Server.Repositories
         {
             get
             {
-                if (this.rangerRepository == null)
-                {
-                    this.rangerRepository = new GenericRepository<Ranger>(_context);
-                }
+                this.rangerRepository ??= new GenericRepository<Ranger>(_context);
                 return rangerRepository;
             }
         }
@@ -69,10 +52,7 @@ namespace App.Server.Repositories
         {
             get
             {
-                if (this.planRepository == null)
-                {
-                    this.planRepository = new PlanRepository(_context);
-                }
+                this.planRepository ??= new PlanRepository(_context);
                 return planRepository;
             }
         }

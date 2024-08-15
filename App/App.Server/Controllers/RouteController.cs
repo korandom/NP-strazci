@@ -1,20 +1,19 @@
 ﻿using App.Server.DTOs;
 using App.Server.Models;
+using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class RouteController : ControllerBase
+    public class RouteController(IUnitOfWork unitOfWork) : ControllerBase
     {
-        private IUnitOfWork _unitOfWork;
-        public RouteController(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
+        [Authorize]
         [HttpGet("in-district/{DistrictId}")]
         public async Task<ActionResult<IEnumerable<RouteDto>>> GetRoutesInDistrict(int DistrictId)
         {
@@ -27,6 +26,7 @@ namespace App.Server.Controllers
             return Ok(routesDtos);
         }
 
+        [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpPost("create")]
         public async Task<ActionResult<RouteDto>> Create(RouteDto routeDto)
         {
@@ -35,7 +35,7 @@ namespace App.Server.Controllers
             {
                 return BadRequest("District id not found");
             }
-            Models.Route route = new()
+            Models.AppData.Route route = new()
             {
                 Id = routeDto.Id,
                 Name = routeDto.Name,
@@ -49,6 +49,7 @@ namespace App.Server.Controllers
             return Ok(route.ToDto());
         }
 
+        [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpDelete("delete")]
         public async Task<ActionResult> Delete(int RouteId)
         {
@@ -63,6 +64,7 @@ namespace App.Server.Controllers
             return Ok("Succesfully deleted route");
         }
 
+        [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpPut("update")]
         public async Task<ActionResult<RouteDto>> Update(RouteDto routeDto)
         {

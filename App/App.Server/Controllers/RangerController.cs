@@ -1,21 +1,39 @@
 ﻿using App.Server.DTOs;
 using App.Server.Models;
+using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
+using App.Server.Services.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class RangerController : ControllerBase
+    public class RangerController(IUnitOfWork unitOfWork, IAppAuthenticationService authenticationService) : ControllerBase
     {
 
-        private IUnitOfWork _unitOfWork;
-        public RangerController(IUnitOfWork unitOfWork)
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IAppAuthenticationService _authenticationService = authenticationService;
+
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<RangerDto>> GetCurrentRanger()
         {
-            _unitOfWork = unitOfWork;
+            var user = await _authenticationService.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var ranger = await _unitOfWork.RangerRepository.GetById(user.Id);
+            if (ranger == null)
+            {
+                return NotFound("No ranger found connected to currently signed in user.");
+            }
+            return Ok(ranger.ToDto());
         }
 
+        [Authorize]
         [HttpGet("in-district/{DistrictId}")]
         public async Task<ActionResult<IEnumerable<RangerDto>>> GetRangersInDistrict(int DistrictId)
         {
@@ -28,6 +46,7 @@ namespace App.Server.Controllers
             return Ok(rangerDtos);
         }
 
+        [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpPost("create")]
         public async Task<ActionResult<RangerDto>> Create(RangerDto rangerDto)
         {
@@ -50,6 +69,7 @@ namespace App.Server.Controllers
             return Ok(ranger.ToDto());
         }
 
+        [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpDelete("delete")]
         public async  Task<ActionResult> Delete(int RangerId)
         {
@@ -64,6 +84,7 @@ namespace App.Server.Controllers
             return Ok("Succesfully deleted ranger");
         }
 
+        [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpPut("update")]
         public async Task<ActionResult<RangerDto>> Update(RangerDto rangerDto)
         {

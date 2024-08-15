@@ -1,8 +1,15 @@
 
 using Microsoft.EntityFrameworkCore;
-using App.Server.Models;
 using App.Server.Repositories;
 using App.Server.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using App.Server.Models.AppData;
+using App.Server.Models.Identity;
+using App.Server.Services.Authentication;
+using App.Server.Services.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication;
+using App.Server.Util;
 
 namespace App.Server
 {
@@ -13,11 +20,34 @@ namespace App.Server
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            // Database context for app data
             builder.Services.AddDbContext<PlannerNPContext>(options =>
             {
-                var connectionString = builder.Configuration.GetConnectionString("DebugConnection") ?? throw new InvalidOperationException("Connection string    not found.");
+                var connectionString = builder.Configuration.GetConnectionString("DebugConnection") ?? throw new InvalidOperationException("Connection string not found.");
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             });
+
+            // Database context for Identity
+            builder.Services.AddDbContext<ApplicationIdentityDbContext>(options =>
+            {
+                var identityConnectionString = builder.Configuration.GetConnectionString("IdentityConnection")
+                    ?? throw new InvalidOperationException("Connection string not found.");
+                options.UseMySql(identityConnectionString, ServerVersion.AutoDetect(identityConnectionString));
+            });
+
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            })
+            .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
+            .AddDefaultTokenProviders();
+
+
+            builder.Services.AddAuthorization();
+
+            builder.Services.AddScoped<IAppAuthenticationService, InternalAuthenticationService>();
+            builder.Services.AddScoped<IAppAuthorizationService, InternalAuthorizationService>();
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -39,10 +69,21 @@ namespace App.Server
                 app.UseSwaggerUI();
             }
 
+            // Seeding data
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                Task.Run(async () =>
+                {
+                    await DataSeeder.SeedRolesAsync(services);
+                    await DataSeeder.SeedAdminUserAsync(services);
+                }).GetAwaiter().GetResult();
+            }
+
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 

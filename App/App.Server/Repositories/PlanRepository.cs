@@ -1,13 +1,11 @@
-﻿using App.Server.Models;
+﻿using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Server.Repositories
 {
-    public class PlanRepository : GenericRepository<Plan>, IGenericRepository<Plan>
+    public class PlanRepository(PlannerNPContext context) : GenericRepository<Plan>(context), IGenericRepository<Plan>
     {
-
-        public PlanRepository(PlannerNPContext context) :base(context) { }
 
         // Accepts an array with first being Date and second being RangerId
         public override async Task<Plan?> GetById(params object[] id)

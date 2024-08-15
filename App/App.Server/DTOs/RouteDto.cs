@@ -1,4 +1,4 @@
-﻿using App.Server.Models;
+﻿using App.Server.Models.AppData;
 
 namespace App.Server.DTOs
 {

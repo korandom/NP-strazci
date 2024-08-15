@@ -1,20 +1,17 @@
 ﻿using App.Server.DTOs;
-using App.Server.Models;
+using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class VehicleController : ControllerBase
+    public class VehicleController(IUnitOfWork unitOfWork) : ControllerBase
     {
-        private IUnitOfWork _unitOfWork;
-        public VehicleController(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
-
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        [Authorize]
         [HttpGet("in-district/{DistrictId}")]
         public async Task<ActionResult<IEnumerable<VehicleDto>>> GetVehiclesInDistrict(int DistrictId)
         {
@@ -27,6 +24,7 @@ namespace App.Server.Controllers
             return Ok(vehiclesDtos);
         }
 
+        [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpPost("create")]
         public async Task<ActionResult<VehicleDto>> Create(VehicleDto vehicleDto)
         {
@@ -48,6 +46,7 @@ namespace App.Server.Controllers
             return Ok(vehicle.ToDto());
         }
 
+        [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpDelete("delete")]
         public async Task<ActionResult> Delete(int vehicleId)
         {
@@ -62,6 +61,7 @@ namespace App.Server.Controllers
             return Ok("Succesfully deleted vehicle");
         }
 
+        [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpPut("update")]
         public async Task<ActionResult<VehicleDto>> Update(VehicleDto vehicleDto)
         {
@@ -80,6 +80,5 @@ namespace App.Server.Controllers
 
             return Ok(vehicle.ToDto());
         }
-
     }
 }
