@@ -13,8 +13,8 @@ export interface Plan {
     locked: boolean;
 };
 
-export const fetchPlansByDate = async (date: string): Promise<Plan[]> => {
-    const response = await fetch(`${BASE_URL}/${date}`);
+export const fetchPlansByDate = async (districtId : number, date: string): Promise<Plan[]> => {
+    const response = await fetch(`${BASE_URL}/${districtId}/${date}`);
     if (!response.ok) {
         throw new Error('Failed to fetch plans');
     }
@@ -22,8 +22,8 @@ export const fetchPlansByDate = async (date: string): Promise<Plan[]> => {
     return result;
 };
 
-export const fetchPlansByDateRange = async (start: string, end: string): Promise<Plan[]> => {
-    const response = await fetch(`${BASE_URL}/by-dates/${start}/${end}`);
+export const fetchPlansByDateRange = async (districtId: number, start: string, end: string): Promise<Plan[]> => {
+    const response = await fetch(`${BASE_URL}/by-dates/${districtId}/${start}/${end}`);
     if (!response.ok) {
         throw new Error('Failed to fetch plans');
     }

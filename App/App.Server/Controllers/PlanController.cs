@@ -54,7 +54,7 @@ namespace App.Server.Controllers
             if (user == null 
             || ( !_authorizationService.IsUserOwner(user, rangerId) && !await _authorizationService.IsInRoleAsync(user, "HeadOfDistrict"))
             ){
-                return Unauthorized();
+                return Unauthorized("User is not authorized to change this plan.");
             }
 
             var plan = await _unitOfWork.PlanRepository.GetById(date, rangerId);
@@ -98,7 +98,7 @@ namespace App.Server.Controllers
             || (!_authorizationService.IsUserOwner(user, rangerId) && !await _authorizationService.IsInRoleAsync(user, "HeadOfDistrict"))
             )
             {
-                return Unauthorized();
+                return Unauthorized("User is not authorized to change this plan.");
             }
 
             var plan = await _unitOfWork.PlanRepository.GetById(date, rangerId);
@@ -211,14 +211,13 @@ namespace App.Server.Controllers
 
             return Ok("Successfully updated lock of the plan.");
         }
-
-        // TODO finish - by district, 
+ 
         // Get plans by date range
         [Authorize(Roles = "Ranger,HeadOfDistrict")]
-        [HttpGet("by-dates/{startDate}/{endDate}")]
-        public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDateRange(DateOnly startDate, DateOnly endDate)
+        [HttpGet("by-dates/{districtId}/{startDate}/{endDate}")]
+        public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDateRange(int districtId, DateOnly startDate, DateOnly endDate)
         {
-            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Date >= startDate && plan.Date <= endDate, null, "Routes,Vehicles,Ranger");
+            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Ranger.DistrictId == districtId && plan.Date >= startDate && plan.Date <= endDate, null, "Routes,Vehicles,Ranger");
             if(plans == null)
             {
                 return NotFound("No plans found in range");
@@ -226,12 +225,13 @@ namespace App.Server.Controllers
             var planDtos = plans.Select(plan => plan.ToDto()).ToList();
             return Ok(planDtos);
         }
-        // TODO finish - by district
+
+        // get plans by date
         [Authorize(Roles = "Ranger,HeadOfDistrict")]
-        [HttpGet("{date}")]
-        public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDate(DateOnly date)
+        [HttpGet("{districtId}/{date}")]
+        public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDate(int districtId, DateOnly date)
         {
-            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Date == date, null, "Routes,Vehicles,Ranger");
+            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Ranger.DistrictId == districtId && plan.Date == date, null, "Routes,Vehicles,Ranger");
 
             var planDtos = plans.Select(plan => plan.ToDto()).ToList();
             return Ok(planDtos);

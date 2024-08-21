@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import UseAuth from '../Components/Authentication/AuthProvider';
 import { Plan, fetchPlansByDateRange } from '../Services/PlanService';
 import { Ranger, fetchRangersByDistrict } from '../Services/RangerService';
 import PlanRecord from '../Components/PlanRecord/PlanRecord'
@@ -27,11 +28,15 @@ const Planner: React.FC = () => {
     const nameOfDays: string[] = ["Ne","Po", "Út", "St", "Čt", "Pá", "So"];
 
 
-    // TODO get district number from user information linked to a ranger instance
+    const { districtId } = UseAuth();
     useEffect(() => {
         const fetchRangers = async () => {
             try {
-                const rangersData = await fetchRangersByDistrict("2");
+                if (!districtId) {
+                    throw new Error("District is not set.");
+                }
+
+                const rangersData = await fetchRangersByDistrict(districtId.toString());
                 setRangers(rangersData);
             } catch (error) {
                 console.error(error);
@@ -54,7 +59,11 @@ const Planner: React.FC = () => {
         if (monthRange.endDate && monthRange.startDate) {
             const fetchPlans = async () => {
                 try {
-                    const fetchedPlans = await fetchPlansByDateRange(monthRange.startDate, monthRange.endDate);
+                    if (!districtId) {
+                        throw new Error("District is not set.");
+                    }
+
+                    const fetchedPlans = await fetchPlansByDateRange(districtId, monthRange.startDate, monthRange.endDate);
                     setPlans(fetchedPlans);
                 } catch (error) {
                     console.error(error);
