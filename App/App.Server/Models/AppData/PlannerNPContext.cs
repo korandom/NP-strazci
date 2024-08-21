@@ -5,7 +5,7 @@ using System.Reflection.Metadata;
 
 namespace App.Server.Models.AppData
 {
-    public class PlannerNPContext(DbContextOptions options) : DbContext(options)
+    public class PlannerNPContext(DbContextOptions<PlannerNPContext> options) : DbContext(options)
     {
         public DbSet<Ranger>  Rangers { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }

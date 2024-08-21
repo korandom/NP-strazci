@@ -15,7 +15,7 @@ namespace App.Server.Controllers
         private readonly IAppAuthorizationService _authorizationService = authorizationService;
 
         // Registering a new user connected to ranger
-        [Authorize(Policy = "RequireHeadOfRangerRole,RequireAdminRole")]
+        [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpPut("register-user")]
         public async Task<IActionResult> RegisterRangerUser(RangerDto rangerDto)
         {
@@ -32,11 +32,11 @@ namespace App.Server.Controllers
                 await _authorizationService.AssignRoleAsync(user, "Ranger");
             }
 
-            return Ok(result);
+            return Ok($"Succesfully registered user {rangerDto.Email}.");
         }
 
         // Admin can assign roles to users
-        [Authorize(Policy = "RequireAdminRole")]
+        [Authorize(Roles = "Admin")]
         [HttpPut("assign-role/{userEmail}")]
         public async Task<IActionResult> AssignRole(string userEmail, string role)
         {
@@ -55,7 +55,7 @@ namespace App.Server.Controllers
 
             if(result.Succeeded) 
             {
-                return Ok($"Successfully assigned role{role} to {userEmail}");
+                return Ok($"Successfully assigned role {role} to {userEmail}");
             }
 
             return BadRequest(result.ToString());
@@ -63,16 +63,26 @@ namespace App.Server.Controllers
 
         // signin
         [HttpPost("signin")]
-        public async Task<IActionResult> SignIn(string email, string password)
+        public async Task<ActionResult<UserDto>> SignIn([FromBody] SignInRequest request )
         {
-            var result = await _authenticationService.SignInAsync(email, password);
+            var result = await _authenticationService.SignInAsync(request.Email, request.Password);
 
             if (result.Succeeded)
             {
-                return Ok("Sign-in successful");
+                var user = await _authenticationService.GetUserAsync(request.Email);
+                if (user == null)
+                {
+                    return StatusCode(500, $"Internal Error occured, user {request.Email} not found.");
+                }
+                string role = await _authorizationService.GetRoleAsync(user);
+                if (role == "")
+                {
+                    return StatusCode(500, "Internal Error occured, no role is assigned to user");
+                }
+                return Ok(new UserDto { Email = request.Email, RangerId = user.RangerId, Role = role });
             }
 
-            return Unauthorized("Invalid email or password.");
+            return Unauthorized("Nesprávný email nebo heslo.");
         }
         // signout
         [Authorize]

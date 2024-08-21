@@ -16,3 +16,14 @@ export const fetchRangersByDistrict = async (districtId : string): Promise<Range
     const result = await response.json();
     return result;
 };
+
+export const getCurrentRanger = async (): Promise<Ranger | undefined> => {
+    const response = await fetch(`${BASE_URL}`);
+    if (!response.ok) {
+        //const errorMessage = await response.text();
+        // log message
+        return undefined;
+    }
+    const result = await response.json();
+    return result;
+}

@@ -13,6 +13,19 @@ namespace App.Server.Services.Authorization
             return await _userManager.AddToRoleAsync(user, role);
         }
 
+        public async Task<string> GetRoleAsync(ApplicationUser user)
+        {
+            string[] roles = { "Admin", "HeadOfDistrict", "Ranger" };
+            foreach (string role in roles)
+            {
+                if(await _userManager.IsInRoleAsync(user, role))
+                {
+                    return role;
+                }
+            }
+            return "";
+        }
+
         public async Task<bool> IsInRoleAsync(ApplicationUser user, string role)
         {
             return await _userManager.IsInRoleAsync(user, role);
@@ -22,5 +35,6 @@ namespace App.Server.Services.Authorization
         {
             return user!= null && user.RangerId == rangerId;
         }
+
     }
 }

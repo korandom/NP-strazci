@@ -23,12 +23,16 @@ namespace App.Server.Controllers
             var user = await _authenticationService.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound();
+                return NotFound("No user is signed in.");
             }
-            var ranger = await _unitOfWork.RangerRepository.GetById(user.Id);
-            if (ranger == null)
+            if (user.RangerId == null)
             {
                 return NotFound("No ranger found connected to currently signed in user.");
+            }
+            var ranger = await _unitOfWork.RangerRepository.GetById(user.RangerId);
+            if (ranger == null)
+            {
+                return NotFound("Invalid RangerId for user.");
             }
             return Ok(ranger.ToDto());
         }
