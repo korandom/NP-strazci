@@ -1,26 +1,22 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import './PlanRecord.css';
-import { Plan, addRoute, removeRoute } from '../../Services/PlanService';
-import routeService from '../../Services/RouteService'
+import { Plan, addRoute, removeRoute, addVehicle, removeVehicle } from '../../Services/PlanService';
+import useDistrict from '../DistrictContext/DistrictDataProvider';
+
 
 // Konkrétní záznam plánu jednoho strážce, bez detailů
 const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable: boolean }> = ({ plan, includeRangerName, isEditable }) => {
-    // state managment for showing details
-    const [includeDetails, setIncludeDetails] = useState(false);
-    const toggleDetails = () => {
-        setIncludeDetails(!includeDetails);
-    };
 
     // state managment for editing
     const [editing, setEditing] = useState(false);
     const toggleEdit = () => {
         isEditable ? setEditing(!editing) : null;
     }
+    const { routes, vehicles } = useDistrict();
 
     // state managment for routes
-    const routes = routeService.getRoutes();
-    const [selectedRouteId, setSelectedRouteId] = useState<number|undefined>(undefined);
+    const [selectedRouteId, setSelectedRouteId] = useState<number | undefined>(undefined);
     const handleRouteSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedId = Number(event.target.value);
         setSelectedRouteId(selectedId);
@@ -32,8 +28,13 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
 
     const addRouteToPlan = () => {
         if (selectedRouteId != undefined) {
-            const selectedRoute = routes.find(route => route.id === selectedRouteId);
+            const selectedRoute = routes?.find(route => route.id === selectedRouteId);
+            
             if (selectedRoute) {
+                if (plannedRoutes.find(route => route.id === selectedRoute.id)) {
+                    return;
+                }
+
                 setPlannedRoutes([...plannedRoutes, selectedRoute]);
                 setSelectedRouteId(undefined); 
                 addRoute(plan.date, plan.ranger.id, selectedRoute.id);
@@ -44,36 +45,96 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
         setPlannedRoutes(plannedRoutes.filter(route => route.id !== routeId));
         removeRoute(plan.date, plan.ranger.id, routeId);
     }
+
+    // state managment for vehicles
+    const [selectedVehicleId, setSelectedVehicleId] = useState<number | undefined>(undefined);
+    const handleVehicleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedId = Number(event.target.value);
+        setSelectedVehicleId(selectedId);
+    };
+
+    const [plannedVehicles, setPlannedVehicles] = useState(plan.vehicles);
+    useEffect(() => {
+        setPlannedVehicles(plan.vehicles);
+    }, [plan.vehicles]);
+
+    const addVehicleToPlan = () => {
+        if (selectedVehicleId != undefined) {
+            const selectedVehicle = vehicles?.find(vehicle => vehicle.id === selectedVehicleId);
+
+            if (selectedVehicle) {
+                if (plannedVehicles.find(vehicle => vehicle.id === selectedVehicle.id)) {
+                    return;
+                }
+
+                setPlannedVehicles([...plannedVehicles, selectedVehicle]);
+                setSelectedRouteId(undefined);
+                addVehicle(plan.date, plan.ranger.id, selectedVehicle.id);
+            }
+        }
+    }
+    const deleteVehicleFromPlan = (vehicleId: number) => {
+        setPlannedVehicles(plannedVehicles.filter(vehicle => vehicle.id !== vehicleId));
+        removeVehicle(plan.date, plan.ranger.id, vehicleId);
+    }
+
     return (
         <div className='planRecord'>
             {includeRangerName ? <p><strong>{plan.ranger.firstName} {plan.ranger.lastName}</strong></p> : null}
             <div className='container'>
                 <div className='vehicles-container'>
-                    {plan.vehicles.map((vehicle, index) => (
+                    {plannedVehicles.map((vehicle, index) => (
                         <div className='vehicle' key={index}>
-                            {/* change for picture of the vehicle?*/}
-                            {vehicle.type}
-                            {includeDetails ? vehicle.name : null }
-                        </div>
-                    ))}
-                    {
-                        editing ?
-                            <div className="add-vehicle">
+                            <div className='identification'>
+                                {/* change for picture of the vehicle based on type/ what is detail what is shown?*/}
+                                {vehicle.type}
                                 
                             </div>
-                        : null
-                    }
+                            {vehicle.name && !editing && (
+                                <div className="tooltip">
+                                    <i>i</i>
+                                    <div className="tooltip-text">{vehicle.name}</div>
+                                </div>
+                            )}
+                            {
+
+                                editing &&
+                                <button onClick={() => deleteVehicleFromPlan(vehicle.id)}>×</button>
+                            }
+                        </div>
+                    ))}
+                    {editing && (
+                        <div className="add">
+                            <select
+                                className='dropdown'
+                                value={selectedVehicleId}
+                                onChange={handleVehicleSelect}
+                            >
+                                <option value={undefined}>Nový dopravní prostředek</option>
+                                {vehicles?.map((vehicle) => (
+                                    <option key={vehicle.id} value={vehicle.id}>{vehicle.name}</option>
+                                ))}
+                            </select>
+                            <button onClick={addVehicleToPlan}>✔</button>
+                        </div>
+                    )}
                 </div>
                 {/* add not only routes, but other actions as well?*/}
                 <div className='routes-container'>
                     {plannedRoutes.map((route, index) => (
                         <div className='route' key={index}>
-                            <div className='route-identification'>
+                            <div className='identification'>
                                 <p>{route.name}</p>
-                                {includeDetails && route.controlPlace &&
-                                    <p>{route.controlPlace.controlTime}  {route.controlPlace.controlPlaceDescription}</p>
-                                }
                             </div>
+                            {route.controlPlace && !editing && (
+                                <div className="tooltip">
+                                    <i>i</i>
+                                    <div className="tooltip-text">
+                                        Čas: {route.controlPlace.controlTime} <br />
+                                        Místo: {route.controlPlace.controlPlaceDescription}
+                                    </div>
+                                </div>
+                            )}
                             {
                                 editing &&
                                 <button onClick={() => deleteRouteFromPlan(route.id)}>×</button>
@@ -81,14 +142,14 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
                         </div>
                     ))}
                     {editing && (
-                        <div className="add-route">
+                        <div className="add">
                             <select
-                                className='route-dropdown'
+                                className='dropdown'
                                 value={selectedRouteId}
                                 onChange={handleRouteSelect}
                             >
                                 <option value={undefined}>Nová trasa</option>
-                                {routes.map((route) => (
+                                {routes?.map((route) => (
                                     <option key={route.id} value={route.id}>{route.name}</option>
                                 ))}
                             </select>
@@ -103,9 +164,6 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
                     {isEditable && !plan.locked ?
                         editing ? 'x' : '✎'
                     : null}
-                </div>
-                <div className='expand-details' onClick={toggleDetails}>
-                    {includeDetails ? '⇱' : '⇲' }
                 </div>
             </div>
         </div>
