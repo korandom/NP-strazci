@@ -6,11 +6,13 @@ import Menu from './Components/Menu';
 import Planner from './Pages/Planner';
 import { AuthProvider } from './Components/Authentication/AuthProvider';
 import AuthRoute from './Components/Authentication/AuthRoutes';
+import { DistrictDataProvider } from './Components/DistrictContext/DistrictDataProvider';
 
 
 function App() {
     return (
         <BrowserRouter>
+            <DistrictDataProvider>
             <AuthProvider>
                 <Routes>
                     <Route path="/prihlasit" element={<Login />} />
@@ -22,6 +24,7 @@ function App() {
                     </Route>
                 </Routes>
             </AuthProvider>
+            </DistrictDataProvider>
         </BrowserRouter>
     );
 }

@@ -28,7 +28,8 @@ const Planner: React.FC = () => {
     const nameOfDays: string[] = ["Ne","Po", "Út", "St", "Čt", "Pá", "So"];
 
 
-    const { districtId } = UseAuth();
+    const { districtId, authorizedEdit } = UseAuth();
+
     useEffect(() => {
         const fetchRangers = async () => {
             try {
@@ -36,7 +37,7 @@ const Planner: React.FC = () => {
                     throw new Error("District is not set.");
                 }
 
-                const rangersData = await fetchRangersByDistrict(districtId.toString());
+                const rangersData = await fetchRangersByDistrict(districtId);
                 setRangers(rangersData);
             } catch (error) {
                 console.error(error);
@@ -119,29 +120,34 @@ const Planner: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {rangers.map(ranger => (
-                                <tr key={ranger.id}>
-                                    <td className="sticky">
-                                        <RangerCell ranger={ranger} />
-                                    </td>
-                                    {dateArray.map((date, index) => {
-                                        const Weekend = date.getDay() == 0 || date.getDay() == 6;
-                                        const stringDate = formatDate(date);
-                                        const plan = plans.find(p => (p.ranger.id === ranger.id && p.date === stringDate));
-                                        const locked = plans.find(p => p.date === stringDate)?.locked ?? false;
-                                        return (
-                                            
-                                            <td className={Weekend ? "weekend plan" : "plan"} key={index}>
-                                                <PlanRecord
-                                                    plan={plan ?  plan  : { date: stringDate, ranger: ranger, routes: [], vehicles: [], locked: locked }}
-                                                    isEditable={true}
-                                                    includeRangerName={false}
-                                                />
-                                            </td>
-                                        );
-                                    })}
-                                </tr>
-                            ))}
+                            {rangers.map(ranger => {
+
+                                const editable = authorizedEdit(ranger);
+                                return (
+                                    <tr key={ranger.id}>
+                                        <td className="sticky">
+                                            <RangerCell ranger={ranger} />
+                                        </td>
+
+                                        {dateArray.map((date, index) => {
+                                            const Weekend = date.getDay() == 0 || date.getDay() == 6;
+                                            const stringDate = formatDate(date);
+                                            const plan = plans.find(p => (p.ranger.id === ranger.id && p.date === stringDate));
+                                            const locked = plans.find(p => p.date === stringDate)?.locked ?? false;
+                                            return (
+
+                                                <td className={Weekend ? "weekend plan" : "plan"} key={index}>
+                                                    <PlanRecord
+                                                        plan={plan ? plan : { date: stringDate, ranger: ranger, routes: [], vehicles: [], locked: locked }}
+                                                        isEditable= {editable} 
+                                                        includeRangerName={false}
+                                                    />
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 )}

@@ -44,3 +44,17 @@ export const removeRoute = async (date: string, rangerId: number, routeId: numbe
         throw new Error('Failed to remove route to plan');
     }
 }
+
+export const addVehicle = async (date: string, rangerId: number, vehicleId: number) => {
+    const response = await fetch(`${BASE_URL}/add-vehicle/${date}/${rangerId.toString()}?vehicleId=${vehicleId.toString()}`, { method: 'PUT' })
+    if (!response.ok) {
+        throw new Error('Failed to add vehicle to plan');
+    }
+}
+
+export const removeVehicle = async (date: string, rangerId: number, vehicleId: number) => {
+    const response = await fetch(`${BASE_URL}/remove-vehicle/${date}/${rangerId.toString()}?vehicleId=${vehicleId.toString()}`, { method: 'PUT' })
+    if (!response.ok) {
+        throw new Error('Failed to remove vehicle to plan');
+    }
+}

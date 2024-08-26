@@ -24,5 +24,16 @@ namespace App.Server.Controllers
             var districtDtos = districts.Select(district => district.ToDto()).ToList();
             return Ok(districtDtos);
         }
+        [Authorize]
+        [HttpGet("{districtId}")]
+        public async Task<ActionResult<DistrictDto>> GetDistrict(int districtId)
+        {
+            var district = await _unitOfWork.DistrictRepository.GetById(districtId);
+            if (district == null)
+            {
+                return NotFound("District not found.");
+            }
+            return Ok(district.ToDto());
+        }
     }
 }

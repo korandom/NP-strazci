@@ -8,7 +8,7 @@ export interface Ranger {
     districtId: number;
 }
 
-export const fetchRangersByDistrict = async (districtId : string): Promise<Ranger[]> => {
+export const fetchRangersByDistrict = async (districtId : number): Promise<Ranger[]> => {
     const response = await fetch(`${BASE_URL}/in-district/${districtId}`);
     if (!response.ok) {
         throw new Error('Failed to fetch rangers');

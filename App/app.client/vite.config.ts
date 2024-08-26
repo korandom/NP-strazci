@@ -59,7 +59,14 @@ export default defineConfig({
                 target,
                 secure: false
             },
-
+            '^/api/District': {
+                target,
+                secure: false
+            },
+            '^/api/Vehicle': {
+                target,
+                secure: false
+            },
             
         },
         port: 5173,
