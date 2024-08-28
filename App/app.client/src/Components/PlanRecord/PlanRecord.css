@@ -6,10 +6,10 @@
     height: 100%;
 }
 
-    .planRecord > p {
-        margin: 0;
-        padding: 10px 0 10px 10px;
-    }
+.planRecord > p {
+    margin: 0;
+    padding: 10px 0 10px 10px;
+}
 
 .container {
     display: flex;
@@ -39,6 +39,18 @@
     background-color: lightgray;
     box-sizing: border-box;
     justify-content: space-between;
+}
+
+.priority-0 {
+    background-color: #ffecb8;
+}
+
+.priority-1 {
+    background-color: #f7c297;
+}
+
+.priority-2 {
+    background-color: #f6a6b2;
 }
 
 .identification > p {

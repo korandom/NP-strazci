@@ -127,7 +127,7 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
                 {/* add not only routes, but other actions as well?*/}
                 <div className='routes-container'>
                     {plannedRoutes.map((route, index) => (
-                        <div className='route' key={index}>
+                        <div className={"route priority-" + route.priority.toString()} key={index}>
                             <div className='identification'>
                                 <p>{route.name}</p>
                             </div>
@@ -155,7 +155,7 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
                             >
                                 <option value={undefined}>Nová trasa</option>
                                 {routes?.map((route) => (
-                                    <option key={route.id} value={route.id}>{route.name}</option>
+                                    <option key={route.id} value={route.id} className={"priority-" + route.priority.toString()}>{route.name}</option>
                                 ))}
                             </select>
                             <button onClick={addRouteToPlan}>✔</button>
