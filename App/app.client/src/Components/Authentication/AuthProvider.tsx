@@ -7,25 +7,23 @@ import useDistrict from '../DistrictContext/DistrictDataProvider';
 interface AuthContextType {
     user: User | undefined,
     ranger: Ranger | undefined,
-    districtId: number | undefined,
-    // routes, vehicles, rangers, somehow plans?
     loading: boolean,
     error: any,
     signin: (email: string, password: string) => void,
     signout: () => void,
-    authorizedEdit: (planOwner : Ranger) => boolean
-}
+    authorizedEdit: (planOwner: Ranger) => boolean,
+    hasRole: (role: string) => boolean
+ }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     const [user, setUser] = useState<User | undefined>(undefined);
     const [ranger, setRanger] = useState<Ranger | undefined>(undefined);
-    const [districtId, setDistrictId] = useState<number | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<any>();
     const navigate = useNavigate();
-    const { assignDistrict, clearDistrict } = useDistrict();
+    const { assignDistrict, clearDistrict, district } = useDistrict();
 
     //TODO clearing errors - manual by calling a function/ when changing routes/ when unmounting?
 
@@ -36,8 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
             const user = await signIn(email, password);
             const ranger = await getCurrentRanger();
             if (ranger != undefined) {
-                setDistrictId(ranger.districtId);
-                assignDistrict(ranger.districtId);
+                await assignDistrict(ranger.districtId);
             }
             setUser(user);
             setRanger(ranger);
@@ -54,33 +51,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
         signOut()
             .then( () =>{
                 setUser(undefined);
-                setDistrictId(undefined);
                 setRanger(undefined);
                 clearDistrict();
             })
     }
     function authorizedEdit(planOwner : Ranger) : boolean{
-        if (planOwner.id == ranger?.id) {
+        if (planOwner.id === user?.rangerId) {
             return true;
         }
-        else if (user?.role == "HeadOfDistrict" && districtId == planOwner.districtId) {
+        if (user?.role === "HeadOfDistrict" && district?.id === planOwner.districtId) {
             return true;
         }
         return false;
+    }
+
+    function hasRole(role: string): boolean {
+        if (user?.role == role) {
+            return true;
+        }
+        else return false;
     }
 
     const memoValue = useMemo(
         () => ({
             user,
             ranger,
-            districtId,
             loading,
             error,
             signin,
             signout,
-            authorizedEdit
+            authorizedEdit,
+            hasRole
         }),
-        [user, ranger, districtId, loading, error]
+        [user, ranger, loading, error]
     );
 
     return (

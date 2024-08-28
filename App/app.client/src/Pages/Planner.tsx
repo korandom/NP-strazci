@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import UseAuth from '../Components/Authentication/AuthProvider';
 import { Plan, fetchPlansByDateRange } from '../Services/PlanService';
-import { Ranger, fetchRangersByDistrict } from '../Services/RangerService';
 import PlanRecord from '../Components/PlanRecord/PlanRecord'
 import RangerCell from '../Components/Planner/RangerCell';
 import './Planner.css';
+import useDistrict from '../Components/DistrictContext/DistrictDataProvider';
 
 const Planner: React.FC = () => {
     const [month, setMonth] = useState<string>(() => {
@@ -24,28 +24,11 @@ const Planner: React.FC = () => {
 
     const [monthRange, setMonthRange] = useState<{ startDate: string, endDate: string }>(calculateMonthRange(month));
     const [plans, setPlans] = useState<Plan[]>([]);
-    const [rangers, setRangers] = useState<Ranger[]>([]);
     const nameOfDays: string[] = ["Ne","Po", "Út", "St", "Čt", "Pá", "So"];
 
 
-    const { districtId, authorizedEdit } = UseAuth();
-
-    useEffect(() => {
-        const fetchRangers = async () => {
-            try {
-                if (!districtId) {
-                    throw new Error("District is not set.");
-                }
-
-                const rangersData = await fetchRangersByDistrict(districtId);
-                setRangers(rangersData);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchRangers();
-    }, []);
+    const { authorizedEdit } = UseAuth();
+    const { district, rangers } = useDistrict();
 
     const changeMonth = (event: React.ChangeEvent<HTMLInputElement>) => {
         const selectedMonth = event.target.value;
@@ -60,11 +43,11 @@ const Planner: React.FC = () => {
         if (monthRange.endDate && monthRange.startDate) {
             const fetchPlans = async () => {
                 try {
-                    if (!districtId) {
+                    if (!district) {
                         throw new Error("District is not set.");
                     }
 
-                    const fetchedPlans = await fetchPlansByDateRange(districtId, monthRange.startDate, monthRange.endDate);
+                    const fetchedPlans = await fetchPlansByDateRange(district.id, monthRange.startDate, monthRange.endDate);
                     setPlans(fetchedPlans);
                 } catch (error) {
                     console.error(error);
@@ -120,7 +103,7 @@ const Planner: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {rangers.map(ranger => {
+                            {rangers?.map(ranger => {
 
                                 const editable = authorizedEdit(ranger);
                                 return (

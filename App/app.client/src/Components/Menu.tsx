@@ -1,17 +1,46 @@
-import  { useState } from 'react';
+import  { useState, useEffect } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import useAuth from './Authentication/AuthProvider';
 import './Menu.css';
+import { District, fetchAllDistricts } from '../Services/DistrictService';
+import useDistrict from './DistrictContext/DistrictDataProvider';
 
 const Menu = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const { signout } = useAuth();
+    const { signout, hasRole } = useAuth();
+    const { assignDistrict } = useDistrict();
+    const [districts, setDistricts] = useState<District[]>([]);
+    const [ isDistrictDropdownOpen, setIsDistrictDropdownOpen ] = useState(false);
+
+    useEffect(() => {
+        const fetchDistricts = async () => {
+            try {
+                const districts = await fetchAllDistricts();
+                setDistricts(districts);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        if (hasRole("Admin")) {
+            fetchDistricts();
+        }
+    }, []);
+
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
+
     const closeMenu = () => {
         setIsOpen(false);
+        setIsDistrictDropdownOpen(false);
     }
+
+    const toggleDistrictDropdown = () => {
+        setIsDistrictDropdownOpen(!isDistrictDropdownOpen);
+    }
+
+
+
 
     return (
         <>
@@ -21,13 +50,30 @@ const Menu = () => {
             </div>
             <div className={isOpen ? "menu open" : "menu"}>
                 <nav className="menu-up">
+                        
+                        <Link to="/" onClick={closeMenu} className="menu-item">🏠</Link>
+                        <Link to="/planovani" onClick={closeMenu} className="menu-item">Plánování</Link>
+                        <div className="menu-item">Zdroje</div>
+                        {hasRole("Admin") &&
+                            <div>
+                                <div className="menu-item" onClick={toggleDistrictDropdown}>
+                                    Obvody
+                                </div>
 
-                        <Link to="/" onClick={closeMenu}>Plán Dne</Link>
-                        <Link to="/planovani" onClick={closeMenu}>Plánování</Link>
-                        Zdroje
+                                {isDistrictDropdownOpen && (
+                                    <div className="dropdown-content">
+                                        {districts.map((district, index) => (
+                                            <div key={index} className="dropdown-item" onClick={() => { assignDistrict(district.id); closeMenu(); }}>
+                                                {district.name}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        }
                 </nav>
-                <nav className="menu-down" onClick={signout}>
-                        Odhlásit
+                <nav className="menu-down">
+                        <div onClick={signout} className="menu-item">Odhlásit</div>
                 </nav>
             </div>
 

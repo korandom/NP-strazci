@@ -1,5 +1,5 @@
 import './Home.css';
-import UseAuth from '../Components/Authentication/AuthProvider';
+import UseDistrict from '../Components/DistrictContext/DistrictDataProvider';
 import React, { useState, useEffect } from 'react';
 import PlanForDay from '../Components/DisplayPlan/PlanForDay';
 import Calendar from 'react-calendar';
@@ -10,7 +10,7 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const Home: React.FC = () => {
-    const { districtId } = UseAuth();
+    const { district } = UseDistrict();
     const [date, setDate] = useState<Date>(new Date());
 
     const [plans, setPlans] = useState<Plan[]>([]);
@@ -18,10 +18,10 @@ const Home: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try { 
-                if (!districtId) {
+                if (!district) {
                     throw Error("District is not set.");
                 }
-                const fetchedPlans = await fetchPlansByDate(districtId, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate());
+                const fetchedPlans = await fetchPlansByDate(district.id, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate());
                 setPlans(fetchedPlans);
             } catch (error) {
                 console.error(error);
