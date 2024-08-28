@@ -3,16 +3,21 @@ import { useState, useEffect } from 'react';
 import './PlanRecord.css';
 import { Plan, addRoute, removeRoute, addVehicle, removeVehicle } from '../../Services/PlanService';
 import useDistrict from '../DistrictContext/DistrictDataProvider';
+import useAuth from '../Authentication/AuthProvider';
 
 
 // Konkrétní záznam plánu jednoho strážce, bez detailů
 const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable: boolean }> = ({ plan, includeRangerName, isEditable }) => {
+    // authorization for adding vehicles (only headOfDistrict)
+    const { hasRole } = useAuth();
 
     // state managment for editing
     const [editing, setEditing] = useState(false);
     const toggleEdit = () => {
         isEditable ? setEditing(!editing) : null;
     }
+
+    // data for adding routes and vehicles from district
     const { routes, vehicles } = useDistrict();
 
     // state managment for routes
@@ -98,19 +103,19 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
                             )}
                             {
 
-                                editing &&
+                                hasRole("HeadOfDistrict") && editing &&
                                 <button onClick={() => deleteVehicleFromPlan(vehicle.id)}>×</button>
                             }
                         </div>
                     ))}
-                    {editing && (
+                    { hasRole("HeadOfDistrict") && editing && (
                         <div className="add">
                             <select
                                 className='dropdown'
                                 value={selectedVehicleId}
                                 onChange={handleVehicleSelect}
                             >
-                                <option value={undefined}>Nový dopravní prostředek</option>
+                                <option value={undefined}>Nový prostředek</option>
                                 {vehicles?.map((vehicle) => (
                                     <option key={vehicle.id} value={vehicle.id}>{vehicle.name}</option>
                                 ))}
