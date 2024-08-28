@@ -1,0 +1,36 @@
+.login-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.login-form {
+    display: flex;
+    width: 100%;
+    align-self: center;
+    max-width: 400px;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: center;
+    align-items: stretch;
+}
+
+input {
+    height: 2em;
+}
+
+.submit-button {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    padding: 1em;
+}

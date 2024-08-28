@@ -1,5 +1,6 @@
 import useAuth from '../Components/Authentication/AuthProvider';
 import React, { useState } from 'react';
+import './Style/Login.css';
 
  const Login = () : JSX.Element => {
      const { signin, loading, error } = useAuth();
@@ -13,11 +14,9 @@ import React, { useState } from 'react';
 
     return (
         <div className="login-container">
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label className="forminput" htmlFor="email">Email:</label>
-                </div>
-                <div>
+            <form className="login-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label className="forminput" htmlFor="email">Email</label>
                     <input
                         type="email"
                         id="email"
@@ -27,10 +26,8 @@ import React, { useState } from 'react';
                         required
                     />
                 </div>
-                <div>
-                    <label className="forminput" htmlFor="password">Heslo:</label>
-                </div>
-                <div>
+                <div className="form-group">
+                    <label className="forminput" htmlFor="password">Heslo</label>
                     <input
                         type="password"
                         id="password"
@@ -40,9 +37,9 @@ import React, { useState } from 'react';
                         required
                     />
                 </div>
-                <div>
+                <div className="submit-button">
                     <button type="submit" disabled={loading}>
-                        {loading ? '...' : 'Pøihlásit'}
+                        {loading ? '...' : 'PÅ™ihlÃ¡sit'}
                     </button>
                 </div>
             </form>

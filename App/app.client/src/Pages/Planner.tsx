@@ -3,7 +3,7 @@ import UseAuth from '../Components/Authentication/AuthProvider';
 import { Plan, fetchPlansByDateRange } from '../Services/PlanService';
 import PlanRecord from '../Components/PlanRecord/PlanRecord'
 import RangerCell from '../Components/Planner/RangerCell';
-import './Planner.css';
+import './Style/Planner.css';
 import useDistrict from '../Components/DistrictContext/DistrictDataProvider';
 
 const Planner: React.FC = () => {

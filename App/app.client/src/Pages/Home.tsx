@@ -1,4 +1,4 @@
-import './Home.css';
+import './Style/Home.css';
 import UseDistrict from '../Components/DistrictContext/DistrictDataProvider';
 import React, { useState, useEffect } from 'react';
 import PlanForDay from '../Components/DisplayPlan/PlanForDay';
