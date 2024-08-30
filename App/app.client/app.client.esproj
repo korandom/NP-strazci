@@ -10,7 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\Components\DistrictContext\" />
-    <Folder Include="src\Pages\Style\" />
     <Folder Include="src\Services\" />
   </ItemGroup>
 </Project>

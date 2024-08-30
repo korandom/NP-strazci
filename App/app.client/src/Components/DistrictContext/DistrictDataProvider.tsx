@@ -31,6 +31,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         try {
             const district = await fetchDistrictById(districtId);
             const routes = await fetchRoutesByDistrict(districtId);
+            routes.sort((a, b) => a.name > b.name ? 1 : -1);
             const vehicles = await fetchVehiclesByDistrict(districtId);
             const rangers = await fetchRangersByDistrict(districtId);
 

@@ -6,7 +6,6 @@ import useDistrict from '../DistrictContext/DistrictDataProvider';
 
 interface AuthContextType {
     user: User | undefined,
-    ranger: Ranger | undefined,
     loading: boolean,
     error: any,
     signin: (email: string, password: string) => void,
@@ -19,7 +18,6 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     const [user, setUser] = useState<User | undefined>(undefined);
-    const [ranger, setRanger] = useState<Ranger | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<any>();
     const navigate = useNavigate();
@@ -36,8 +34,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
             if (ranger != undefined) {
                 await assignDistrict(ranger.districtId);
             }
+            setError(null);
             setUser(user);
-            setRanger(ranger);
             navigate("/");
         }
         catch (error) {
@@ -51,7 +49,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
         signOut()
             .then( () =>{
                 setUser(undefined);
-                setRanger(undefined);
                 clearDistrict();
             })
     }
@@ -75,7 +72,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     const memoValue = useMemo(
         () => ({
             user,
-            ranger,
             loading,
             error,
             signin,
@@ -83,7 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
             authorizedEdit,
             hasRole
         }),
-        [user, ranger, loading, error]
+        [user, loading, error]
     );
 
     return (

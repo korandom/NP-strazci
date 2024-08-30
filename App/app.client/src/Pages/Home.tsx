@@ -10,6 +10,8 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const Home: React.FC = () => {
+    const [error, setError] = useState<any>();
+
     const { district } = UseDistrict();
     const [date, setDate] = useState<Date>(new Date());
 
@@ -19,17 +21,18 @@ const Home: React.FC = () => {
         const fetchData = async () => {
             try { 
                 if (!district) {
-                    throw Error("District is not set.");
+                    throw Error("Není vybrán žádný obvod.");
                 }
                 const fetchedPlans = await fetchPlansByDate(district.id, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate());
                 setPlans(fetchedPlans);
-            } catch (error) {
-                console.error(error);
+                setError(null);
+            } catch (error : any) {
+                setError(error);
             }
         };
 
         fetchData();
-    }, [date]);
+    }, [date, district]);
 
     const handleDateChange = (date : Value)  => {
         if (date instanceof Date) {
@@ -38,21 +41,29 @@ const Home: React.FC = () => {
     };
 
     return (
-        <div className='home-container'>
-            <div className='calendar'>
-                <Calendar
-                    onChange={handleDateChange}
-                    value={date}
+        <>
+            {error ? (
+                <div className="error">
+                    {error.message}
+                </div>
+            ) : (
+                <div className='home-container'>
+                    <div className='calendar'>
+                        <Calendar
+                            onChange={handleDateChange}
+                            value={date}
                     locale='cs'
-                    maxDetail="month"
-                    minDetail="month"
-                    next2Label={null}
-                    prev2Label={null}
-                />
-            </div>
-            
-            <PlanForDay recordsData={plans} />
-        </div>
+                            maxDetail="month"
+                            minDetail="month"
+                            next2Label={null}
+                            prev2Label={null}
+                        />
+                        </div>
+
+                    <PlanForDay recordsData={plans} />
+                </div>
+            )}
+        </>
     );
 };
 

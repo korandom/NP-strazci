@@ -213,7 +213,7 @@ namespace App.Server.Controllers
         }
  
         // Get plans by date range
-        [Authorize(Roles = "Ranger,HeadOfDistrict")]
+        [Authorize(Roles = "Ranger,HeadOfDistrict,Admin")]
         [HttpGet("by-dates/{districtId}/{startDate}/{endDate}")]
         public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDateRange(int districtId, DateOnly startDate, DateOnly endDate)
         {
@@ -227,7 +227,7 @@ namespace App.Server.Controllers
         }
 
         // get plans by date
-        [Authorize(Roles = "Ranger,HeadOfDistrict")]
+        [Authorize(Roles = "Ranger,HeadOfDistrict,Admin")]
         [HttpGet("{districtId}/{date}")]
         public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDate(int districtId, DateOnly date)
         {
