@@ -18,9 +18,9 @@ namespace App.Server.Controllers
         public async Task<ActionResult<IEnumerable<RouteDto>>> GetRoutesInDistrict(int DistrictId)
         {
             var routes = await _unitOfWork.RouteRepository.Get(route => route.DistrictId == DistrictId);
-            if (routes == null || !routes.Any())
+            if (routes == null)
             {
-                return NotFound("No routes found in district");
+                return NotFound("Error getting routes.");
             }
             var routesDtos = routes.Select(route => route.ToDto()).ToList();
             return Ok(routesDtos);
@@ -30,8 +30,8 @@ namespace App.Server.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<RouteDto>> Create(RouteDto routeDto)
         {
-            var sector = await _unitOfWork.DistrictRepository.GetById(routeDto.DistrictId);
-            if (sector == null)
+            var district = await _unitOfWork.DistrictRepository.GetById(routeDto.DistrictId);
+            if (district == null)
             {
                 return BadRequest("District id not found");
             }
@@ -50,7 +50,7 @@ namespace App.Server.Controllers
         }
 
         [Authorize(Roles = "Admin,HeadOfDistrict")]
-        [HttpDelete("delete")]
+        [HttpDelete("delete/{RouteId}")]
         public async Task<ActionResult> Delete(int RouteId)
         {
             var route = await _unitOfWork.RouteRepository.GetById(RouteId);

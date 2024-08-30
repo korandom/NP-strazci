@@ -53,8 +53,13 @@ const Menu = () => {
                         
                         <Link to="/" onClick={closeMenu} className="menu-item">🏠</Link>
                         <Link to="/planovani" onClick={closeMenu} className="menu-item">Plánování</Link>
-                        <div className="menu-item">Zdroje</div>
-                        {hasRole("Admin") &&
+                        {
+                            (hasRole("HeadOfDistrict") || hasRole("Admin")) &&
+                            <Link to="/sprava" onClick={closeMenu} className="menu-item">Správa objektů</Link>
+
+                        }
+                        {
+                            hasRole("Admin") &&
                             <div>
                                 <div className="menu-item" onClick={toggleDistrictDropdown}>
                                     Obvody
@@ -63,7 +68,7 @@ const Menu = () => {
                                 {isDistrictDropdownOpen && (
                                     <div className="dropdown-content">
                                         {districts.map((district, index) => (
-                                            <div key={index} className="dropdown-item" onClick={() => { assignDistrict(district.id); closeMenu(); }}>
+                                            <div key={index} className="dropdown-item" onClick={ async () => {await assignDistrict(district.id); closeMenu(); }}>
                                                 {district.name}
                                             </div>
                                         ))}

@@ -27,3 +27,25 @@ export const getCurrentRanger = async (): Promise<Ranger | undefined> => {
     const result = await response.json();
     return result;
 }
+
+export const updateRanger = async (ranger: Ranger) => {
+    const response = await fetch(`${BASE_URL}/update`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(ranger)
+    });
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message);
+    }
+}
+
+export const deleteRanger = async (ranger: Ranger) => {
+    const response = await fetch(`${BASE_URL}/delete/${ranger.id}`);
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message);
+    }
+}

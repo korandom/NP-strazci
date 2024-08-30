@@ -42,9 +42,9 @@ namespace App.Server.Controllers
         public async Task<ActionResult<IEnumerable<RangerDto>>> GetRangersInDistrict(int DistrictId)
         {
             var rangers = await _unitOfWork.RangerRepository.Get(ranger => ranger.DistrictId == DistrictId);
-            if (rangers == null || !rangers.Any())
+            if (rangers == null )
             {
-                return NotFound("No rangers found in district");
+                return NotFound("Failed to fetch rangers.");
             }
             var rangerDtos = rangers.Select(ranger => ranger.ToDto()).ToList();
             return Ok(rangerDtos);
@@ -74,7 +74,7 @@ namespace App.Server.Controllers
         }
 
         [Authorize(Roles = "Admin,HeadOfDistrict")]
-        [HttpDelete("delete")]
+        [HttpDelete("delete/{RangerId}")]
         public async  Task<ActionResult> Delete(int RangerId)
         {
             var ranger = await _unitOfWork.RangerRepository.GetById(RangerId);

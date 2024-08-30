@@ -16,9 +16,9 @@ namespace App.Server.Controllers
         public async Task<ActionResult<IEnumerable<VehicleDto>>> GetVehiclesInDistrict(int DistrictId)
         {
             var vehicles = await _unitOfWork.VehicleRepository.Get(vehicle => vehicle.DistrictId == DistrictId);
-            if (vehicles == null || !vehicles.Any())
+            if (vehicles == null )
             {
-                return NotFound("No vehicles found in district");
+                return NotFound("Failed to fetch vehicles.");
             }
             var vehiclesDtos = vehicles.Select(vehicle => vehicle.ToDto()).ToList();
             return Ok(vehiclesDtos);
@@ -47,7 +47,7 @@ namespace App.Server.Controllers
         }
 
         [Authorize(Roles = "Admin,HeadOfDistrict")]
-        [HttpDelete("delete")]
+        [HttpDelete("delete/{vehicleId}")]
         public async Task<ActionResult> Delete(int vehicleId)
         {
             var vehicle = await _unitOfWork.VehicleRepository.GetById(vehicleId);

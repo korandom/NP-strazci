@@ -15,3 +15,25 @@ export const fetchVehiclesByDistrict = async (districtId: number): Promise<Vehic
     const routes = await response.json();
     return routes;
 }
+
+export const updateVehicle = async (vehicle: Vehicle) => {
+    const response = await fetch(`${BASE_URL}/update`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(vehicle)
+    });
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message);
+    }
+}
+
+export const deleteVehicle = async (vehicle: Vehicle) => {
+    const response = await fetch(`${BASE_URL}/delete/${vehicle.id}`);
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message);
+    }
+}

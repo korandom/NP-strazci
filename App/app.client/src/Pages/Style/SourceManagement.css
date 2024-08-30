@@ -1,0 +1,102 @@
+/*Containers*/
+.district-container {
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+}
+
+.sources-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: flex-start;
+}
+
+
+.items-container{
+    min-width: fit-content;
+    display: grid;
+    max-width: 33%;
+}
+
+.district-name{
+    align-self: center;
+}
+.source-name {
+    padding: 0 1em;
+}
+/*Items viewing*/
+
+.item-buttons {
+    grid-row: 1;
+    grid-column: 2;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0.4em;
+    box-sizing: border-box;
+}
+
+.additional-item-info {
+    display: flex;
+    grid-row: 2;
+    grid-column-start: 1;
+    grid-column-end: 3;
+    flex-direction: column;
+}
+.item-name {
+    font-weight: 500;
+    font-size: large;
+    grid-column: 1;
+    grid-row: 1;
+    margin-right: 1em;
+}
+
+.item {
+    display: grid;
+    width: 100%;
+    border: 2px, solid;
+    padding: 0.4em;
+    margin: 0.3em;
+    box-sizing: border-box;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 1em;
+}
+.delete-button{
+    color: #d62f2f;
+}
+/*Items layout when editing*/
+.item-edit-label {
+    grid-column: 1;
+    padding: 0.2em;
+}
+
+.item-edit-input {
+    grid-column: 2;
+    padding: 0.1em;
+    margin: 0.2em;
+    min-height: 2em;
+}
+
+button.control-button {
+    display: flex;
+    grid-column-end: 3;
+    grid-column-start: 1;
+}
+
+button.save-button {
+    grid-column: 3;
+}
+
+button.scratch-button {
+    grid-column: 3;
+    grid-row: 1;
+}
