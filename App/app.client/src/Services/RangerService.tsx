@@ -43,9 +43,25 @@ export const updateRanger = async (ranger: Ranger) => {
 }
 
 export const deleteRanger = async (ranger: Ranger) => {
-    const response = await fetch(`${BASE_URL}/delete/${ranger.id}`);
+    const response = await fetch(`${BASE_URL}/delete/${ranger.id}`, {method:'DELETE'});
     if (!response.ok) {
         const message = await response.text();
         throw new Error(message);
     }
+}
+
+export const createRanger = async (ranger: Ranger): Promise<Ranger> => {
+    const response = await fetch(`${BASE_URL}/create`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(ranger)
+    });
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message);
+    }
+    const result = await response.json();
+    return result;
 }

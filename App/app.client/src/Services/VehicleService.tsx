@@ -31,9 +31,25 @@ export const updateVehicle = async (vehicle: Vehicle) => {
 }
 
 export const deleteVehicle = async (vehicle: Vehicle) => {
-    const response = await fetch(`${BASE_URL}/delete/${vehicle.id}`);
+    const response = await fetch(`${BASE_URL}/delete/${vehicle.id}`, {method:'DELETE'});
     if (!response.ok) {
         const message = await response.text();
         throw new Error(message);
     }
+}
+
+export const createVehicle = async (vehicle: Vehicle): Promise<Vehicle> => {
+    const response = await fetch(`${BASE_URL}/create`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(vehicle)
+    });
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message);
+    }
+    const result = await response.json();
+    return result;
 }

@@ -33,13 +33,28 @@ export const updateRoute = async (route: Route) => {
         const message = await response.text();
         throw new Error(message);
     }
-    console.error("updated");
 }
 
 export const deleteRoute = async (route: Route) => {
-    const response = await fetch(`${BASE_URL}/delete/${route.id}`);
+    const response = await fetch(`${BASE_URL}/delete/${route.id}`, {method: 'DELETE'});
     if (!response.ok) {
         const message = await response.text();
         throw new Error(message);
     }
+}
+
+export const createRoute = async (route: Route) : Promise<Route> => {
+    const response = await fetch(`${BASE_URL}/create`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(route)
+    });
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message);
+    }
+    const result = await response.json();
+    return result;
 }
