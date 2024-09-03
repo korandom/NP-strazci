@@ -1,6 +1,6 @@
-import { User, signIn, signOut } from '../../Services/UserService';
+import { User, getCurrentUser, signIn, signOut } from '../../Services/UserService';
 import { Ranger, getCurrentRanger } from '../../Services/RangerService';
-import  { createContext, useContext, ReactNode, useState, useMemo} from 'react';
+import  { createContext, useContext, ReactNode, useState, useMemo, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import useDistrict from '../DistrictContext/DistrictDataProvider';
 
@@ -19,13 +19,31 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     const [user, setUser] = useState<User | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(false);
+    const [initialLoading, setInitialLoading] = useState<boolean>(true);
     const [error, setError] = useState<any>();
     const navigate = useNavigate();
-    const { assignDistrict, clearDistrict, district } = useDistrict();
+    const { assignDistrict, clearDistrict, district} = useDistrict();
 
-    //TODO clearing errors - manual by calling a function/ when changing routes/ when unmounting?
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            setInitialLoading(true);
+            try {
+                const user = await getCurrentUser();
+                const ranger = await getCurrentRanger();
+                if (ranger != undefined) {
+                    await assignDistrict(ranger.districtId);
+                }
+                setUser(user);
+            } catch (error) {
+                {}
+            } finally {
+                setInitialLoading(false);
+            }
+        };
 
-    //TODO get current user from database if there is an active session/4
+        fetchInitialData();
+    }, []);
+
     async function signin(email: string, password: string) {
         setLoading(true);
         try {
@@ -52,7 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                 clearDistrict();
             })
     }
-    function authorizedEdit(planOwner : Ranger) : boolean{
+    function authorizedEdit(planOwner: Ranger): boolean{
         if (planOwner.id === user?.rangerId) {
             return true;
         }
@@ -84,7 +102,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
 
     return (
         <AuthContext.Provider value={memoValue}>
-            {children}
+            {!initialLoading && children}
         </AuthContext.Provider>
     );
 };

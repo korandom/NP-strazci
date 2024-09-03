@@ -31,3 +31,15 @@ export const signOut = async () => {
     }
     // log success?
 };
+
+export const getCurrentUser = async (): Promise<User> => {
+    const response = await fetch(`${BASE_URL}`);
+
+    if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(errorMessage);
+    }
+
+    const result = await response.json();
+    return result;
+}

@@ -92,7 +92,22 @@ namespace App.Server.Controllers
             await _authenticationService.SignOutAsync();
             return Ok("Sign-out successful");
         }
-        // getuser
+
+        [HttpGet]
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        {
+            var user = await _authenticationService.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound("No user is signed in.");
+            }
+            string role = await _authorizationService.GetRoleAsync(user);
+            if (role == "")
+            {
+                return StatusCode(500, "Internal Error occured, no role is assigned to user");
+            }
+            return Ok(new UserDto { Email = user.Email, RangerId = user.RangerId, Role = role });
+        }
         // set password -- user created with admin and is setting up first passwrod via link with token and email ? 
         // change password
 
