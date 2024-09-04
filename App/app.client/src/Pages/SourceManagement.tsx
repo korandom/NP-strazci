@@ -1,6 +1,4 @@
 import useDistrict from "../Components/DistrictContext/DistrictDataProvider";
-import RangerItem from "../Components/Sources/Rangers/RangerItem";
-import VehicleItem from "../Components/Sources/Vehicles/VehicleItem";
 import "./Style/SourceManagement.css"
 import RoutesManager from "../Components/Sources/Routes/RoutesManager";
 import VehicleManager from "../Components/Sources/Vehicles/VehicleManager";

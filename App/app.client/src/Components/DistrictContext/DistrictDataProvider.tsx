@@ -3,12 +3,14 @@ import { Vehicle, createVehicle, deleteVehicle, fetchVehiclesByDistrict, updateV
 import { Ranger, createRanger, deleteRanger, fetchRangersByDistrict, updateRanger} from '../../Services/RangerService';
 import { District, fetchDistrictById} from '../../Services/DistrictService';
 import { createContext, useContext, ReactNode, useState, useMemo } from 'react';
+import { Locked, fetchLocks, lockPlans, unlockPlans } from '../../Services/PlanService';
 
 interface DistrictContextType {
     district: District|undefined, 
     routes: Route[],
     vehicles: Vehicle[],
     rangers: Ranger[],
+    locks: Locked[],
 
     assignDistrict: (districtId: number) => void,
     clearDistrict: () => void,
@@ -25,6 +27,9 @@ interface DistrictContextType {
     removeRanger: (ranger: Ranger) => void,
     changeRanger: (ranger: Ranger) => void,
 
+    addLock: (date: string) => void,
+    removeLock: (date:string)=> void,
+
     loading: boolean,
     error: any,
 }
@@ -36,6 +41,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
     const [routes, setRoutes] = useState<Route[]>([]);
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const [rangers, setRangers] = useState<Ranger[]>([]);
+    const [locks, setLocks] = useState<Locked[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<any>();
 
@@ -48,15 +54,16 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
             routes.sort((a, b) => a.name > b.name ? 1 : -1);
             const vehicles = await fetchVehiclesByDistrict(districtId);
             const rangers = await fetchRangersByDistrict(districtId);
-
+            const locks = await fetchLocks(districtId);
 
             setDistrict(district);
             setRoutes(routes);
             setVehicles(vehicles);
             setRangers(rangers);
+            setLocks(locks);
 
         }
-        catch (error) {
+        catch (error: any) {
             setError(error);
         }
         finally {
@@ -68,6 +75,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         setRoutes([]);
         setVehicles([]);
         setRangers([]);
+        setLocks([]);
     }
 
     // Route Changes management 
@@ -93,6 +101,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
             setError(error);
         }
     };
+
     const changeRoute = async (route: Route) => {
         const originalRoutes = [...routes];
         setRoutes(routes.map(r => r.id === route.id ? route : r));
@@ -104,7 +113,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
             setRoutes(originalRoutes);
             setError(error);
         }
-    }
+    };
 
     // Vehicle Changes management
     const addVehicle = async (vehicle: Vehicle) => {
@@ -174,13 +183,38 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
             setRangers(originalRangers);
             setError(error);
         }
-    }
+    };
+    const addLock = async (date: string) => {
+        if (!district) throw new Error("Není pøiøazen obvod.");
+
+        setLocks([...locks, { date: date, districtId: district?.id }]);
+        try {
+            await lockPlans(date, district?.id);
+        } catch (error) {
+            // rollback in case of error
+            setLocks(locks.filter(l => l.date !== date));
+            setError(error);
+        }
+    };
+    const removeLock = async (date: string) => {
+        if (!district) throw new Error("Není pøiøazen obvod.");
+
+        setLocks(locks.filter(l => l.date !== date));
+        try {
+            await unlockPlans(date, district?.id);
+        } catch (error) {
+            // rollback in case of error
+            setLocks([...locks, { date: date, districtId: district?.id }]);
+            setError(error);
+        }
+    };
     const memoValue = useMemo(
         () => ({
             district,
             routes,
             vehicles,
             rangers,
+            locks,
             loading,
             error,
             assignDistrict,
@@ -193,9 +227,11 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
             changeVehicle,
             addRanger,
             removeRanger,
-            changeRanger
+            changeRanger,
+            addLock,
+            removeLock
         }),
-        [district, routes, vehicles, rangers, loading, error]
+        [district, routes, vehicles, rangers, locks, loading, error]
     );
 
     return (

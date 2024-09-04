@@ -193,25 +193,56 @@ namespace App.Server.Controllers
             return Ok("Successfully removed vehicle from plan.");
         }
 
-        // TODO locking per days per district?
-        // Lock or unlock the plan
+        
+        // Lock plans
         [Authorize(Roles = "HeadOfDistrict")]
-        [HttpPut("lock/{date}/{rangerId}")]
-        public async Task<IActionResult> LockPlan(DateOnly date, int rangerId, bool is_locked)
+        [HttpPost("lock/{districtId}/{date}")]
+        public async Task<IActionResult> LockPlans(DateOnly date, int districtId)
         {
-            var plan = await _unitOfWork.PlanRepository.GetById(date, rangerId);
+            var district = await _unitOfWork.DistrictRepository.GetById(districtId);
+            if (district == null)
+            {
+                return BadRequest("District id not found");
+            }
+            Lock newLock = new()
+            {
+                Date = date,
+                DistrictId = districtId,
+                District = district
+            };
 
-            if (plan == null)
-                return NotFound("Plan not found.");
-
-            plan.Locked = is_locked;
-
-            _unitOfWork.PlanRepository.Update(plan);
+            _unitOfWork.LockRepository.Add(newLock);
             await _unitOfWork.SaveAsync();
-
-            return Ok("Successfully updated lock of the plan.");
+            return Ok("Plans succesfully locked.");
         }
- 
+        // Unlock plans
+        [Authorize(Roles = "HeadOfDistrict")]
+        [HttpDelete("unlock/{districtId}/{date}")]
+        public async Task<IActionResult> UnlockPlans(DateOnly date, int districtId)
+        {
+            var deleteLock = await _unitOfWork.LockRepository.Get(l=> l.Date == date && l.DistrictId == districtId);
+            if (deleteLock == null || !deleteLock.Any())
+            {
+                return BadRequest("Lock doesn't exist.");
+            }
+
+            _unitOfWork.LockRepository.Delete(deleteLock.First());
+            await _unitOfWork.SaveAsync();
+            return Ok("Succesfully unlocked plans.");
+        }
+
+        [Authorize()]
+        [HttpGet("locks/{districtId}")]
+        public async Task<ActionResult<IEnumerable<LockDto>>> GetLocks(int districtId)
+        {
+            var locks = await _unitOfWork.LockRepository.Get(l => l.DistrictId == districtId);
+            if (locks == null )
+            {
+                return BadRequest("Locks not found.");
+            }
+            return Ok(locks.Select(l=> new LockDto { Date=l.Date, DistrictId=l.DistrictId}));
+        }
+
         // Get plans by date range
         [Authorize(Roles = "Ranger,HeadOfDistrict,Admin")]
         [HttpGet("by-dates/{districtId}/{startDate}/{endDate}")]

@@ -3,7 +3,7 @@ import UseAuth from '../Components/Authentication/AuthProvider';
 import { Plan, fetchPlansByDateRange } from '../Services/PlanService';
 import PlanRecord from '../Components/PlanRecord/PlanRecord'
 import RangerCell from '../Components/Planner/RangerCell';
-import './Style/Planner.css';
+import './Style/Planner.css'; 
 import useDistrict from '../Components/DistrictContext/DistrictDataProvider';
 
 const Planner: React.FC = () => {
@@ -12,7 +12,7 @@ const Planner: React.FC = () => {
     // getting current month
     const [month, setMonth] = useState<string>(() => {
         const currentDate = new Date();
-        const currentMonth = currentDate.getMonth() + 1; 
+        const currentMonth = currentDate.getMonth() + 1;
         return `${currentDate.getFullYear()}-${currentMonth.toString().padStart(2, '0')}`;
     });
 
@@ -28,11 +28,11 @@ const Planner: React.FC = () => {
 
     const [monthRange, setMonthRange] = useState<{ startDate: string, endDate: string }>(calculateMonthRange(month));
     const [plans, setPlans] = useState<Plan[]>([]);
-    const nameOfDays: string[] = ["Ne","Po", "Út", "St", "Čt", "Pá", "So"];
+    const nameOfDays: string[] = ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"];
 
 
-    const { authorizedEdit } = UseAuth();
-    const { district, rangers } = useDistrict();
+    const { hasRole, user } = UseAuth();
+    const { district, rangers, locks, addLock, removeLock } = useDistrict();
 
     const changeMonth = (event: React.ChangeEvent<HTMLInputElement>) => {
         const selectedMonth = event.target.value;
@@ -49,7 +49,7 @@ const Planner: React.FC = () => {
                 try {
                     if (!district) {
                         throw new Error("Není vybrán žádný obvod.");
-                    } 
+                    }
                     const fetchedPlans = await fetchPlansByDateRange(district.id, monthRange.startDate, monthRange.endDate);
                     setPlans(fetchedPlans);
                     setError(null);
@@ -79,6 +79,15 @@ const Planner: React.FC = () => {
         return date.toISOString().split('T')[0];
     };
 
+    const generateLocksArray = (): boolean[] => {
+        const locksArray = dateArray.map((date) => { return date < new Date || locks.some(l => l.date == formatDate(date)) });
+        return locksArray;
+    };
+
+    const isLockedArray = useMemo(() => {
+        return generateLocksArray()
+    }, [locks, dateArray]);
+
     return (
         <>
             {error ? (
@@ -102,6 +111,15 @@ const Planner: React.FC = () => {
                                             const Weekend = date.getDay() == 0 || date.getDay() == 6;
                                             return (
                                                 <th className={Weekend ? "weekend date-header" : "date-header"} key={index}>
+                                                    {hasRole("HeadOfDistrict") && (date > new Date) &&
+                                                        <div className="lock" >
+                                                            { isLockedArray[index] ?
+                                                                <button onClick={() => removeLock(formatDate(date))}>🔒</button>
+                                                             :
+                                                                <button onClick={() => addLock(formatDate(date))}>🔓</button>
+                                                            }
+                                                        </div>
+                                                    }
                                                     <div>
                                                         {nameOfDays[date.getDay()]}
                                                     </div>
@@ -116,7 +134,9 @@ const Planner: React.FC = () => {
                                 <tbody>
                                     {rangers?.map(ranger => {
 
-                                        const editable = authorizedEdit(ranger);
+                                        const isheadOfDistrict = hasRole("HeadOfDistrict");
+                                        const isOwner = user?.rangerId == ranger.id;
+
                                         return (
                                             <tr key={ranger.id}>
                                                 <td className="sticky">
@@ -127,13 +147,12 @@ const Planner: React.FC = () => {
                                                     const Weekend = date.getDay() == 0 || date.getDay() == 6;
                                                     const stringDate = formatDate(date);
                                                     const plan = plans.find(p => (p.ranger.id === ranger.id && p.date === stringDate));
-                                                    const locked = plans.find(p => p.date === stringDate)?.locked ?? false;
                                                     return (
 
                                                         <td className={Weekend ? "weekend plan" : "plan"} key={index}>
                                                             <PlanRecord
-                                                                plan={plan ? plan : { date: stringDate, ranger: ranger, routes: [], vehicles: [], locked: locked }}
-                                                                isEditable={editable}
+                                                                plan={plan ? plan : { date: stringDate, ranger: ranger, routes: [], vehicles: [] }}
+                                                                isEditable={isheadOfDistrict||(isOwner && !isLockedArray[index])}
                                                                 includeRangerName={false}
                                                             />
                                                         </td>

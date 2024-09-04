@@ -1,5 +1,5 @@
 import { User, getCurrentUser, signIn, signOut } from '../../Services/UserService';
-import { Ranger, getCurrentRanger } from '../../Services/RangerService';
+import { getCurrentRanger } from '../../Services/RangerService';
 import  { createContext, useContext, ReactNode, useState, useMemo, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import useDistrict from '../DistrictContext/DistrictDataProvider';
@@ -10,7 +10,6 @@ interface AuthContextType {
     error: any,
     signin: (email: string, password: string) => void,
     signout: () => void,
-    authorizedEdit: (planOwner: Ranger) => boolean,
     hasRole: (role: string) => boolean
  }
 
@@ -22,7 +21,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     const [initialLoading, setInitialLoading] = useState<boolean>(true);
     const [error, setError] = useState<any>();
     const navigate = useNavigate();
-    const { assignDistrict, clearDistrict, district} = useDistrict();
+    const { assignDistrict, clearDistrict } = useDistrict();
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -70,15 +69,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                 clearDistrict();
             })
     }
-    function authorizedEdit(planOwner: Ranger): boolean{
-        if (planOwner.id === user?.rangerId) {
-            return true;
-        }
-        if (user?.role === "HeadOfDistrict" && district?.id === planOwner.districtId) {
-            return true;
-        }
-        return false;
-    }
 
     function hasRole(role: string): boolean {
         if (user?.role == role) {
@@ -94,7 +84,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
             error,
             signin,
             signout,
-            authorizedEdit,
             hasRole
         }),
         [user, loading, error]

@@ -10,6 +10,7 @@ namespace App.Server.Repositories
         private GenericRepository<Models.AppData.Route>? routeRepository;
         private GenericRepository<Vehicle>? vehicleRepository;
         private GenericRepository<Ranger>? rangerRepository;
+        private GenericRepository<Lock>? lockRepository;
         private PlanRepository? planRepository;
 
         public GenericRepository<District> DistrictRepository
@@ -45,6 +46,15 @@ namespace App.Server.Repositories
             {
                 this.rangerRepository ??= new GenericRepository<Ranger>(_context);
                 return rangerRepository;
+            }
+        }
+
+        public GenericRepository<Lock> LockRepository
+        {
+            get
+            {
+                this.lockRepository ??= new GenericRepository<Lock>(_context);
+                return lockRepository;
             }
         }
 

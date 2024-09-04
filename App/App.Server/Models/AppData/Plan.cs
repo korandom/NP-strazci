@@ -1,6 +1,5 @@
 ﻿using App.Server.DTOs;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace App.Server.Models.AppData
 {
@@ -13,7 +12,6 @@ namespace App.Server.Models.AppData
 
         public ICollection<Route> Routes { get; } = new List<Route>();
         public ICollection<Vehicle> Vehicles { get; } = new List<Vehicle>();
-        public bool Locked { get; set; }
 
         public Plan() { }
         public Plan(DateOnly date, Ranger ranger)
@@ -21,7 +19,6 @@ namespace App.Server.Models.AppData
             Date = date;
             RangerId = ranger.Id;
             Ranger = ranger;
-            Locked = false;
         }
     }
 
@@ -33,7 +30,6 @@ namespace App.Server.Models.AppData
             {
                 Date = plan.Date,
                 Ranger = plan.Ranger.ToDto(),
-                Locked = plan.Locked,
                 Routes = plan.Routes.Select(r => r.ToDto()).ToList(),
                 Vehicles = plan.Vehicles.Select(v => v.ToDto()).ToList()
             };

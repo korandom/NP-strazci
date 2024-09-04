@@ -166,8 +166,8 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
             <div className='tools'>
                 <div className='edit' onClick={toggleEdit}>
                     {/*more advanced when authorization is implemented - if its the rangers or if user is the head*/}
-                    {isEditable && !plan.locked ?
-                        editing ? 'x' : '✎'
+                    {isEditable ?
+                        (editing ? 'x' : '✎')
                     : null}
                 </div>
             </div>
