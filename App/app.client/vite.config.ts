@@ -33,6 +33,7 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
 const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
     env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7136';
 
+const hubTarget = 'https://localhost:7136';
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [plugin()],
@@ -67,6 +68,12 @@ export default defineConfig({
                 target,
                 secure: false
             },
+            '^/districtHub': {
+                target : hubTarget,
+                secure: false,
+                ws: true
+            },
+            
             
         },
         port: 5173,

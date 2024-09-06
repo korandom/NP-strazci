@@ -26,28 +26,28 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
         const selectedId = Number(event.target.value);
         setSelectedRouteId(selectedId);
     };
-    const [plannedRoutes, setPlannedRoutes] = useState(plan.routes);
+    const [plannedRouteIds, setPlannedRoutesIds] = useState(plan.routes.map(route => route.id));
     useEffect(() => {
-        setPlannedRoutes(plan.routes);
+        setPlannedRoutesIds(plan.routes.map(route => route.id));
     }, [plan.routes]);
 
     const addRouteToPlan = () => {
-        if (selectedRouteId != undefined) {
-            const selectedRoute = routes?.find(route => route.id === selectedRouteId);
+        if (selectedRouteId != undefined) { 
             
-            if (selectedRoute) {
-                if (plannedRoutes.find(route => route.id === selectedRoute.id)) {
+            if (routes.some(route => route.id === selectedRouteId)) {
+
+                if (plannedRouteIds.some(id => selectedRouteId === id)) {
                     return;
                 }
 
-                setPlannedRoutes([...plannedRoutes, selectedRoute]);
+                setPlannedRoutesIds([...plannedRouteIds, selectedRouteId]);
                 setSelectedRouteId(undefined); 
-                addRoute(plan.date, plan.ranger.id, selectedRoute.id);
+                addRoute(plan.date, plan.ranger.id, selectedRouteId);
             }
         }
     };
     const deleteRouteFromPlan = (routeId :number) => {
-        setPlannedRoutes(plannedRoutes.filter(route => route.id !== routeId));
+        setPlannedRoutesIds(plannedRouteIds.filter(id => id !== routeId));
         removeRoute(plan.date, plan.ranger.id, routeId);
     }
 
@@ -58,28 +58,28 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
         setSelectedVehicleId(selectedId);
     };
 
-    const [plannedVehicles, setPlannedVehicles] = useState(plan.vehicles);
+    const [plannedVehicleIds, setPlannedVehicleIds] = useState(plan.vehicles.map(vehicle => vehicle.id));        ;
     useEffect(() => {
-        setPlannedVehicles(plan.vehicles);
+        setPlannedVehicleIds(plan.vehicles.map(vehicle=> vehicle.id));
     }, [plan.vehicles]);
 
     const addVehicleToPlan = () => {
         if (selectedVehicleId != undefined) {
-            const selectedVehicle = vehicles?.find(vehicle => vehicle.id === selectedVehicleId);
 
-            if (selectedVehicle) {
-                if (plannedVehicles.find(vehicle => vehicle.id === selectedVehicle.id)) {
+            if (vehicles.some(vehicle => vehicle.id === selectedVehicleId)) {
+
+                if (plannedVehicleIds.some(id => id === selectedVehicleId)) {
                     return;
                 }
 
-                setPlannedVehicles([...plannedVehicles, selectedVehicle]);
+                setPlannedVehicleIds([...plannedVehicleIds, selectedVehicleId]);
                 setSelectedRouteId(undefined);
-                addVehicle(plan.date, plan.ranger.id, selectedVehicle.id);
+                addVehicle(plan.date, plan.ranger.id, selectedVehicleId);
             }
         }
     }
     const deleteVehicleFromPlan = (vehicleId: number) => {
-        setPlannedVehicles(plannedVehicles.filter(vehicle => vehicle.id !== vehicleId));
+        setPlannedVehicleIds(plannedVehicleIds.filter(id => id !== vehicleId));
         removeVehicle(plan.date, plan.ranger.id, vehicleId);
     }
 
@@ -88,26 +88,33 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
             {includeRangerName ? <p><strong>{plan.ranger.firstName} {plan.ranger.lastName}</strong></p> : null}
             <div className='container'>
                 <div className='vehicles-container'>
-                    {plannedVehicles.map((vehicle, index) => (
-                        <div className='vehicle' key={index}>
-                            <div className='identification'>
-                                {/* change for picture of the vehicle based on type/ what is detail what is shown?*/}
-                                {vehicle.type}
-                                
-                            </div>
-                            {vehicle.name && !editing && (
-                                <div className="tooltip">
-                                    <i>i</i>
-                                    <div className="tooltip-text">{vehicle.name}</div>
-                                </div>
-                            )}
-                            {
+                    {plannedVehicleIds.map((id, index) => {
+                        const vehicle = vehicles.find(v => v.id === id);
+                        if (!vehicle) {
+                            return null;
+                        }
+                        return (
+                            <div className='vehicle' key={index}>
+                                <div className='identification'>
+                                    {/* change for picture of the vehicle based on type/ what is detail what is shown?*/}
+                                    {vehicle.type}
 
-                                hasRole("HeadOfDistrict") && editing &&
-                                <button onClick={() => deleteVehicleFromPlan(vehicle.id)}>×</button>
-                            }
-                        </div>
-                    ))}
+                                </div>
+                                {vehicle.name && !editing && (
+                                    <div className="tooltip">
+                                        <i>i</i>
+                                        <div className="tooltip-text">{vehicle.name}</div>
+                                    </div>
+                                )}
+                                {
+
+                                    hasRole("HeadOfDistrict") && editing &&
+                                    <button onClick={() => deleteVehicleFromPlan(vehicle.id)}>×</button>
+                                }
+                            </div>
+                        )
+                    })
+                    }
                     { hasRole("HeadOfDistrict") && editing && (
                         <div className="add">
                             <select
@@ -126,26 +133,35 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
                 </div>
                 {/* add not only routes, but other actions as well?*/}
                 <div className='routes-container'>
-                    {plannedRoutes.map((route, index) => (
-                        <div className={"route priority-" + route.priority.toString()} key={index}>
-                            <div className='identification'>
-                                <p>{route.name}</p>
-                            </div>
-                            {route.controlPlace && !editing && (
-                                <div className="tooltip">
-                                    <i>i</i>
-                                    <div className="tooltip-text">
-                                        Čas: {route.controlPlace.controlTime} <br />
-                                        Místo: {route.controlPlace.controlPlaceDescription}
-                                    </div>
+                    {plannedRouteIds.map((id, index) => {
+                        const route = routes.find(route => route.id === id);
+
+                        if (!route) {
+                            return null;
+                        }
+                        
+                        return (
+
+                            <div className={"route priority-" + route.priority.toString()} key={index}>
+                                <div className='identification'>
+                                    <p>{route.name}</p>
                                 </div>
-                            )}
-                            {
-                                editing &&
-                                <button onClick={() => deleteRouteFromPlan(route.id)}>×</button>
-                            }
-                        </div>
-                    ))}
+                                {route.controlPlace && !editing && (
+                                    <div className="tooltip">
+                                        <i>i</i>
+                                        <div className="tooltip-text">
+                                            Čas: {route.controlPlace.controlTime} <br />
+                                            Místo: {route.controlPlace.controlPlaceDescription}
+                                        </div>
+                                    </div>
+                                )}
+                                {
+                                    editing &&
+                                    <button onClick={() => deleteRouteFromPlan(route.id)}>×</button>
+                                }
+                            </div>
+                        )})
+                    }
                     {editing && (
                         <div className="add">
                             <select

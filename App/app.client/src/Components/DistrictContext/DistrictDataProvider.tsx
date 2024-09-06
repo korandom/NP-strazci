@@ -2,8 +2,9 @@ import { Route, createRoute, deleteRoute, fetchRoutesByDistrict, updateRoute } f
 import { Vehicle, createVehicle, deleteVehicle, fetchVehiclesByDistrict, updateVehicle } from '../../Services/VehicleService';
 import { Ranger, createRanger, deleteRanger, fetchRangersByDistrict, updateRanger} from '../../Services/RangerService';
 import { District, fetchDistrictById} from '../../Services/DistrictService';
-import { createContext, useContext, ReactNode, useState, useMemo } from 'react';
+import { createContext, useContext, ReactNode, useState, useMemo, useEffect } from 'react';
 import { Locked, fetchLocks, lockPlans, unlockPlans } from '../../Services/PlanService';
+import { HubConnection, HubConnectionBuilder, LogLevel} from '@microsoft/signalr';
 
 interface DistrictContextType {
     district: District|undefined, 
@@ -44,6 +45,83 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
     const [locks, setLocks] = useState<Locked[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<any>();
+    const [hubConnection, setHubConnection] = useState<HubConnection>();
+
+    useEffect(() => {
+        const connect = async () => {
+            if (!district) return;
+            const connection = new HubConnectionBuilder()
+                .withUrl('/districtHub')
+                .configureLogging(LogLevel.Information) 
+                .build();
+
+            connection.on('RouteUpdated', (route: Route) => {
+                console.log("routeupdated");
+                setRoutes(prevRoutes => prevRoutes.map(r => r.id === route.id ? route : r));
+            });
+
+            connection.on('RouteAdded', (route: Route) => {
+                setRoutes(prevRoutes => [...prevRoutes, route]);
+            });
+
+            connection.on('RouteDeleted', (route: Route) => {
+                setRoutes(prevRoutes => prevRoutes.filter(r => r.id !== route.id));
+            });
+
+            connection.on('VehicleUpdated', (vehicle: Vehicle) => {
+                setVehicles(prevVehicles => prevVehicles.map(v => v.id === vehicle.id ? vehicle : v));
+            });
+
+            connection.on('VehicleAdded', (vehicle: Vehicle) => {
+                setVehicles(prevVehicles => [...prevVehicles, vehicle]);
+            });
+
+            connection.on('VehicleDeleted', (vehicle: Vehicle) => {
+                setVehicles(prevVehicles => prevVehicles.filter(v => v.id !== vehicle.id));
+            });
+
+            connection.on('RangerUpdated', (ranger: Ranger) => {
+                setRangers(prevRangers => prevRangers.map(r => r.id === ranger.id ? ranger : r));
+            });
+
+            connection.on('RangerAdded', (ranger: Ranger) => {
+                setRangers(prevRangers => [...prevRangers, ranger]);
+            });
+
+            connection.on('RangerDeleted', (ranger: Ranger) => {
+                setRangers(prevRangers => prevRangers.filter(r => r.id !== ranger.id));
+            });
+
+            connection.on('LockAdded', (lock: Locked) => {
+                setLocks(prevLocks => [...prevLocks, lock]);
+            });
+
+            connection.on('LockDeleted', (lock: Locked) => {
+                setLocks(prevLocks => prevLocks.filter(l => l.date !== lock.date));
+            });
+
+            await connection.start()
+                .catch(err => console.error("Error starting connection: ", err));
+            
+
+            if (district) {
+
+                await connection.invoke('AddToDistrictGroup', district.id);
+
+            }
+
+            setHubConnection(connection);
+            return connection;
+        };
+
+        connect().catch(setError);
+
+        return () => {
+            if (hubConnection) {
+                hubConnection.stop();
+            }
+        };
+    }, [district]);
 
     // District
     async function assignDistrict(districtId: number) {
@@ -83,6 +161,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         try {
 
             const newRoute = await createRoute(route);
+            hubConnection?.invoke("SendRouteNotification", "RouteAdded", newRoute.districtId, newRoute);
             setRoutes([...routes, newRoute]);
         } catch (error) {
             setError(error);
@@ -95,6 +174,8 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
 
         try {
             await deleteRoute(route);
+            hubConnection?.invoke("SendRouteNotification", "RouteDeleted", route.districtId, route);
+
         } catch (error) {
             // rollback in case of error
             setRoutes(originalRoutes);
@@ -108,6 +189,8 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
 
         try {
             await updateRoute(route);
+            hubConnection?.invoke("SendRouteNotification", "RouteUpdated", route.districtId, route);
+
         } catch (error) {
             // rollback in case of error
             setRoutes(originalRoutes);
@@ -119,6 +202,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
     const addVehicle = async (vehicle: Vehicle) => {
         try {
             const newVehicle = await createVehicle(vehicle);
+            hubConnection?.invoke("SendVehicleNotification", "VehicleAdded", newVehicle.districtId, newVehicle);
             setVehicles([...vehicles, newVehicle]);
         } catch (error) {
             setError(error);
@@ -131,6 +215,8 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
 
         try {
             await deleteVehicle(vehicle);
+            hubConnection?.invoke("SendVehicleNotification", "VehicleDeleted", vehicle.districtId, vehicle);
+
         } catch (error) {
             // rollback in case of error
             setVehicles(originalVehicles);
@@ -143,6 +229,8 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
 
         try {
             await updateVehicle(vehicle);
+            hubConnection?.invoke("SendVehicleNotification", "VehicleUpdated", vehicle.districtId, vehicle);
+
         } catch (error) {
             // rollback in case of error
             setVehicles(originalVehicles);
@@ -154,6 +242,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
     const addRanger = async (ranger: Ranger) => {
         try {
             const newRanger = await createRanger(ranger);
+            hubConnection?.invoke("SendRangerNotification", "RangerAdded", newRanger.districtId, newRanger);
             setRangers([...rangers, newRanger]);
         } catch (error) {
             setError(error);
@@ -166,6 +255,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
 
         try {
             await deleteRanger(ranger);
+            hubConnection?.invoke("SendRangerNotification", "RangerDeleted", ranger.districtId, ranger);
         } catch (error) {
             // rollback in case of error
             setRangers(originalRangers);
@@ -178,6 +268,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
 
         try {
             await updateRanger(ranger);
+            hubConnection?.invoke("SendRangerNotification", "RangerUpdated", ranger.districtId, ranger);
         } catch (error) {
             // rollback in case of error
             setRangers(originalRangers);
@@ -189,7 +280,8 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
 
         setLocks([...locks, { date: date, districtId: district?.id }]);
         try {
-            await lockPlans(date, district?.id);
+            await lockPlans(date, district.id);
+            hubConnection?.invoke("SendLockNotification", "LockAdded", district.id, { date: date, districtId: district.id });
         } catch (error) {
             // rollback in case of error
             setLocks(locks.filter(l => l.date !== date));
@@ -202,6 +294,8 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         setLocks(locks.filter(l => l.date !== date));
         try {
             await unlockPlans(date, district?.id);
+            hubConnection?.invoke("SendLockNotification", "LockDeleted", district.id, { date: date, districtId: district.id });
+
         } catch (error) {
             // rollback in case of error
             setLocks([...locks, { date: date, districtId: district?.id }]);

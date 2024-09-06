@@ -10,6 +10,7 @@ using App.Server.Services.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication;
 using App.Server.Util;
+using App.Server.Services.Hubs;
 
 namespace App.Server
 {
@@ -45,11 +46,13 @@ namespace App.Server
 
 
             builder.Services.AddAuthorization();
-
             builder.Services.AddScoped<IAppAuthenticationService, InternalAuthenticationService>();
             builder.Services.AddScoped<IAppAuthorizationService, InternalAuthorizationService>();
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            // SignalR for realTime updates
+            builder.Services.AddSignalR();
 
             builder.Services.AddControllers();
 
@@ -67,6 +70,11 @@ namespace App.Server
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseCors(x => x
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowed(origin => true) // allow any origin
+                    .AllowCredentials());
             }
 
             // Seeding data
@@ -86,6 +94,8 @@ namespace App.Server
             app.UseAuthorization();
 
             app.MapControllers();
+
+            app.MapHub<DistrictHub>("/districtHub");
 
             app.MapFallbackToFile("/index.html");
 
