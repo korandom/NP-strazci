@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Vehicle } from "../../../Services/VehicleService";
 import VehicleForm from "./VehicleForm";
-import useDistrict from "../../DistrictContext/DistrictDataProvider";
+import useDistrict from "../../DataProviders/DistrictDataProvider";
 
 const VehicleItem: React.FC<{ vehicle: Vehicle }> = ({ vehicle }): JSX.Element => {
     const [isEdited, setIsEdited] = useState(false);

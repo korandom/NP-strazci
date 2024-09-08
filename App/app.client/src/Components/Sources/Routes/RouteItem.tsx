@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Route } from "../../../Services/RouteService";
 import RouteForm from "./RouteForm";
-import useDistrict from "../../DistrictContext/DistrictDataProvider";
+import useDistrict from "../../DataProviders/DistrictDataProvider";
 
 const RouteItem: React.FC<{ route: Route }> = ({ route }): JSX.Element => {
     const [isEdited, setIsEdited] = useState(false);

@@ -30,8 +30,8 @@ namespace App.Server.Models.AppData
             {
                 Date = plan.Date,
                 Ranger = plan.Ranger.ToDto(),
-                Routes = plan.Routes.Select(r => r.ToDto()).ToList(),
-                Vehicles = plan.Vehicles.Select(v => v.ToDto()).ToList()
+                RouteIds = plan.Routes.Select(r => r.Id).ToArray(),
+                VehicleIds = plan.Vehicles.Select(v => v.Id).ToArray()
             };
         }
     }

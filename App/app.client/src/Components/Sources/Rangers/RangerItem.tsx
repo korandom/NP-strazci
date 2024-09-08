@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Ranger } from "../../../Services/RangerService";
 import RangerForm from "./RangerForm";
-import useDistrict from "../../DistrictContext/DistrictDataProvider";
+import useDistrict from "../../DataProviders/DistrictDataProvider";
 
 const RangerItem: React.FC<{ ranger: Ranger }> = ({ ranger }): JSX.Element => {
     const [isEdited, setIsEdited] = useState(false);

@@ -6,8 +6,8 @@ namespace App.Server.DTOs
     {
         public DateOnly Date { get; set; }
         public RangerDto Ranger { get; set; }
-        public ICollection<RouteDto> Routes { get; set; }
-        public ICollection<VehicleDto> Vehicles { get; set; }
+        public int[] RouteIds { get; set; }
+        public int[] VehicleIds { get; set; }
     }
 
     public class LockDto

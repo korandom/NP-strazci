@@ -84,7 +84,7 @@ namespace App.Server.Controllers
 
             await _unitOfWork.SaveAsync();
 
-            return Ok("Succesfully added route to plan.");
+            return Ok(plan.ToDto());
         }
 
         [Authorize(Roles = "Ranger,HeadOfDistrict")]
@@ -124,7 +124,7 @@ namespace App.Server.Controllers
 
             await _unitOfWork.SaveAsync();
 
-            return Ok("Successfully removed route from plan.");
+            return Ok(plan.ToDto());
         }
 
         // Add a vehicle to the plan
@@ -159,7 +159,7 @@ namespace App.Server.Controllers
 
             await _unitOfWork.SaveAsync();
 
-            return Ok("Successfully added vehicle to plan.");
+            return Ok(plan.ToDto());
         }
 
         // Remove a vehicle from the plan
@@ -190,7 +190,7 @@ namespace App.Server.Controllers
 
             await _unitOfWork.SaveAsync();
 
-            return Ok("Successfully removed vehicle from plan.");
+            return Ok(plan.ToDto());
         }
 
         

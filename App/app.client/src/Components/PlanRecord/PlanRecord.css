@@ -22,20 +22,13 @@
     align-content: center;
 }
 
-.vehicles-container {
+.planned-items-container {
     flex: 0 1 auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
     box-sizing: border-box;
-}
-
-.routes-container {
-    flex: 0 1 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    box-sizing: border-box;
+    gap: 0.3em;
 }
 
 .route {

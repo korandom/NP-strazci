@@ -96,6 +96,7 @@ namespace App.Server
             app.MapControllers();
 
             app.MapHub<DistrictHub>("/districtHub");
+            app.MapHub<PlanHub>("/planHub");
 
             app.MapFallbackToFile("/index.html");
 

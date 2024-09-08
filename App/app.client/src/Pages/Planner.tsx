@@ -1,66 +1,26 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import UseAuth from '../Components/Authentication/AuthProvider';
-import { Plan, fetchPlansByDateRange } from '../Services/PlanService';
 import PlanRecord from '../Components/PlanRecord/PlanRecord'
 import RangerCell from '../Components/Planner/RangerCell';
 import './Style/Planner.css'; 
-import useDistrict from '../Components/DistrictContext/DistrictDataProvider';
+import useDistrict from '../Components/DataProviders/DistrictDataProvider';
+import usePlans from '../Components/DataProviders/PlanDataProvider';
 
 const Planner: React.FC = () => {
-    const [error, setError] = useState<any>();
+    const { hasRole, user } = UseAuth();
+    const { rangers, locks, addLock, removeLock } = useDistrict();
+    const { plans, month, monthRange, resetToCurrentMonth, changeMonth, error } = usePlans();
 
-    // getting current month
-    const [month, setMonth] = useState<string>(() => {
-        const currentDate = new Date();
-        const currentMonth = currentDate.getMonth() + 1;
-        return `${currentDate.getFullYear()}-${currentMonth.toString().padStart(2, '0')}`;
-    });
-
-    // calculating start and end days of a month
-    const calculateMonthRange = (month: string): { startDate: string, endDate: string } => {
-        const start = new Date(month + '-01');
-        const end = new Date(start.getFullYear(), start.getMonth() + 1, 1);
-
-        const startDate = start.toISOString().split('T')[0];
-        const endDate = end.toISOString().split('T')[0];
-        return { startDate, endDate };
-    }
-
-    const [monthRange, setMonthRange] = useState<{ startDate: string, endDate: string }>(calculateMonthRange(month));
-    const [plans, setPlans] = useState<Plan[]>([]);
     const nameOfDays: string[] = ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"];
 
-
-    const { hasRole, user } = UseAuth();
-    const { district, rangers, locks, addLock, removeLock } = useDistrict();
-
-    const changeMonth = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedMonth = event.target.value;
-        setMonth(selectedMonth);
-
-        if (selectedMonth) {
-            setMonthRange(calculateMonthRange(selectedMonth));
-        }
-    };
-
     useEffect(() => {
-        if (monthRange.endDate && monthRange.startDate) {
-            const fetchPlans = async () => {
-                try {
-                    if (!district) {
-                        throw new Error("Není vybrán žádný obvod.");
-                    }
-                    const fetchedPlans = await fetchPlansByDateRange(district.id, monthRange.startDate, monthRange.endDate);
-                    setPlans(fetchedPlans);
-                    setError(null);
-                } catch (error: any) {
-                    setError(error);
-                }
-            };
-            fetchPlans();
-        }
+        resetToCurrentMonth();
+    }, []);
 
-    }, [monthRange, district]);
+    const pickMonth = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedMonth = event.target.value;
+        changeMonth(selectedMonth);
+    };
 
     const generateDateRange = (start: string, end: string): Date[] => {
         const endDate = new Date(end);
@@ -99,7 +59,7 @@ const Planner: React.FC = () => {
                 <div className="planner-container">
                     <div className="month-picker">
                         <label htmlFor="monthPicker">Vyberte Měsíc: </label>
-                        <input id="monthPicker" aria-label="Měsíc" type="month" value={month} onChange={changeMonth} lang="cs" />
+                        <input id="monthPicker" aria-label="Měsíc" type="month" value={month} onChange={pickMonth} lang="cs" />
                     </div>
                     <div className="table-container">
                         {dateArray.length > 0 && (
@@ -151,7 +111,7 @@ const Planner: React.FC = () => {
 
                                                         <td className={Weekend ? "weekend plan" : "plan"} key={index}>
                                                             <PlanRecord
-                                                                plan={plan ? plan : { date: stringDate, ranger: ranger, routes: [], vehicles: [] }}
+                                                                plan={plan ? plan : { date: stringDate, ranger: ranger, routeIds: [], vehicleIds: [] }}
                                                                 isEditable={isheadOfDistrict||(isOwner && !isLockedArray[index])}
                                                                 includeRangerName={false}
                                                             />

@@ -2,7 +2,7 @@ import { Route, createRoute, deleteRoute, fetchRoutesByDistrict, updateRoute } f
 import { Vehicle, createVehicle, deleteVehicle, fetchVehiclesByDistrict, updateVehicle } from '../../Services/VehicleService';
 import { Ranger, createRanger, deleteRanger, fetchRangersByDistrict, updateRanger} from '../../Services/RangerService';
 import { District, fetchDistrictById} from '../../Services/DistrictService';
-import { createContext, useContext, ReactNode, useState, useMemo, useEffect } from 'react';
+import { createContext, useContext, ReactNode, useState, useMemo } from 'react';
 import { Locked, fetchLocks, lockPlans, unlockPlans } from '../../Services/PlanService';
 import { HubConnection, HubConnectionBuilder, LogLevel} from '@microsoft/signalr';
 
@@ -47,98 +47,84 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
     const [error, setError] = useState<any>();
     const [hubConnection, setHubConnection] = useState<HubConnection>();
 
-    useEffect(() => {
-        const connect = async () => {
-            if (!district) return;
-            const connection = new HubConnectionBuilder()
-                .withUrl('/districtHub')
-                .configureLogging(LogLevel.Information) 
-                .build();
+    const connect = async (districtId: number) => {
+        const connection = new HubConnectionBuilder()
+            .withUrl('/districtHub')
+            .configureLogging(LogLevel.Information) 
+            .build();
 
-            connection.on('RouteUpdated', (route: Route) => {
-                console.log("routeupdated");
-                setRoutes(prevRoutes => prevRoutes.map(r => r.id === route.id ? route : r));
-            });
+        connection.on('RouteUpdated', (route: Route) => {
+            setRoutes(prevRoutes => prevRoutes.map(r => r.id === route.id ? route : r));
+        });
 
-            connection.on('RouteAdded', (route: Route) => {
-                setRoutes(prevRoutes => [...prevRoutes, route]);
-            });
+        connection.on('RouteAdded', (route: Route) => {
+            setRoutes(prevRoutes => [...prevRoutes, route]);
+        });
 
-            connection.on('RouteDeleted', (route: Route) => {
-                setRoutes(prevRoutes => prevRoutes.filter(r => r.id !== route.id));
-            });
+        connection.on('RouteDeleted', (route: Route) => {
+            setRoutes(prevRoutes => prevRoutes.filter(r => r.id !== route.id));
+        });
 
-            connection.on('VehicleUpdated', (vehicle: Vehicle) => {
-                setVehicles(prevVehicles => prevVehicles.map(v => v.id === vehicle.id ? vehicle : v));
-            });
+        connection.on('VehicleUpdated', (vehicle: Vehicle) => {
+            setVehicles(prevVehicles => prevVehicles.map(v => v.id === vehicle.id ? vehicle : v));
+        });
 
-            connection.on('VehicleAdded', (vehicle: Vehicle) => {
-                setVehicles(prevVehicles => [...prevVehicles, vehicle]);
-            });
+        connection.on('VehicleAdded', (vehicle: Vehicle) => {
+            setVehicles(prevVehicles => [...prevVehicles, vehicle]);
+        });
 
-            connection.on('VehicleDeleted', (vehicle: Vehicle) => {
-                setVehicles(prevVehicles => prevVehicles.filter(v => v.id !== vehicle.id));
-            });
+        connection.on('VehicleDeleted', (vehicle: Vehicle) => {
+            setVehicles(prevVehicles => prevVehicles.filter(v => v.id !== vehicle.id));
+        });
 
-            connection.on('RangerUpdated', (ranger: Ranger) => {
-                setRangers(prevRangers => prevRangers.map(r => r.id === ranger.id ? ranger : r));
-            });
+        connection.on('RangerUpdated', (ranger: Ranger) => {
+            setRangers(prevRangers => prevRangers.map(r => r.id === ranger.id ? ranger : r));
+        });
 
-            connection.on('RangerAdded', (ranger: Ranger) => {
-                setRangers(prevRangers => [...prevRangers, ranger]);
-            });
+        connection.on('RangerAdded', (ranger: Ranger) => {
+            setRangers(prevRangers => [...prevRangers, ranger]);
+        });
 
-            connection.on('RangerDeleted', (ranger: Ranger) => {
-                setRangers(prevRangers => prevRangers.filter(r => r.id !== ranger.id));
-            });
+        connection.on('RangerDeleted', (ranger: Ranger) => {
+            setRangers(prevRangers => prevRangers.filter(r => r.id !== ranger.id));
+        });
 
-            connection.on('LockAdded', (lock: Locked) => {
-                setLocks(prevLocks => [...prevLocks, lock]);
-            });
+        connection.on('LockAdded', (lock: Locked) => {
+            setLocks(prevLocks => [...prevLocks, lock]);
+        });
 
-            connection.on('LockDeleted', (lock: Locked) => {
-                setLocks(prevLocks => prevLocks.filter(l => l.date !== lock.date));
-            });
+        connection.on('LockDeleted', (lock: Locked) => {
+            setLocks(prevLocks => prevLocks.filter(l => l.date !== lock.date));
+        });
 
-            await connection.start()
-                .catch(err => console.error("Error starting connection: ", err));
-            
+        await connection.start()
+            .catch(err => console.error("Error starting connection: ", err));
 
-            if (district) {
+        await connection.invoke('AddToDistrictGroup', districtId);
 
-                await connection.invoke('AddToDistrictGroup', district.id);
 
-            }
+        setHubConnection(connection);
+    };
 
-            setHubConnection(connection);
-            return connection;
-        };
-
-        connect().catch(setError);
-
-        return () => {
-            if (hubConnection) {
-                hubConnection.stop();
-            }
-        };
-    }, [district]);
-
+       
+ 
     // District
     async function assignDistrict(districtId: number) {
         setLoading(true);
         try {
-            const district = await fetchDistrictById(districtId);
-            const routes = await fetchRoutesByDistrict(districtId);
+            const fetchedDistrict = await fetchDistrictById(districtId);
+            const fetchedRoutes = await fetchRoutesByDistrict(districtId);
             routes.sort((a, b) => a.name > b.name ? 1 : -1);
-            const vehicles = await fetchVehiclesByDistrict(districtId);
-            const rangers = await fetchRangersByDistrict(districtId);
-            const locks = await fetchLocks(districtId);
+            const fetchedVehicles = await fetchVehiclesByDistrict(districtId);
+            const fetchedRangers = await fetchRangersByDistrict(districtId);
+            const fetchedLocks = await fetchLocks(districtId);
+            connect(districtId);
 
-            setDistrict(district);
-            setRoutes(routes);
-            setVehicles(vehicles);
-            setRangers(rangers);
-            setLocks(locks);
+            setDistrict(fetchedDistrict);
+            setRoutes(fetchedRoutes);
+            setVehicles(fetchedVehicles);
+            setRangers(fetchedRangers);
+            setLocks(fetchedLocks);
 
         }
         catch (error: any) {
@@ -149,6 +135,9 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         }
     }
     async function clearDistrict() {
+        if (hubConnection) {
+            hubConnection.stop();
+        }
         setDistrict(undefined);
         setRoutes([]);
         setVehicles([]);

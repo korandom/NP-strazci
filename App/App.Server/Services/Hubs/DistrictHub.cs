@@ -40,11 +40,5 @@ namespace App.Server.Services.Hubs
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, districtId.ToString());
         }
-
-        public override async Task OnConnectedAsync()
-        {
-            Console.WriteLine("CONNECTED TO SIGNAL.");
-            await base.OnConnectedAsync();
-        }
     }
 }

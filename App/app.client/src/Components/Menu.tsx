@@ -3,7 +3,7 @@ import { Outlet, Link } from 'react-router-dom';
 import useAuth from './Authentication/AuthProvider';
 import './Menu.css';
 import { District, fetchAllDistricts } from '../Services/DistrictService';
-import useDistrict from './DistrictContext/DistrictDataProvider';
+import useDistrict from './DataProviders/DistrictDataProvider';
 
 const Menu = () => {
     const [isOpen, setIsOpen] = useState(false);

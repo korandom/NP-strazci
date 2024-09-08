@@ -13,6 +13,7 @@ namespace App.Server.Repositories
             if (id.Length != 2) return null;
             return await _dbSet.Include(plan => plan.Routes)
                                .Include(plan => plan.Vehicles)
+                               .Include(plan => plan.Ranger)
                                .FirstOrDefaultAsync(plan => plan.Date == (DateOnly)id[0] && plan.RangerId == (int)id[1]);
         }
     }

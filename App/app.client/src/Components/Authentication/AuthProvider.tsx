@@ -1,8 +1,8 @@
 import { User, getCurrentUser, signIn, signOut } from '../../Services/UserService';
 import { getCurrentRanger } from '../../Services/RangerService';
-import  { createContext, useContext, ReactNode, useState, useMemo, useEffect} from 'react';
+import  { createContext, useContext, ReactNode, useState, useMemo, useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
-import useDistrict from '../DistrictContext/DistrictDataProvider';
+import useDistrict from '../DataProviders/DistrictDataProvider';
 
 interface AuthContextType {
     user: User | undefined,
@@ -19,12 +19,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     const [user, setUser] = useState<User | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(false);
     const [initialLoading, setInitialLoading] = useState<boolean>(true);
+    const isInitializing = useRef(false);
     const [error, setError] = useState<any>();
     const navigate = useNavigate();
     const { assignDistrict, clearDistrict } = useDistrict();
 
     useEffect(() => {
         const fetchInitialData = async () => {
+            if (isInitializing.current) return;
+            isInitializing.current = true;
+
             setInitialLoading(true);
             try {
                 const user = await getCurrentUser();
@@ -37,6 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                 {}
             } finally {
                 setInitialLoading(false);
+                isInitializing.current = false;
             }
         };
 

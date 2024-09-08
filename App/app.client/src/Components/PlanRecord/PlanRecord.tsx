@@ -2,35 +2,39 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import './PlanRecord.css';
 import { Plan, addRoute, removeRoute, addVehicle, removeVehicle } from '../../Services/PlanService';
-import useDistrict from '../DistrictContext/DistrictDataProvider';
+import useDistrict from '../DataProviders/DistrictDataProvider';
 import useAuth from '../Authentication/AuthProvider';
-
+import usePlans from '../DataProviders/PlanDataProvider';
 
 // Konkrétní záznam plánu jednoho strážce, bez detailů
 const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable: boolean }> = ({ plan, includeRangerName, isEditable }) => {
-    // authorization for adding vehicles (only headOfDistrict)
     const { hasRole } = useAuth();
+    const { routes, vehicles } = useDistrict();
+    const { addPlannedRoute, addPlannedVehicle, removePlannedRoute, removePlannedVehicle } = usePlans();
 
-    // state managment for editing
     const [editing, setEditing] = useState(false);
+    const [selectedRouteId, setSelectedRouteId] = useState<number | undefined>(undefined);
+    const [plannedRouteIds, setPlannedRouteIds] = useState(plan.routeIds);
+    const [selectedVehicleId, setSelectedVehicleId] = useState<number | undefined>(undefined);
+    const [plannedVehicleIds, setPlannedVehicleIds] = useState(plan.vehicleIds);
+
+   
     const toggleEdit = () => {
         isEditable ? setEditing(!editing) : null;
-    }
+    };
 
-    // data for adding routes and vehicles from district
-    const { routes, vehicles } = useDistrict();
-
-    // state managment for routes
-    const [selectedRouteId, setSelectedRouteId] = useState<number | undefined>(undefined);
+    // selecting route to add from dropdown
     const handleRouteSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedId = Number(event.target.value);
         setSelectedRouteId(selectedId);
     };
-    const [plannedRouteIds, setPlannedRoutesIds] = useState(plan.routes.map(route => route.id));
-    useEffect(() => {
-        setPlannedRoutesIds(plan.routes.map(route => route.id));
-    }, [plan.routes]);
 
+    // update routeIds
+    useEffect(() => {
+        setPlannedRouteIds(plan.routeIds);
+    }, [plan.routeIds]);
+
+  
     const addRouteToPlan = () => {
         if (selectedRouteId != undefined) { 
             
@@ -40,28 +44,29 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
                     return;
                 }
 
-                setPlannedRoutesIds([...plannedRouteIds, selectedRouteId]);
+                setPlannedRouteIds([...plannedRouteIds, selectedRouteId]);
                 setSelectedRouteId(undefined); 
-                addRoute(plan.date, plan.ranger.id, selectedRouteId);
+                addPlannedRoute(plan.date, plan.ranger.id, selectedRouteId);
             }
         }
     };
-    const deleteRouteFromPlan = (routeId :number) => {
-        setPlannedRoutesIds(plannedRouteIds.filter(id => id !== routeId));
-        removeRoute(plan.date, plan.ranger.id, routeId);
-    }
 
-    // state managment for vehicles
-    const [selectedVehicleId, setSelectedVehicleId] = useState<number | undefined>(undefined);
+    const deleteRouteFromPlan = (routeId: number) => {
+        setPlannedRouteIds(plannedRouteIds.filter(id => id !== routeId));
+        removePlannedRoute(plan.date, plan.ranger.id, routeId);
+    };
+
+
+    // selecting vehicle to add from dropdown
     const handleVehicleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedId = Number(event.target.value);
         setSelectedVehicleId(selectedId);
     };
 
-    const [plannedVehicleIds, setPlannedVehicleIds] = useState(plan.vehicles.map(vehicle => vehicle.id));        ;
+    // update vehicleIds
     useEffect(() => {
-        setPlannedVehicleIds(plan.vehicles.map(vehicle=> vehicle.id));
-    }, [plan.vehicles]);
+        setPlannedVehicleIds(plan.vehicleIds);
+    }, [plan.vehicleIds]);
 
     const addVehicleToPlan = () => {
         if (selectedVehicleId != undefined) {
@@ -74,20 +79,21 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
 
                 setPlannedVehicleIds([...plannedVehicleIds, selectedVehicleId]);
                 setSelectedRouteId(undefined);
-                addVehicle(plan.date, plan.ranger.id, selectedVehicleId);
+                addPlannedVehicle(plan.date, plan.ranger.id, selectedVehicleId);
             }
         }
-    }
+    };
+
     const deleteVehicleFromPlan = (vehicleId: number) => {
         setPlannedVehicleIds(plannedVehicleIds.filter(id => id !== vehicleId));
-        removeVehicle(plan.date, plan.ranger.id, vehicleId);
-    }
+        removePlannedVehicle(plan.date, plan.ranger.id, vehicleId);
+    };
 
     return (
         <div className='planRecord'>
             {includeRangerName ? <p><strong>{plan.ranger.firstName} {plan.ranger.lastName}</strong></p> : null}
             <div className='container'>
-                <div className='vehicles-container'>
+                <div className='planned-items-container'>
                     {plannedVehicleIds.map((id, index) => {
                         const vehicle = vehicles.find(v => v.id === id);
                         if (!vehicle) {
@@ -132,7 +138,7 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
                     )}
                 </div>
                 {/* add not only routes, but other actions as well?*/}
-                <div className='routes-container'>
+                <div className='planned-items-container'>
                     {plannedRouteIds.map((id, index) => {
                         const route = routes.find(route => route.id === id);
 
@@ -181,7 +187,6 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
             </div>
             <div className='tools'>
                 <div className='edit' onClick={toggleEdit}>
-                    {/*more advanced when authorization is implemented - if its the rangers or if user is the head*/}
                     {isEditable ?
                         (editing ? 'x' : '✎')
                     : null}

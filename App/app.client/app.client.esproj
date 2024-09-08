@@ -9,7 +9,7 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="src\Components\DistrictContext\" />
+    <Folder Include="src\Components\DataProviders\" />
     <Folder Include="src\Services\" />
   </ItemGroup>
 </Project>

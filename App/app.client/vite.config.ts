@@ -73,8 +73,11 @@ export default defineConfig({
                 secure: false,
                 ws: true
             },
-            
-            
+            '^/planHub': {
+                target: hubTarget,
+                secure: false,
+                ws: true
+            },   
         },
         port: 5173,
         https: {

@@ -7,27 +7,30 @@ import Planner from './Pages/Planner';
 import SourceManagement from './Pages/SourceManagement'
 import { AuthProvider } from './Components/Authentication/AuthProvider';
 import AuthRoute from './Components/Authentication/AuthRoutes';
-import { DistrictDataProvider } from './Components/DistrictContext/DistrictDataProvider';
+import { DistrictDataProvider } from './Components/DataProviders/DistrictDataProvider';
+import { MonthlyPlansProvider } from './Components/DataProviders/PlanDataProvider';
 
 
 function App() {
     return (
         <BrowserRouter>
             <DistrictDataProvider>
-            <AuthProvider>
-                <Routes>
-                    <Route path="/prihlasit" element={<Login />} />
-                    <Route element={<AuthRoute/> }>
-                        <Route element={<Menu />}>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/planovani" element={<Planner />} />
-                            <Route element={<AuthRoute roles={["Admin", "HeadOfDistrict"]} />}>
-                                    <Route path="/sprava" element={<SourceManagement />} />
+                <AuthProvider>
+                    <MonthlyPlansProvider>
+                        <Routes>
+                            <Route path="/prihlasit" element={<Login />} />
+                            <Route element={<AuthRoute />}>
+                                <Route element={<Menu />}>
+                                        <Route path="/" element={<Home />} />
+                                        <Route path="/planovani" element={<Planner />} />
+                                    <Route element={<AuthRoute roles={["Admin", "HeadOfDistrict"]} />}>
+                                        <Route path="/sprava" element={<SourceManagement />} />
+                                    </Route>
+                                </Route>
                             </Route>
-                        </Route>
-                    </Route>
-                </Routes>
-            </AuthProvider>
+                        </Routes>
+                    </MonthlyPlansProvider>
+                </AuthProvider>
             </DistrictDataProvider>
         </BrowserRouter>
     );
