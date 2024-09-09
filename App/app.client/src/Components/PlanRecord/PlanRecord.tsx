@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import './PlanRecord.css';
-import { Plan, addRoute, removeRoute, addVehicle, removeVehicle } from '../../Services/PlanService';
+import { Plan } from '../../Services/PlanService';
 import useDistrict from '../DataProviders/DistrictDataProvider';
 import useAuth from '../Authentication/AuthProvider';
 import usePlans from '../DataProviders/PlanDataProvider';
@@ -92,7 +92,7 @@ const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable:
     return (
         <div className='planRecord'>
             {includeRangerName ? <p><strong>{plan.ranger.firstName} {plan.ranger.lastName}</strong></p> : null}
-            <div className='container'>
+            <div className={editing? 'editing container': 'container'}>
                 <div className='planned-items-container'>
                     {plannedVehicleIds.map((id, index) => {
                         const vehicle = vehicles.find(v => v.id === id);
