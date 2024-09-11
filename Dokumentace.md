@@ -11,7 +11,7 @@
 5. [Případné rozšíření](#případné-rozšíření)
 6. [Doménový model](#doménový-model)
 ## Základní souhrn
-Mobilní a webová aplikace na záznam pracovní doby a plánování tras pro strážce. 
+Webová aplikace na záznam pracovní doby a plánování tras pro strážce. 
 1. **Mobilní rozhraní**
     - Primárně určeno pro strážce.
     Každý strážce si může trasy plánovat, zobrazit plán všech strážců, zaznamenat pracovní dobu a přidat poznámku dne.

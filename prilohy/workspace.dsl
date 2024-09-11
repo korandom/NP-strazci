@@ -5,42 +5,68 @@ workspace "Planovací kalendář"  {
         vedouciObvodu = person "Vedoucí strážního obvoudu"
         kalendar = softwareSystem "Plánovací kalendář"  {
             Webapp = container "Webová aplikace" "Poskytne front-end webové aplikace klientovi"
-            WebFrontend = container "Single-page Webová aplikace Front-end" "" "" "Web Front-End" 
-            MobileApp = container "Mobilní aplikace" 
-            Database = container "Databáze" "" "" "Database"
-            Backend = container "Backend aplikace" {
-                StrazceModel = component "Model Strážců" 
-                TrasaModel = component "Model Tras a okrsků"
-                DopravaModel = component "Model Dopravních prostředků"
-                PlanovaniModel = component "Model Plánů"
-                SpravaController = component "Controller Správy zdrojů"
-                PlanovaniController = component "Controller Plánování tras"
+            WebFrontend = container "Single-page Webová aplikace Front-end" "" "React + TSX" "Web Front-End" 
+            Database = container "Databáze" "" "MariaDB" "Database"
+            AuthDatabase = container "Auth Databáze" "" "MariaDB" "Databáze"
+            Backend = container "Backend aplikace" "" "ASP .NET Core"{
+                // Repa
+                UnitOfWork = component "Unit Of Work" "souhr repozitářů, umožňuje jednotné uložení více transakcí"
+                GeneralRepo = component "General Repository" "šablona - pro Strážce, Trasy, Dopr. prostředky"
+                PlanRepo = component "Repository plánů"
+                
+                
+                // Controllery
+                ObvodController = component "Controller Obvodů"
+                StrazceController = component "Controller Strážců"
+                TrasaController = component "Controller Tras"
+                UzivatelController = component "Controller Uživatelů"
+                PlanovaniController = component "Controller Plánování"
+                ProstredkyController = component "Controller Dopr. Prostředků"
+                
+                // Huby
+                ObvodHub = component "Hub Obvod-zdroje"
+                PlanHub = component "Hub Plány"
+                
+                //Auth
+                AuthService = component "Autorizace a Autentikace"
+                
                 
                 // Controller + Model vztahy
-                SpravaController -> StrazceModel "reprezentace dat strážců"
-                SpravaController -> TrasaModel "reprezentace dat tras a okrsků"
-                SpravaController -> DopravaModel "reprezentace dat dopravních prostředků"
-                PlanovaniController -> PlanovaniModel "reprezentace dat plánů tras"
+                ObvodController -> UnitOfWork 
+                StrazceController -> UnitOfWork              
+                TrasaController -> UnitOfWork 
+                PlanovaniController -> UnitOfWork 
+                ProstredkyController -> UnitOfWork 
+                UzivatelController -> AuthService 
+                
+                UnitOfWork -> PlanRepo "správa dat plánů služby"
+                UnitOfWork -> GeneralRepo "správa dat modelů zdrojů"
+                
+                
+                
                 
                 // vztahy s databází
-                StrazceModel -> Database "zapisuje, čte"
-                TrasaModel -> Database "zapisuje, čte"
-                DopravaModel -> Database "zapisuje, čte"
-                PlanovaniModel -> Database "zapisuje, čte"
+                GeneralRepo -> Database "zapisuje, čte"
+                PlanRepo -> Database "zapisuje, čte"
+                AuthService -> AuthDatabase "zapisuje, čte"
                 
                 // vztahy s Frontendem
-                 WebFrontend -> SpravaController "volá API"
-                 SpravaController -> WebFrontend "posílá data"
-                 WebFrontend -> PlanovaniController "volá API"
-                 PlanovaniController -> WebFrontend "posílá data"
+                WebFrontend -> ObvodController "volá API a přijímá data"
+                WebFrontend -> StrazceController "volá API a přijímá data"
+                WebFrontend -> TrasaController "volá API a přijímá data"
+                WebFrontend -> UzivatelController "volá API a přijímá data"
+                WebFrontend -> ProstredkyController "volá API a přijímá data"
+                WebFrontend -> PlanovaniController "volá API"
+                PlanovaniController -> WebFrontend "posílá data"
+                WebFrontend -> PlanHub "posílá a přijímá změny v plánech"
+                WebFrontend -> ObvodHub "posílá a přijímá úpravy zdrojů obvodu"
+                 
             }
             
             
             Webapp -> WebFrontend 
-            Backend -> MobileApp "posílá data"
-            MobileApp -> Backend "volá API"
-            
-            strazce -> MobileApp "Zobrazuje a plánuje trasy"
+            strazce -> WebFrontend "Zobrazuje a plánuje trasy"
+            strazce -> WebApp "Načtení frontendu aplikace" "" "internal"
             vedouciObvodu -> WebFrontend "Vytváří plán tras a spravuje objekty"
             vedouciObvodu -> WebApp "Načtení frontendu aplikace" "" "internal"
         }
