@@ -1,3 +1,4 @@
+
 workspace "Planovací kalendář"  {
 
     model {
@@ -5,7 +6,31 @@ workspace "Planovací kalendář"  {
         vedouciObvodu = person "Vedoucí strážního obvoudu"
         kalendar = softwareSystem "Plánovací kalendář"  {
             Webapp = container "Webová aplikace" "Poskytne front-end webové aplikace klientovi"
-            WebFrontend = container "Single-page Webová aplikace Front-end" "" "React + TSX" "Web Front-End" 
+            WebFrontend = container "Single-page Front-end" "" "React + TSX" "Web Front-End" {
+                BrowserRouter = component "Browser Router" "Řídí navigaci mezi stránkami"
+                LoginPage = component "Přihlašovací stránka"
+                HomePage = component "Domovská stránka" "Zobrazuje denní plán služby"
+                PlansPage = component "Stránka Plánování" "Umožňuje plánování služby"
+                SourcePage = component "Stránka správy zdrojů" "pouze pro vedoucí strážního obvodu"
+                Menu = component "Menu" 
+                Services = component "Services"
+                AuthProvider = component "Poskytovatel autorizace a autentikace" "Poskytuje kontext všem "
+                DistrictDataProvider = component "Poskytovatel dat Obvodu"
+                PlanDataProvider = component "Poskytovatel dat plánů"
+                
+                // browser pages
+                BrowserRouter -> LoginPage
+                BrowserRouter -> Menu
+                Menu -> HomePage
+                Menu -> PlansPage
+                Menu -> SourcePage
+                
+                // services
+                DistrictDataProvider -> Services "volá funkce pro získání nebo změnu dat obvodu"
+                PlanDataProvider -> Services "volá funkce pro získání nebo změnu plánů"
+                AuthProvider -> Services "volá funkce pro autentikaci a autorizaci uživatelů"
+                
+            }
             Database = container "Databáze" "" "MariaDB" "Database"
             AuthDatabase = container "Auth Databáze" "" "MariaDB" "Databáze"
             Backend = container "Backend aplikace" "" "ASP .NET Core"{
@@ -51,23 +76,22 @@ workspace "Planovací kalendář"  {
                 AuthService -> AuthDatabase "zapisuje, čte"
                 
                 // vztahy s Frontendem
-                WebFrontend -> ObvodController "volá API a přijímá data"
-                WebFrontend -> StrazceController "volá API a přijímá data"
-                WebFrontend -> TrasaController "volá API a přijímá data"
-                WebFrontend -> UzivatelController "volá API a přijímá data"
-                WebFrontend -> ProstredkyController "volá API a přijímá data"
-                WebFrontend -> PlanovaniController "volá API"
-                PlanovaniController -> WebFrontend "posílá data"
-                WebFrontend -> PlanHub "posílá a přijímá změny v plánech"
-                WebFrontend -> ObvodHub "posílá a přijímá úpravy zdrojů obvodu"
+                Services -> ObvodController "volá API a přijímá data"
+                Services -> StrazceController "volá API a přijímá data"
+                Services -> TrasaController "volá API a přijímá data"
+                Services -> UzivatelController "volá API a přijímá data"
+                Services -> ProstredkyController "volá API a přijímá data"
+                Services -> PlanovaniController "volá API a přijímá data"
+                PlanDataProvider -> PlanHub "posílá a přijímá změny v plánech"
+                DistrictDataProvider -> ObvodHub "posílá a přijímá úpravy zdrojů obvodu"
                  
             }
             
             
             Webapp -> WebFrontend 
-            strazce -> WebFrontend "Zobrazuje a plánuje trasy"
+            strazce -> WebFrontend "Zobrazuje plán služby a plánuje trasy"
             strazce -> WebApp "Načtení frontendu aplikace" "" "internal"
-            vedouciObvodu -> WebFrontend "Vytváří plán tras a spravuje objekty"
+            vedouciObvodu -> WebFrontend "Vytváří plán služby a spravuje objekty"
             vedouciObvodu -> WebApp "Načtení frontendu aplikace" "" "internal"
         }
     }
@@ -87,6 +111,9 @@ workspace "Planovací kalendář"  {
             container kalendar "kalendarContainer" "Diagram kontejnerů" {
                 include *
                 //autoLayout lr
+            }
+            component WebFrontend "WebFrontend"{
+                include *
             }
             component Backend "Backend" {
                 include *
