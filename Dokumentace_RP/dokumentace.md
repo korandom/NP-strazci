@@ -1,146 +1,146 @@
-# Plánování sluby strácù
-Tento dokument obsahuje popis architektury webové aplikace pro plánování sluby strácù.
+# PlÃ¡novÃ¡nÃ­ sluÅ¾by strÃ¡Å¾cÅ¯
+Tento dokument obsahuje popis architektury webovÃ© aplikace pro plÃ¡novÃ¡nÃ­ sluÅ¾by strÃ¡Å¾cÅ¯.
 
 ## Obsah
-- [Plánování sluby strácù](#planovani-sluzby-strazcu)
+- [PlÃ¡novÃ¡nÃ­ sluÅ¾by strÃ¡Å¾cÅ¯](#planovani-sluzby-strazcu)
     - [Obsah](#obsah)
-    - [Úvod](#uvod)
-    - [Základní informace o systému](#zakladni-informace-o-systemu)
-    - [Front-end webové aplikace](#front-end-webove-aplikace)
+    - [Ãšvod](#uvod)
+    - [ZÃ¡kladnÃ­ informace o systÃ©mu](#zakladni-informace-o-systemu)
+    - [Front-end webovÃ© aplikace](#front-end-webove-aplikace)
         - [Browser router](#browser-router)
         - [Services](#Services)
-        - [Poskytovatel Dat Plánù](#poskytovatel-dat-planu)
+        - [Poskytovatel Dat PlÃ¡nÅ¯](#poskytovatel-dat-planu)
         - [Poskytovatel Dat Obvodu](#poskytovatel-dat-obvodu)
         - [Poskytovatel Autentizace a autorizace](#poskytovatel-autentizace-a-autorizace)
-        - [Pøihlašovací stránka](#prihlasovaci-stranka)
+        - [PÅ™ihlaÅ¡ovacÃ­ strÃ¡nka](#prihlasovaci-stranka)
         - [Menu](#menu)
-        - [Stránka plánování](#stranka-planovani)
-        - [Stránka správy zdrojù](#stranka-spravy-zdroju)
-        - [Domovská stránka](#domovska-stranka)
+        - [StrÃ¡nka plÃ¡novÃ¡nÃ­](#stranka-planovani)
+        - [StrÃ¡nka sprÃ¡vy zdrojÅ¯](#stranka-spravy-zdroju)
+        - [DomovskÃ¡ strÃ¡nka](#domovska-stranka)
     - [Backend aplikace](#backend-aplikace)
         - [Kontrolery](#kontrolery)
         - [Unit of Work](#unit-of-work)
-        - [Repozitáøe](#repozitare)
+        - [RepozitÃ¡Å™e](#repozitare)
         - [Huby](#huby)
         - [Autentikace a autorizace](#autentikace-a-autorizace)
 
 
 
-## Úvod
-Aplikace Plánovací kalendáø je urèena pro stráce a vedoucí stráních obvodù národního parku. 
-Strácùm umoòuje zobrazit si plán sluby a naplánovat si trasy.
-Vedoucím stráních obvodù umoòuje vytváøet plán sluby a spravovat objekty v obvodu.
+## Ãšvod
+Aplikace PlÃ¡novacÃ­ kalendÃ¡Å™ je urÄena pro strÃ¡Å¾ce a vedoucÃ­ strÃ¡Å¾nÃ­ch obvodÅ¯ nÃ¡rodnÃ­ho parku. 
+StrÃ¡Å¾cÅ¯m umoÅ¾Åˆuje zobrazit si plÃ¡n sluÅ¾by a naplÃ¡novat si trasy.
+VedoucÃ­m strÃ¡Å¾nÃ­ch obvodÅ¯ umoÅ¾Åˆuje vytvÃ¡Å™et plÃ¡n sluÅ¾by a spravovat objekty v obvodu.
 
 ![C1 model](./prilohy/architektura/C1_model.png)
-*C4 diagram Level 1: Plánovací kalendáø*
+*C4 diagram Level 1: PlÃ¡novacÃ­ kalendÃ¡Å™*
 
-## Základní informace o systému
-Plánovací kalendáø je webová aplikace, která slouí k plánování sluby strácù v reálném èase a zobrazování plánù na den.
-Aplikace poskytne klientovi front-end, kterı umoòuje uivateli interagovat se systémem a mìnit plán sluby.
-Front-end webové aplikace vyuívá knihovnu React s Typescriptem. 
-Uivatelské rozhraní zobrazuje a pracuje s daty, které jsou naètené z backendu ASP.NET Core prostøednictím volání API kontrolerù. 
-Aby byla data aktuální pøes všechna zaøízení, je backend vyuit také na posílání informací o provedenıch zmìnách.
-Backend ète a zapisuje data do dvou databází MariaDB: jedna obsahuje aplikaèní data o objektech (trasy, stráci, dopravní prostøedky atd.) a druhá je urèena pro autentikaèní data o identitách a rolích uivatelù.
+## ZÃ¡kladnÃ­ informace o systÃ©mu
+PlÃ¡novacÃ­ kalendÃ¡Å™ je webovÃ¡ aplikace, kterÃ¡ slouÅ¾Ã­ k plÃ¡novÃ¡nÃ­ sluÅ¾by strÃ¡Å¾cÅ¯ v reÃ¡lnÃ©m Äase a zobrazovÃ¡nÃ­ plÃ¡nÅ¯ na den.
+Aplikace poskytne klientovi front-end, kterÃ½ umoÅ¾Åˆuje uÅ¾ivateli interagovat se systÃ©mem a mÄ›nit plÃ¡n sluÅ¾by.
+Front-end webovÃ© aplikace vyuÅ¾Ã­vÃ¡ knihovnu React s Typescriptem. 
+UÅ¾ivatelskÃ© rozhranÃ­ zobrazuje a pracuje s daty, kterÃ© jsou naÄtenÃ© z backendu ASP.NET Core prostÅ™ednictÃ­m volÃ¡nÃ­ API kontrolerÅ¯. 
+Aby byla data aktuÃ¡lnÃ­ pÅ™es vÅ¡echna zaÅ™Ã­zenÃ­, je backend vyuÅ¾it takÃ© na posÃ­lÃ¡nÃ­ informacÃ­ o provedenÃ½ch zmÄ›nÃ¡ch.
+Backend Äte a zapisuje data do dvou databÃ¡zÃ­ MariaDB: jedna obsahuje aplikaÄnÃ­ data o objektech (trasy, strÃ¡Å¾ci, dopravnÃ­ prostÅ™edky atd.) a druhÃ¡ je urÄena pro autentikaÄnÃ­ data o identitÃ¡ch a rolÃ­ch uÅ¾ivatelÅ¯.
 
 ![C2 model](./prilohy/architektura/C2_model.png)
-*C4 diagram Level 2: Kontejnery Plánovacího kalendáøe*
-### Front-end webové aplikace
-Front-end webové aplikace poskytuje aplikaèní logiku, jako napøíklad zobrazení plánu sluby, poskytnutí funkcionality plánování a spravování zdrojù. Vyuívá API backendu pro získání a updatování dat.
-Aby mìl uivatel pøístup k datùm aplikace je autentizován. 
+*C4 diagram Level 2: Kontejnery PlÃ¡novacÃ­ho kalendÃ¡Å™e*
+### Front-end webovÃ© aplikace
+Front-end webovÃ© aplikace poskytuje aplikaÄnÃ­ logiku, jako napÅ™Ã­klad zobrazenÃ­ plÃ¡nu sluÅ¾by, poskytnutÃ­ funkcionality plÃ¡novÃ¡nÃ­ a spravovÃ¡nÃ­ zdrojÅ¯. VyuÅ¾Ã­vÃ¡ API backendu pro zÃ­skÃ¡nÃ­ a updatovÃ¡nÃ­ dat.
+Aby mÄ›l uÅ¾ivatel pÅ™Ã­stup k datÅ¯m aplikace je autentizovÃ¡n. 
 
-V diagramu front-end webové aplikace nejsou zaznamenány vztahy vedoucí z poskytovatelù za úèelem pøehlednosti. Poskytují kontext aplikace, kterı je primárnì dostupnı všem stránkám.
+V diagramu front-end webovÃ© aplikace nejsou zaznamenÃ¡ny vztahy vedoucÃ­ z poskytovatelÅ¯ za ÃºÄelem pÅ™ehlednosti. PoskytujÃ­ kontext aplikace, kterÃ½ je primÃ¡rnÄ› dostupnÃ½ vÅ¡em strÃ¡nkÃ¡m.
 
 ![C3 model](./prilohy/architektura/C3_model_frontend.png)
-*C4 diagram Level 2: Front-end webové aplikace*
+*C4 diagram Level 2: Front-end webovÃ© aplikace*
 
 #### Browser router
-Jedná se o react-router, kterı je odpovìdnı za navigaci mezi stránkami.
+JednÃ¡ se o react-router, kterÃ½ je odpovÄ›dnÃ½ za navigaci mezi strÃ¡nkami.
 
 #### Services
-Services obsahuje mnoinu fetch funkcí, které volají API backendu. 
-Jsou uspoøádané do sloek podle objektù, kterıch se tıkají.
+Services obsahuje mnoÅ¾inu fetch funkcÃ­, kterÃ© volajÃ­ API backendu. 
+Jsou uspoÅ™Ã¡danÃ© do sloÅ¾ek podle objektÅ¯, kterÃ½ch se tÃ½kajÃ­.
 
-#### Poskytovatel Dat Plánù
-Poskytovatel Dat Plánù je odpovìdnı za centrální spravování plánù v rámci vybraného a právì zobrazovaného mìsíce. 
-Tyto plány poskytuje v rámci kontextu domovské stránce a stránce plánování. 
-Pøi zmìnì zobrazovaného mìsíce je odpovìdnı za získání novıch plánù pomocí Services a pokud je provedena v plánech zmìna, notifikuje o tom pomocí Hub Plánù ostatní klienty.
+#### Poskytovatel Dat PlÃ¡nÅ¯
+Poskytovatel Dat PlÃ¡nÅ¯ je odpovÄ›dnÃ½ za centrÃ¡lnÃ­ spravovÃ¡nÃ­ plÃ¡nÅ¯ v rÃ¡mci vybranÃ©ho a prÃ¡vÄ› zobrazovanÃ©ho mÄ›sÃ­ce. 
+Tyto plÃ¡ny poskytuje v rÃ¡mci kontextu domovskÃ© strÃ¡nce a strÃ¡nce plÃ¡novÃ¡nÃ­. 
+PÅ™i zmÄ›nÄ› zobrazovanÃ©ho mÄ›sÃ­ce je odpovÄ›dnÃ½ za zÃ­skÃ¡nÃ­ novÃ½ch plÃ¡nÅ¯ pomocÃ­ Services a pokud je provedena v plÃ¡nech zmÄ›na, notifikuje o tom pomocÃ­ Hub PlÃ¡nÅ¯ ostatnÃ­ klienty.
 
 #### Poskytovatel Dat Obvodu
-Poskytovatel Dat Obvodu je odpovìdnı za centrální spravování zdrojù obvodu (tras, dopravních prostøedkù, strácù).
-Tyto data poskytuje v rámci kontextu domovské stránce, stránce plánování a stránce správy zdrojù. 
-Pokud je provedena v zdrojích zmìna, notifikuje o zmìnì ostatní klienty pouitím Hub Obvod-zdroje na backendu.
+Poskytovatel Dat Obvodu je odpovÄ›dnÃ½ za centrÃ¡lnÃ­ spravovÃ¡nÃ­ zdrojÅ¯ obvodu (tras, dopravnÃ­ch prostÅ™edkÅ¯, strÃ¡Å¾cÅ¯).
+Tyto data poskytuje v rÃ¡mci kontextu domovskÃ© strÃ¡nce, strÃ¡nce plÃ¡novÃ¡nÃ­ a strÃ¡nce sprÃ¡vy zdrojÅ¯. 
+Pokud je provedena v zdrojÃ­ch zmÄ›na, notifikuje o zmÄ›nÄ› ostatnÃ­ klienty pouÅ¾itÃ­m Hub Obvod-zdroje na backendu.
 
 #### Poskytovatel Autentizace a autorizace
-Poskytovatel autentizace a autorizace spravuje stav pøihlášení a ovìøuje roli uivatele, tento stav v rámci kontextu poskytuje všem stránkám.
-Volá funkce z Services spojené s pøihlašováním a odhlašováním.
+Poskytovatel autentizace a autorizace spravuje stav pÅ™ihlÃ¡Å¡enÃ­ a ovÄ›Å™uje roli uÅ¾ivatele, tento stav v rÃ¡mci kontextu poskytuje vÅ¡em strÃ¡nkÃ¡m.
+VolÃ¡ funkce z Services spojenÃ© s pÅ™ihlaÅ¡ovÃ¡nÃ­m a odhlaÅ¡ovÃ¡nÃ­m.
 
-#### Pøihlašovací stránka
-Pøihlašovací stránka je odpovìdná za zobrazení pøihlašovacího formuláøe a navigace na hlavní stránku pøi úspìšném pøihlášení.
-Vyuívá funkci Poskytovatele Autentizace a autorizace pro pøihlášení uivatele.
+#### PÅ™ihlaÅ¡ovacÃ­ strÃ¡nka
+PÅ™ihlaÅ¡ovacÃ­ strÃ¡nka je odpovÄ›dnÃ¡ za zobrazenÃ­ pÅ™ihlaÅ¡ovacÃ­ho formulÃ¡Å™e a navigace na hlavnÃ­ strÃ¡nku pÅ™i ÃºspÄ›Å¡nÃ©m pÅ™ihlÃ¡Å¡enÃ­.
+VyuÅ¾Ã­vÃ¡ funkci Poskytovatele Autentizace a autorizace pro pÅ™ihlÃ¡Å¡enÃ­ uÅ¾ivatele.
 
 #### Menu
-Menu poskytuje odkazy na stránky a funkci odhlášení
-Je odpovìdná zobrazit link na stránku správa zdrojù pouze vedoucím stráního obvodu.
+Menu poskytuje odkazy na strÃ¡nky a funkci odhlÃ¡Å¡enÃ­.
+Je odpovÄ›dnÃ¡ zobrazit link na strÃ¡nku sprÃ¡vy zdrojÅ¯ pouze vedoucÃ­m strÃ¡Å¾nÃ­ho obvodu.
 
-#### Stránka plánování
-Stránka plánování je zodpovìdná za zobrazení plánu sluby na vybranı mìsíc a umonit kontrolované editování a zamykání plánù.
-Vyuívá Poskytovatele Dat Obvodu, aby zobrazoval aktuální informace o zdrojích.
-Poskytovatele autentizace a autorizace, aby mohl uivatel editovat pouze pro nìj povolené plány.
-Poskytovatele Dat Plánù vyuívá na získání a správu zobrazovanıch plánù.
+#### StrÃ¡nka plÃ¡novÃ¡nÃ­
+StrÃ¡nka plÃ¡novÃ¡nÃ­ je zodpovÄ›dnÃ¡ za zobrazenÃ­ plÃ¡nu sluÅ¾by na vybranÃ½ mÄ›sÃ­c a umoÅ¾nÄ›nÃ­ kontrolovanÃ©ho editovÃ¡nÃ­ a zamykÃ¡nÃ­ plÃ¡nÅ¯.
+VyuÅ¾Ã­vÃ¡ Poskytovatele Dat Obvodu, aby zobrazovala aktuÃ¡lnÃ­ informace o zdrojÃ­ch.
+Poskytovatele autentizace a autorizace vyuÅ¾Ã­vÃ¡, aby mohl uÅ¾ivatel editovat pouze pro nÄ›j povolenÃ© plÃ¡ny.
+Poskytovatele Dat PlÃ¡nÅ¯ vyuÅ¾Ã­vÃ¡ na zÃ­skÃ¡nÃ­ a sprÃ¡vu zobrazovanÃ½ch plÃ¡nÅ¯.
 
-#### Stránka správy zdrojù
-Stránka správy zdrojù je zodpovìdná za zobrazení tras, strácù a dopravních prostøedkù se všemi informacemi a je pøístupná pouze pro vedoucí stráních obvodù.
-Umoòuje vedoucím pøidávat, mazat a editovat zdroje obvodu. 
-Vyuívá Poskytovatele Dat Obvodu pro šíøení zmìn napøíè stránkami a do backendu. 
+#### StrÃ¡nka sprÃ¡vy zdrojÅ¯
+StrÃ¡nka sprÃ¡vy zdrojÅ¯ je zodpovÄ›dnÃ¡ za zobrazenÃ­ tras, strÃ¡Å¾cÅ¯ a dopravnÃ­ch prostÅ™edkÅ¯ se vÅ¡emi informacemi a je pÅ™Ã­stupnÃ¡ pouze pro vedoucÃ­ strÃ¡Å¾nÃ­ch obvodÅ¯.
+UmoÅ¾Åˆuje vedoucÃ­m pÅ™idÃ¡vat, mazat a editovat zdroje obvodu. 
+VyuÅ¾Ã­vÃ¡ Poskytovatele Dat Obvodu pro Å¡Ã­Å™enÃ­ zmÄ›n napÅ™Ã­Ä strÃ¡nkami a do backendu. 
 
-#### Domovská stránka
-Domovská stránka je zodpovìdná za zobrazování plánu sluby urèitého obvodu na urèitı den.
+#### DomovskÃ¡ strÃ¡nka
+DomovskÃ¡ strÃ¡nka je zodpovÄ›dnÃ¡ za zobrazovÃ¡nÃ­ plÃ¡nu sluÅ¾by urÄitÃ©ho obvodu na urÄitÃ½ den.
 
 ### Backend aplikace
-Backend slouí na zpracování poadavkù frontendu a manipulaci s daty v databázi.
-Poskytuje business logiku aplikace, jako napøíklad pøidání trasy do plánu stráce, ovìøení identity uivatele nebo získání dopravních prostøedkù v daném obvodu.
+Backend slouÅ¾Ã­ na zpracovÃ¡nÃ­ poÅ¾adavkÅ¯ frontendu a manipulaci s daty v databÃ¡zi.
+Poskytuje business logiku aplikace, jako napÅ™Ã­klad pÅ™idÃ¡nÃ­ trasy do plÃ¡nu strÃ¡Å¾ce, ovÄ›Å™enÃ­ identity uÅ¾ivatele nebo zÃ­skÃ¡nÃ­ dopravnÃ­ch prostÅ™edkÅ¯ v danÃ©m obvodu.
 
 Obsahuje:
-- Kontrolery - Implementují API, které zpracovávají poadavky frontendu a posílají data.
-- Unit of Work - Komponenta, která koordinuje pøístup k repozitáøùm a jednotnì ukládá zmìny do databáze.
-- Repozitáøe - Poskytují metody pro pøístup a práci s objekty v databázi.
-- Huby - Slouí pro posílání informací o provedenıch zmìnách, zajišují komunikaci mezi serverem a klientem v reálném èase.
-- Autorizaèní a autentikaèní logiku
+- Kontrolery - ImplementujÃ­ API, kterÃ© zpracovÃ¡vajÃ­ poÅ¾adavky frontendu a posÃ­lajÃ­ data.
+- Unit of Work - Komponenta, kterÃ¡ koordinuje pÅ™Ã­stup k repozitÃ¡Å™Å¯m a jednotnÄ› uklÃ¡dÃ¡ zmÄ›ny do databÃ¡ze.
+- RepozitÃ¡Å™e - PoskytujÃ­ metody pro pÅ™Ã­stup a prÃ¡ci s objekty v databÃ¡zi.
+- Huby - SlouÅ¾Ã­ pro posÃ­lÃ¡nÃ­ informacÃ­ o provedenÃ½ch zmÄ›nÃ¡ch, zajiÅ¡Å¥ujÃ­ komunikaci mezi serverem a klientem v reÃ¡lnÃ©m Äase.
+- AutorizaÄnÃ­ a autentikaÄnÃ­ logiku
 
 ![C3 model](./prilohy/architektura/C3_model_backend.png)
 *C4 diagram Level 3: Backend*
 
 #### Kontrolery
-**Kontrolery zdrojù** (trasy, stráci, obvody a dopravní prostøedky) obsahují primárnì pouze HTTP metody pro základní CRUD operace - tvorba novıch, získání všech v daném obvodu, aktualizaci a mazání objektù.
-Vıjimkou je kontroler strácù, kterı také obsahuje metodu na získání stráce, kterı je pøiøazenı k aktuálnì pøihlášenému uivateli (pokud je uivatel strácem).
+**Kontrolery zdrojÅ¯** (trasy, strÃ¡Å¾ci, obvody a dopravnÃ­ prostÅ™edky) obsahujÃ­ primÃ¡rnÄ› pouze HTTP metody pro zÃ¡kladnÃ­ CRUD operace - tvorba novÃ½ch, zÃ­skÃ¡nÃ­ vÅ¡ech v danÃ©m obvodu, aktualizaci a mazÃ¡nÃ­ objektÅ¯.
+VÃ½jimkou je kontroler strÃ¡Å¾cÅ¯, kterÃ½ takÃ© obsahuje metodu na zÃ­skÃ¡nÃ­ strÃ¡Å¾ce, kterÃ½ je pÅ™iÅ™azenÃ½ k aktuÃ¡lnÄ› pÅ™ihlÃ¡Å¡enÃ©mu uÅ¾ivateli (pokud je uÅ¾ivatel strÃ¡Å¾cem).
 
-**Kontroler Plánù** poskytuje API pro pøidávání a odebírání tras nebo dopravních prostøedkù ze specifickıch plánù, zamknutí a odemknutí plánù v urèitém dnu a získání plánù v urèitém èasovém rozmezí.
+**Kontroler PlÃ¡nÅ¯** poskytuje API pro pÅ™idÃ¡vÃ¡nÃ­ a odebÃ­rÃ¡nÃ­ tras nebo dopravnÃ­ch prostÅ™edkÅ¯ ze specifickÃ½ch plÃ¡nÅ¯, zamknutÃ­ a odemknutÃ­ plÃ¡nÅ¯ v urÄitÃ©m dnu a zÃ­skÃ¡nÃ­ plÃ¡nÅ¯ v urÄitÃ©m ÄasovÃ©m rozmezÃ­.
 
-**Kontroler Uivatelù** poskytuje API pro pøihlašování a odhlašování uivatelù, registraci novıch uivatelù a správu rolí.
+**Kontroler UÅ¾ivatelÅ¯** poskytuje API pro pÅ™ihlaÅ¡ovÃ¡nÃ­ a odhlaÅ¡ovÃ¡nÃ­ uÅ¾ivatelÅ¯, registraci novÃ½ch uÅ¾ivatelÅ¯ a sprÃ¡vu rolÃ­.
 
 #### Unit of Work
-Unit of work je tøída, která koordinuje práci repozitáøù a zajišuje, e všechny repozitáøe pracují se stejnou reprezentací databáze a tedy udruje konzistenci dat.
-Umoòuje uloit všechny zmìny provedené v reprezentaci databáze do reálné databáze v jednom atomickém kroku.
+Unit of work je tÅ™Ã­da, kterÃ¡ koordinuje prÃ¡ci repozitÃ¡Å™Å¯ a zajiÅ¡Å¥uje, Å¾e vÅ¡echny repozitÃ¡Å™e pracujÃ­ se stejnou reprezentacÃ­ databÃ¡ze a tedy udrÅ¾uje konzistenci dat.
+UmoÅ¾Åˆuje uloÅ¾it vÅ¡echny zmÄ›ny provedenÃ© v reprezentaci databÃ¡ze do reÃ¡lnÃ© databÃ¡ze v jednom atomickÃ©m kroku.
 
-#### Repozitáøe
-Repozitáøe jsou zodpovìdné za pøístup k datùm v databázi, vyuívají Entity Framework a jeho DbContext pro usnadnìní práce s databází.
-DbContext zajišuje mapování mezi objekty v aplikaci a tabulkami v databázi, co umoòuje snadnìjší práci s daty.
-General Repository je obecná šablona, která implementuje rozhraní pro získávání, ukládání, mazání a aktualizaci objektù v databázi.
-Je vyuit pro správu všech objektù kromì plánù. 
-Plány jsou spravovány v Plan Repository, kterı implementuje stejné rozhraní, ale má specifickou metodu pro získávání plánù.
+#### RepozitÃ¡Å™e
+RepozitÃ¡Å™e jsou zodpovÄ›dnÃ© za pÅ™Ã­stup k datÅ¯m v databÃ¡zi, vyuÅ¾Ã­vajÃ­ Entity Framework a jeho DbContext pro usnadnÄ›nÃ­ prÃ¡ce s databÃ¡zÃ­.
+DbContext zajiÅ¡Å¥uje mapovÃ¡nÃ­ mezi objekty v aplikaci a tabulkami v databÃ¡zi, coÅ¾ umoÅ¾Åˆuje snadnÄ›jÅ¡Ã­ prÃ¡ci s daty.
+General Repository je obecnÃ¡ Å¡ablona, kterÃ¡ implementuje rozhranÃ­ pro zÃ­skÃ¡vÃ¡nÃ­, uklÃ¡dÃ¡nÃ­, mazÃ¡nÃ­ a aktualizaci objektÅ¯ v databÃ¡zi.
+Je vyuÅ¾it pro sprÃ¡vu vÅ¡ech objektÅ¯ kromÄ› plÃ¡nÅ¯. 
+PlÃ¡ny jsou spravovÃ¡ny v Plan Repository, kterÃ½ implementuje stejnÃ© rozhranÃ­, ale mÃ¡ specifickou metodu pro zÃ­skÃ¡vÃ¡nÃ­ plÃ¡nÅ¯.
 
 #### Huby
-Huby jsou implementované pomocí SignalR a slouí k posílání informací o provedenıch zmìnách a tím udrují plán sluby a informace o objektech aktuální napøíè všemi klienty.
+Huby jsou implementovanÃ© pomocÃ­ SignalR a slouÅ¾Ã­ k posÃ­lÃ¡nÃ­ informacÃ­ o provedenÃ½ch zmÄ›nÃ¡ch a tÃ­m udrÅ¾ujÃ­ plÃ¡n sluÅ¾by a informace o objektech aktuÃ¡lnÃ­ napÅ™Ã­Ä vÅ¡emi klienty.
 
-**Hub Plány** slouí k posílání notifikací o zmìnách konkrétního plánu skupinì klientù.
-Umoòuje klientùm pøidat se do skupiny podle obvodu, ve kterém jsou, a mìsíce, kterého plány sledují. 
-Díky skupinám jsou notifikace o zmìnách posílány pouze klientùm, kterıch se zmìny tıkají.
+**Hub PlÃ¡ny** slouÅ¾Ã­ k posÃ­lÃ¡nÃ­ notifikacÃ­ o zmÄ›nÃ¡ch konkrÃ©tnÃ­ho plÃ¡nu skupinÄ› klientÅ¯.
+UmoÅ¾Åˆuje klientÅ¯m pÅ™idat se do skupiny podle obvodu, ve kterÃ©m jsou, a mÄ›sÃ­ce, kterÃ©ho plÃ¡ny sledujÃ­. 
+DÃ­ky skupinÃ¡m jsou notifikace o zmÄ›nÃ¡ch posÃ­lÃ¡ny pouze klientÅ¯m, kterÃ½ch se zmÄ›ny tÃ½kajÃ­.
 
-**Hub Obvod-zdroje** slouí k posílání notifikací o zmìnách ve zdrojích skupinì klientù. 
-Umoòuje klinetùm pøidat se do skupiny podle obvodu. 
-Notifikaèní metody jsou ètyøi - pro posílání zmìn o trasách, dopravních prostøedkách, strácích a zámcích.
+**Hub Obvod-zdroje** slouÅ¾Ã­ k posÃ­lÃ¡nÃ­ notifikacÃ­ o zmÄ›nÃ¡ch ve zdrojÃ­ch skupinÄ› klientÅ¯. 
+UmoÅ¾Åˆuje klinetÅ¯m pÅ™idat se do skupiny podle obvodu. 
+NotifikaÄnÃ­ metody jsou ÄtyÅ™i - pro posÃ­lÃ¡nÃ­ zmÄ›n o trasÃ¡ch, dopravnÃ­ch prostÅ™edcÃ­ch, strÃ¡Å¾cÃ­ch a zÃ¡mcÃ­ch.
 
 #### Autentikace a autorizace
-Autentikace a autorizace je zodpovìdná za pøístup k datùm v Auth databázi a vyuívá IdentityDbContext pro usnadnìní autorizace a autentikace. 
-Autentikaèní sluba implementuje metody pøihlašování, odhlašování, registrování novıch uivatelù a získání informací o pøihlášeném uviateli.
-Autorizaèní sluba implementuje metody pro pøiøazování a ovìøování rolí uivatelù.
+Autentikace a autorizace je zodpovÄ›dnÃ¡ za pÅ™Ã­stup k datÅ¯m v Auth databÃ¡zi a vyuÅ¾Ã­vÃ¡ IdentityDbContext pro usnadnÄ›nÃ­ autorizace a autentikace. 
+AutentikaÄnÃ­ sluÅ¾ba implementuje metody pÅ™ihlaÅ¡ovÃ¡nÃ­, odhlaÅ¡ovÃ¡nÃ­, registrovÃ¡nÃ­ novÃ½ch uÅ¾ivatelÅ¯ a zÃ­skÃ¡nÃ­ informacÃ­ o pÅ™ihlÃ¡Å¡enÃ©m uÅ¾ivateli.
+AutorizaÄnÃ­ sluÅ¾ba implementuje metody pro pÅ™iÅ™azovÃ¡nÃ­ a ovÄ›Å™ovÃ¡nÃ­ rolÃ­ uÅ¾ivatelÅ¯.
