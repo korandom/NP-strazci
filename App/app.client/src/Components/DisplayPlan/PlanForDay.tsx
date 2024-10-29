@@ -7,7 +7,7 @@ interface PlanForDayProps {
     recordsData: Plan[];
 }
 
-// Zobrazení plánu strácù na urèitı den
+// ZobrazenÃ­ plÃ¡nu strÃ¡Å¾cÅ¯ na urÄitÃ½ den
 const PlanForDay: React.FC<PlanForDayProps> = ({ recordsData }) => {
     return (
         <div className="plan-for-day">

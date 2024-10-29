@@ -27,7 +27,7 @@ const VehicleManager = ({ districtId }: { districtId: number }): JSX.Element => 
 
     return (
         <div className="items-container">
-            <h3 className="source-name">Dopravní prosředky</h3>
+            <h3 className="source-name">Dopravní prostředky</h3>
             <button onClick={() => setIsCreateActive(true)}>Vytvořit</button>
 
             {isCreateActive &&

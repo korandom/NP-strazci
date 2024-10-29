@@ -1,7 +1,7 @@
 import React from 'react';
 import { Ranger } from '../../Services/RangerService';
 
-// Identifikace str·ûce v tabulce pl·novaËe
+// Identifikace str√°≈æce v tabulce pl√°novaƒçe
 const RangerCell: React.FC<{ ranger:Ranger}> = ({ ranger }) => {
     return (
         <div className='rangerCell'>
