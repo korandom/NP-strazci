@@ -1,123 +1,92 @@
-# WebovÃ¡ aplikace na plÃ¡novÃ¡nÃ­ sluÅ¾by strÃ¡Å¾cÅ¯ nÃ¡rodnÃ­ho parku
+# Webová aplikace na plánování sluby strácù národního parku
 ## Obsah
-1. [ZÃ¡kladnÃ­ souhrn](#zÃ¡kladnÃ­-souhrn)
-2. [UÅ¾ivatelÃ©](#uÅ¾ivatelÃ©)
-3. [FunkÄnÃ­ poÅ¾adavky](#funkÄnÃ­-poÅ¾adavky)
-    - [PlÃ¡novÃ¡nÃ­ tras](#plÃ¡novÃ¡nÃ­-tras) 
-    - [SprÃ¡va objektÅ¯ a zdrojÅ¯](#sprÃ¡va-objektÅ¯-a-zdrojÅ¯)
-4. [PoÅ¾adavky kvality](#poÅ¾adavky-kvality)
-5. [PÅ™Ã­padnÃ© rozÅ¡Ã­Å™enÃ­](#pÅ™Ã­padnÃ©-rozÅ¡Ã­Å™enÃ­)
-6. [DomÃ©novÃ½ model](#domÃ©novÃ½-model)
+1. [Základní souhrn](#základní-souhrn)
+2. [Uivatelé](#uivatelé)
+3. [Funkèní poadavky](#funkèní-poadavky)
+    - [Plánování tras](#plánování-tras) 
+    - [Správa objektù a zdrojù](#správa-objektù-a-zdrojù)
+4. [Poadavky kvality](#poadavky-kvality)
+5. [Pøípadné rozšíøení](#pøípadné-rozšíøení)
+6. [Doménovı model](#doménovı-model)
 
-## ZÃ¡kladnÃ­ souhrn
-WebovÃ¡ aplikace na plÃ¡novÃ¡nÃ­ tras, sprÃ¡vu a pÅ™idÄ›lovÃ¡nÃ­ zdrojÅ¯ pro strÃ¡Å¾ce.
-1. **MobilnÃ­ rozhranÃ­**
-    - PrimÃ¡rnÄ› urÄeno pro strÃ¡Å¾ce.
-    KaÅ¾dÃ½ strÃ¡Å¾ce si mÅ¯Å¾e trasy plÃ¡novat, zobrazit plÃ¡n vÅ¡ech strÃ¡Å¾cÅ¯ a pÅ™idat poznÃ¡mku dne.
+## Základní souhrn
+
+Webová aplikace na plánování tras, správu a pøidìlování zdrojù pro stráce.
+1. **Mobilní rozhraní**
+    - Primárnì urèeno pro stráce.
+    Kadı stráce si mùe plánovat docházku, zobrazovat plán všech strácù v obvodu a pøidat poznámku dne.
     - [Design1](https://www.figma.com/file/B96k04ObDK4yaycN5ulT1I/NP-strazci?node-id=0%3A1&t=VeApoPs8S3MXuRlP-1)
-2. **WebovÃ© rozhranÃ­**
-    - UrÄeno pro vedoucÃ­ i strÃ¡Å¾ce.
-    Poskytuje nadmnoÅ¾inu funkcÃ­ mobilnÃ­ho rozhranÃ­.
-    UmoÅ¾Åˆuje vedoucÃ­mu zobrazovat, uzamykat, mÄ›nit plÃ¡n tras.
-    UmoÅ¾Åˆuje vedoucÃ­mu spravovat objekty a jejich atributy (trasy, dopravnÃ­ prostÅ™edky, strÃ¡Å¾ci).
+2. **Webové rozhraní**
+    - Urèeno pro vedoucí i stráce.
+    Poskytuje nadmnoinu funkcí mobilního rozhraní.
+    Umoòuje vedoucímu zobrazovat, uzamykat, mìnit docházku strácù pod jeho dohledem.
+    Umoòuje vedoucímu generovat plán tras podle jejich priorit a vyplnìné docházky strácù pod jeho dohledem, a tento plán manuálnì mìnit.
+    Umoòuje vedoucímu obvodu spravovat objekty a jejich atributy (trasy, dopravní prostøedky, stráci).
 
 
-## UÅ¾ivatelÃ© 
-1. StrÃ¡Å¾ce
-    - StrÃ¡Å¾ce je zamÄ›stnanec nÃ¡rodnÃ­ho parku, kterÃ½ mÃ¡ za Ãºkol chrÃ¡nit pÅ™Ã­rodnÃ­ ÃºzemÃ­ nÃ¡rodnÃ­ho parku.
-    - MÃ¡ povinnost ÃºÄastnit se plÃ¡novÃ¡nÃ­ tras a pÅ™edÃ¡vat informace z terÃ©nu pomocÃ­ dennÃ­ poznÃ¡mky.
-1. VedoucÃ­ strÃ¡Å¾nÃ­ho obvodu
-   - VedoucÃ­ strÃ¡Å¾nÃ­ho obvodu je strÃ¡Å¾ce, kterÃ½ mÃ¡ povinnost vytvÃ¡Å™et plÃ¡n tras, pÅ™iÅ™azovat dopravnÃ­ prostÅ™edky a reagovat na dennÃ­ poznÃ¡mky.
-1. VedoucÃ­ strÃ¡Å¾nÃ­ sluÅ¾by
-   - VedoucÃ­ strÃ¡Å¾nÃ­ sluÅ¾by je zamÄ›stnanec nÃ¡rodnÃ­ho parku, kterÃ½ mÃ¡ pÅ™ehled o prÃ¡ci strÃ¡Å¾cÅ¯ ze vÅ¡ech obvodÅ¯, mÃ¡ pÅ™Ã­stup k datÅ¯m, ale nezasahuje do nich.
-1. NÃ¡mÄ›stek Å™editele
-   - NÃ¡mÄ›stek Å™editele mÃ¡ stejnÃ© moÅ¾nosti pouÅ¾Ã­vÃ¡nÃ­ aplikace jako vedoucÃ­ strÃ¡Å¾nÃ­ sluÅ¾by.
-1. Å˜editel
-   - Å˜editel mÃ¡ stejnÃ© moÅ¾nosti pouÅ¾Ã­vÃ¡nÃ­ aplikace jako vedoucÃ­ strÃ¡Å¾nÃ­ sluÅ¾by.
+## Uivatelé 
+1. Stráce
+    - Stráce je zamìstnanec národního parku, kterı má za úkol chránit pøírodní území národního parku.
+    - Má povinnost úèastnit se plánování a pøedávat informace z terénu pomocí denní poznámky.
+1. Vedoucí stráního okrsku
+   - Vedoucí stráního okrsku je stráce, kterı má povinnost vytváøet plán tras, pøiøazovat dopravní prostøedky a reagovat na denní poznámky strácù okrsku. 
+1. Vedoucí stráního obvodu
+   - Vedoucí stráního obvodu je stráce, kterı má monost vytváøet plán tras, pøiøazovat dopravní prostøedky a reagovat na denní poznámky strácù obvodu.
+1. Vedoucí strání sluby
+   - Vedoucí strání sluby je zamìstnanec národního parku, kterı má pøehled o práci strácù ze všech obvodù, má pøístup k datùm, ale nezasahuje do nich.
+1. Námìstek øeditele
+   - Námìstek øeditele má stejné monosti pouívání aplikace jako vedoucí strání sluby.
+1. Øeditel
+   - Øeditel má stejné monosti pouívání aplikace jako vedoucí strání sluby.
 
 ------------------------
-## FunkÄnÃ­ poÅ¾adavky
+## Funkèní poadavky
 
-### PlÃ¡novÃ¡nÃ­ tras
+### Plánování tras
 
- - Jako **strÃ¡Å¾ce** si chci zobrazit plÃ¡n tras na nadchÃ¡zejÃ­cÃ­ den, Äi tÃ½den, abych mÄ›l pÅ™ehled. ([issue #18](https://github.com/korandom/NP-strazci/issues/18))
+Jako **stráce** si chci zobrazit plán tras, abych mìl pøehled. ([issue #18](https://github.com/korandom/NP-strazci/issues/18))
+- Jako **stráce** chci mít rychlı pøístup k plánu tras strácù z okrsku, abych mohl snadno zjistit umístìní mıch kolegù a ovìøit si mùj plán.
+- Jako **stráce** chci mít monost rozšíøit plán na stráce z obvodu, protoe v krizové situaci mohu potøebovat informaci o pozici všech strácù v obvodu. 
+- Jako **stráce** chci, aby se na mobilní obrazovce zobrazoval plán v rámci jednoho vybraného dne a pouze strácù, kteøí jsou v práci, protoe je pro mì dùleitá pøehlednost a èitelnost plánu.
+- Jako **stráce** chci, aby se na poèítaèové obrazovce zobrazoval plán na vybranıch 14 dní, protoe to je rozsah plánování do budoucna a na velké obrazovce chci mít širší pøehled.
+
+Jako **vedoucí stráního obvodu/okrsku** chci generovat tıdenní plán tras, kterı odpovídá docházce strácù, prioritám tras a spravedlivému rozdìlení tras mezi stráce v rámci mìsíce, protoe stráci musejí bıt s rozdìlením tras spokojení a poadavky na èetnost prùchodù tras v rámci priorit naplnìny.  ([issue #6](https://github.com/korandom/NP-strazci/issues/6))
+- Jako **vedoucí stráního obvodu/okrsku** chci vygenerovanı plán kdykoliv upravit, protoe mùe nastat neoèekávaná situace a plán musí bıt aktuální.
  
- - Jako **strÃ¡Å¾ce** chci, aby se v utvoÅ™enÃ©m plÃ¡nu zobrazili pouze strÃ¡Å¾ci, kteÅ™Ã­ v danÃ½ den nebo tÃ½den jdou do prÃ¡ce, aby byl plÃ¡n pÅ™ehlednÄ›jÅ¡Ã­. ([issue #18](https://github.com/korandom/NP-strazci/issues/18))
+Jako **vedoucí stráního obvodu/okrsku** chci mít monost pøiøadit nìjakému stráci na den nìjakı dopravní prostøedek, protoe jich je omezené mnoství a musím je rozdìlovat podle potøeby. ([issue #14](https://github.com/korandom/NP-strazci/issues/14))
 
- - Jako **strÃ¡Å¾ce** si chci na urÄitÃ½ den naplÃ¡novat mnoÅ¾inu tras, kterou projdu, aby mÅ¯j vedoucÃ­ vÄ›dÄ›l, kam mÃ¡m v plÃ¡nu jÃ­t a aby si moji kolegovÃ© nenaplÃ¡novali stejnÃ© trasy jako jÃ¡. ([issue #4](https://github.com/korandom/NP-strazci/issues/4))
+Jako **vedoucí strání sluby**, **námìstek øeditele**, **øeditel** chci mít monost vybrat si obvod a zobrazit jeho informace, abych si mohl zobrazit plán sluby a mìl všeobecnı pøehled. ([issue #19](https://github.com/korandom/NP-strazci/issues/19))
 
- - Jako **strÃ¡Å¾ce** chci vidÄ›t naplÃ¡novanÃ© trasy mÃ½ch kolegÅ¯, protoÅ¾e si nechci naplÃ¡novat stejnÃ© trasy. ([issue #4](https://github.com/korandom/NP-strazci/issues/4))
-
- - Jako **vedoucÃ­ strÃ¡Å¾nÃ­ho obvodu** chci mÃ­t moÅ¾nost upravit naplÃ¡novanÃ© trasy strÃ¡Å¾cÅ¯ a uzamknout zmÄ›ny tak, aby strÃ¡Å¾ci do zmÄ›n nemohli zasahovat, protoÅ¾e pokud nejsem spokojen s naplÃ¡novÃ½mi trasami, chci, aby moje zmÄ›ny byli nÃ¡sledovÃ¡ny. ([issue #6](https://github.com/korandom/NP-strazci/issues/6))
-
- - Jako **vedoucÃ­ strÃ¡Å¾nÃ­ho obvodu** chci mÃ­t moÅ¾nost zÃ¡mek na plÃ¡nech odemknout a provÃ©st dalÅ¡Ã­ zmÄ›ny, protoÅ¾e mÅ¯Å¾e nastat neÄekanÃ¡ situace, pÅ™i kterÃ© to bude potÅ™eba. ([issue #6](https://github.com/korandom/NP-strazci/issues/6))
+ ### Správa zdrojù obvodu
+Jako **vedoucí stráního obvodu** chci mít monost pøidat, upravit a smazat trasu z kolekce, protoe informace tras se mohou mìnit a data musí bıt aktuální pro automatizované generování i pro zobrazování plánu tras. ([issue #7](https://github.com/korandom/NP-strazci/issues/7))
+ - Jako **vedoucí stráního obvodu** chci mít monost urèit a zmìnit, která trasa je kontrolní a v jakém èase probíhá kontrola, protoe poadavky na kontrolní místa se mohou zmìnit. ([issue #9](https://github.com/korandom/NP-strazci/issues/9))
  
- - Jako **vedoucÃ­ strÃ¡Å¾nÃ­ho obvodu** chci mÃ­t moÅ¾nost pÅ™iÅ™adit nÄ›jakÃ©mu strÃ¡Å¾ci na den nÄ›jakÃ½ dopravnÃ­ prostÅ™edek, protoÅ¾e jich je omezenÃ© mnoÅ¾stvÃ­ a musÃ­m je rozdÄ›lovat podle potÅ™eby. ([issue #14](https://github.com/korandom/NP-strazci/issues/14))
-
- - Jako **vedoucÃ­ strÃ¡Å¾nÃ­ sluÅ¾by**, **nÃ¡mÄ›stek Å™editele**, **Å™editel** chci mÃ­t moÅ¾nost vybrat si obvod a zobrazit jeho informace, abych si mohl zobrazit plÃ¡n tras. ([issue #19](https://github.com/korandom/NP-strazci/issues/19))
-
- ### SprÃ¡va objektÅ¯ a zdrojÅ¯ 
-
- - Jako **vedoucÃ­ strÃ¡Å¾nÃ­ho obvodu** chci dÃ¡t informaci strÃ¡Å¾cÅ¯m o dÅ¯leÅ¾itosti tras, protoÅ¾e dÅ¯leÅ¾itost tras se mÄ›nÃ­ a pokud strÃ¡Å¾ci vÃ­, jakÃ© trasy jsou dÅ¯leÅ¾itÃ©, naplÃ¡nujÃ­ si trasy sprÃ¡vnÄ›ji. ([issue #7](https://github.com/korandom/NP-strazci/issues/7))
+Jako **vedoucí stráního obvodu** chci mít monost pøidat nebo smazat dopravní prostøedek z kolekce, protoe aktuální poèet nebo jejich druh se mùe zmìnit. ([issue #16](https://github.com/korandom/NP-strazci/issues/16))
  
- - Jako **vedoucÃ­ strÃ¡Å¾nÃ­ho obvodu** chci mÃ­t moÅ¾nost pÅ™idat nebo smazat dopravnÃ­ prostÅ™edek z kolekce, protoÅ¾e aktuÃ¡lnÃ­ poÄet nebo jejich druh se mÅ¯Å¾e zmÄ›nit. ([issue #16](https://github.com/korandom/NP-strazci/issues/16))
+Jako **vedoucí stráního obvodu** chci mít monost pøidat nebo smazat nebo editovat informace okrskù, aby informace o okrskách byli aktuální. ([issue #21](https://github.com/korandom/NP-strazci/issues/21))
+
+Jako **vedoucí stráního obvodu** chci mít monost pøidávat a mazat stráce z mého obvodu, aby se v plánu zmìny promítali. ([issue #20](https://github.com/korandom/NP-strazci/issues/20))
+
+### Docházka
+ Jako **stráce** si chci naplánovat, které dny v jakı èas budu slouit, aby mi vedoucí mohl naplánovat trasy a plán odpovídal mım potøebám. ([issue #1](https://github.com/korandom/NP-strazci/issues/1))
+ - Jako **stráce** chci pøidat dùvod nepøítomnosti, pokud se plánování v danı den nebudu úèastnit, protoe potøebuji schválení od vedoucího. ([issue #3](https://github.com/korandom/NP-strazci/issues/3))
  
- - Jako **vedoucÃ­ strÃ¡Å¾nÃ­ho obvodu** chci mÃ­t moÅ¾nost pÅ™idat nebo smazat nebo editovat informace okrskÅ¯, nastavit barvy, aby informace o okrskÃ¡ch byli aktuÃ¡lnÃ­ a barvy byli podle mÃ½ch pÅ™edstav. ([issue #21](https://github.com/korandom/NP-strazci/issues/21))
+ Jako **vedoucí stráního obvodu/okrsku** chci zmìnit naplánovanou docházku strácù, aby docházka odpovídala mım poadavkùm a zmìnám. ([issue #9](https://github.com/korandom/NP-strazci/issues/9))
+ - Jako **vedoucí stráního obvodu/okrsku** chci naplánovanou docházku strácù uzamknout, aby po mém schválení nemohli stráci zasahovat a další zmìny museli bıt provedeny pouze mnou.
 
- -  Jako **vedoucÃ­ strÃ¡Å¾nÃ­ho obvodu** chci mÃ­t moÅ¾nost pÅ™idÃ¡vat a mazat strÃ¡Å¾ce z mÃ©ho obvodu. ([issue #20](https://github.com/korandom/NP-strazci/issues/20))
+### Poznámka ke dni
+ Jako **stráce** chci mít monost ohodnotit den ve formì poznámky, protoe chci poznamenat události, které se staly a pøedat zajímavé informace vedoucímu. ([issue #5](https://github.com/korandom/NP-strazci/issues/5))
 
- - Jako **vedoucÃ­ strÃ¡Å¾nÃ­ho obvodu** chci mÃ­t moÅ¾nost ve vÃ½jmeÄnÃ© situaci urÄit a zmÄ›nit, kterÃ¡ trasa je kontrolnÃ­ a v jakÃ©m Äase probÃ­hÃ¡ kontrola, protoÅ¾e poÅ¾adavky na kontrolnÃ­ mÃ­sta se mohou zmÄ›nit. ([issue #9](https://github.com/korandom/NP-strazci/issues/9))
+ Jako **stráce** chci vidìt denní poznámky ostatních strácù, abych se dozvìdìl potøebné informace a mohl na nì reagovat. ([issue #17](https://github.com/korandom/NP-strazci/issues/17))
 
- ### AutomatickÃ© plÃ¡novÃ¡nÃ­ s preferencemi 
+ 
+ ## Poadavky kvality
 
- - VedoucÃ­ strÃ¡Å¾nÃ­ho obvodu mÅ¯Å¾e automaticky generovat plÃ¡ny, kterÃ© se Å™Ã­dÃ­ podle preferencÃ­ a priorit tras.
- - VedoucÃ­ strÃ¡Å¾nÃ­ho obvodu mÅ¯Å¾e plÃ¡ny mÄ›nit, pokud je to potÅ™eba.
- - StrÃ¡Å¾ce si mÅ¯Å¾e nastavit a editovat preference na trasy.
-
- ## PoÅ¾adavky kvality
-
- - MobilnÃ­ uÅ¾ivatelskÃ© rozhranÃ­ musÃ­ bÃ½t intuitivnÃ­, s dostateÄnÄ› velkÃ½m textem, aby se dalo ovlÃ¡dat s minimÃ¡lnÃ­m zauÄenÃ­m i pro netechnicky zaloÅ¾enÃ© lidi. 
- - ZabezpeÄenÃ­ mobilnÃ­ aplikace - zÃ¡kladnÃ­ poÅ¾adavky: Å¡ifrovanÃ¡ a zabezpeÄenÃ¡ komunikace s WS backendem, ostatnÃ­ zabezpeÄenÃ­ na Ãºrovni zabezpeÄenÃ­ telefonu (VÃ½hradnÄ› OS Android 11+)
- - ZabezpeÄenÃ­ webovÃ© aplikace - VÃ½hradnÄ› on-premise Å™eÅ¡enÃ­, Å¡ifrovÃ¡nÃ­, poddomÃ©na "npsumava.cz", autorizace a autentizace uÅ¾ivatelÅ¯ pÅ™es LDAP organizace, mfa 
+ - Mobilní uivatelské rozhraní musí bıt intuitivní, s dostateènì velkım textem, aby se dalo ovládat s minimálním zauèením i pro netechnicky zaloené lidi. 
+ 
  -----------------------------
 
- ## PÅ™Ã­padnÃ© rozÅ¡Ã­Å™enÃ­
-
- ### Vizualizace tras na mapÄ›
- - ZobrazenÃ­ strÃ¡Å¾cemi pokrytÃ½ch mÃ­st na mapÄ› v konkrÃ©ntÃ­ den.
-
- ### PouÅ¾itÃ© vybavenÃ­ strÃ¡Å¾ce na den
- - Mezi vybavenÃ­ patÅ™Ã­ kolo, bÄ›Å¾eckÃ© lyÅ¾e, snÄ›Å¾nÃ­ce, skialpy, zÃ¡znamovÃ© zaÅ™Ã­zenÃ­ (osobnÃ­ kamera), moÅ¾nost pÅ™idat dalÅ¡Ã­.
- - StÅ™Ã¡Å¾ce mÅ¯Å¾e vybrat, kterÃ© z vybavenÃ­ v danÃ½ den pouÅ¾il, souÄÃ¡stÃ­ dochÃ¡zky.
- - VedoucÃ­ strÃ¡Å¾nÃ­ho obvodu si mÅ¯Å¾e zobrazit Äetnost uÅ¾itÃ­ urÄitÃ©ho vybavenÃ­ v urÄitÃ©m ÄasovÃ©m Ãºseku.
- - SlouÅ¾Ã­ pro posouzenÃ­ potÅ™eby a uÅ¾itÃ­ vybavenÃ­.
-
- ### DochÃ¡zka 
- - Jako **strÃ¡Å¾ce** si chci zaznamenat poÄet odpracovanÃ½ch hodin na urÄitÃ½ den, protoÅ¾e musÃ­m tuto informaci pÅ™edat vedoucÃ­mu. ([issue #1](https://github.com/korandom/NP-strazci/issues/1))
- 
- - Jako **strÃ¡Å¾ce** chci zaznamenat, jestli mÃ¡m odpracovanÃ© nÄ›jakÃ© hodiny na den v rÃ¡mci JPO - Jednotky poÅ¾Ã¡rnÃ­ ochrany, protoÅ¾e je to separÃ¡tnÃ­ Äinnost a tyto hodiny se poÄÃ­tajÃ­ oddÄ›lenÄ›. ([issue #12](https://github.com/korandom/NP-strazci/issues/12))
- 
- - Jako **strÃ¡Å¾ce** chci, aby se odpracovanÃ© hodiny zaznamenanÃ© o vÃ­kendech nebo svÃ¡tcÃ­ch zapoÄÃ­taly do nÃ¡hradnÃ­ho volna, protoÅ¾e chci vÄ›dÄ›t, kolik hodin nÃ¡hradnÃ­ho volna mohu vyuÅ¾Ã­t v budoucnu. ([issue #2](https://github.com/korandom/NP-strazci/issues/2))
-
- - Jako **strÃ¡Å¾ce** chci, abych si mohl zaznamenat hodiny pÅ™esÄasÅ¯, a abych si je mohl takÃ© vybÃ­rat, pokud potÅ™eba, protoÅ¾e chci mÃ­t pÅ™ehled o mÃ½ch pÅ™esÄasech a chci si sÃ¡m flexibilnÄ› plÃ¡novat pracovnÃ­ dobu. ([issue #13](https://github.com/korandom/NP-strazci/issues/13))
- 
- - Jako **strÃ¡Å¾ce** si chci naplÃ¡novat nÃ¡hradnÃ­ volno nebo dovolenou, protoÅ¾e potÅ™ebuji schvÃ¡lenÃ­ od vedoucÃ­ho. ([issue #3](https://github.com/korandom/NP-strazci/issues/3))
-
- - Jako **strÃ¡Å¾ce** chci mÃ­t moÅ¾nost ohodnotit den ve formÄ› poznÃ¡mky, protoÅ¾e chci poznamenat udÃ¡losti, kterÃ© se staly a pÅ™edat zajÃ­mavÃ© informace vedoucÃ­mu. ([issue #5](https://github.com/korandom/NP-strazci/issues/5))
-
- - Jako **vedoucÃ­ strÃ¡Å¾nÃ­ho obvodu** chci vidÄ›t dennÃ­ poznÃ¡mky strÃ¡Å¾cÅ¯, abych se dozvÄ›dÄ›l potÅ™ebnÃ© informace a mohl na nÄ› reagovat. ([issue #17](https://github.com/korandom/NP-strazci/issues/17))
-
- - Jako **vedoucÃ­ strÃ¡Å¾nÃ­ho obvodu** chci vidÄ›t poÄet odpracovanÃ½ch hodin jednotlivÃ½ch strÃ¡Å¾cÅ¯ v rÃ¡mci mÄ›sÃ­ce i v jednotlivÃ© dny, protoÅ¾e musÃ­m mÃ­t pÅ™ehled o mÃ½ch podÅ™Ã­zenÃ½ch. ([issue #9](https://github.com/korandom/NP-strazci/issues/9))
-
-  ### Statistiky tras ([issue #8](https://github.com/korandom/NP-strazci/issues/8))
- 
- - Jako **vedoucÃ­ strÃ¡Å¾nÃ­ho obvodu** chci zobrazit vizualizaci (graf) poÄtu prÅ¯chodÅ¯ tras v rÃ¡mci urÄitÃ©ho obdobÃ­, protoÅ¾e chci vÄ›dÄ›t frekvenci prochÃ¡zenÃ­ tras.
- 
- - Jako **vedoucÃ­ strÃ¡Å¾nÃ­ho obvodu** chci zobrazit vizualizaci (graf) - kolikrÃ¡t byla urÄitÃ¡ trasa navÅ¡tÃ­vena jakÃ½mi strÃ¡Å¾ci v rÃ¡mci urÄitÃ©ho obdobÃ­, protoÅ¾e chci vÄ›dÄ›t, jestli je trasa plÃ¡novanÃ¡ pro strÃ¡Å¾ce pÅ™imÄ›Å™enÄ› rovnomÄ›rnÄ›.
-
- - Jako **vedoucÃ­ strÃ¡Å¾nÃ­ho obvodu** chci zobrazit vizualizaci (graf) - kolikrÃ¡t proÅ¡el jakÃ© trasy urÄitÃ½ strÃ¡Å¾ce v rÃ¡mci urÄitÃ©ho obdobÃ­, protoÅ¾e chci vÄ›dÄ›t, jakÃ© trasy jsou pro urÄitÃ©ho strÃ¡Å¾ce plÃ¡novanÃ© nejvÃ­ce a nejmÃ©nÄ› Äasto.
-
- ## DomÃ©novÃ½ model
- - [DomÃ©novÃ½ model verze](prilohy/domenovy_model.svg)
+ ## Doménovı model
+ - [Doménovı model verze](prilohy/domenovy_model.svg)
 
 
