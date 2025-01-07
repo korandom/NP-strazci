@@ -3,13 +3,15 @@ import {  Plan, addRoute, addVehicle, fetchPlansByDateRange, removeRoute, remove
 import useDistrict from './DistrictDataProvider';
 import useAuth from '../Authentication/AuthProvider';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import { calculateTwoWeeksRange, formatDate, getShiftedDate } from '../../Util/DateUtil';
+
 
 interface PlanContextType {
     plans: Plan[],
-    month: string,
-    monthRange: { startDate: string, endDate: string },
-    resetToCurrentMonth: () => void,
-    changeMonth: (newMonth: string) => void,
+    dateRange: { start: Date, end: Date },
+    resetPlans: () => void,
+    weekForward: () => void,
+    weekBack: () => void,
     addPlannedVehicle: (date: string, rangerId: number, vehicleId: number) => void,
     removePlannedVehicle: (date: string, rangerId: number, vehicleId: number) => void,
     addPlannedRoute: (date: string, rangerId: number, routeId: number) => void,
@@ -21,12 +23,25 @@ interface PlanContextType {
 
 const PlanContext = createContext<PlanContextType>({} as PlanContextType);
 
-export const MonthlyPlansProvider = ({ children }: { children: ReactNode }): JSX.Element => {
+/**
+ * PlansProvider manages the state and logic for plans in the application in a centralized way.
+ * It provides the context for making changes to plans and fetching plans for viewing. 
+ * It receives updates of plans via HubConnection.
+ *
+ * @param children - The child components that will have access to the plans context.
+ * @returns A JSX.Element that provides the context to its children.
+ * 
+ * Automatically fetches new plans when the district or user changes.
+ * Manages weekly navigation (forward/backward) and resets of plans.
+ * Supports operations for adding/removing vehicles and routes from plans.
+ */
+export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     const { district } = useDistrict();
     const { user } = useAuth();
     const [plans, setPlans] = useState<Plan[]>([]);
-    const [month, setMonth] = useState<string>(getCurrentMonth());
-    const [monthRange, setMonthRange] = useState<{ startDate: string, endDate: string }>(calculateMonthRange(month));
+    const [week1Plans, setWeek1Plans] = useState<Plan[]>([]);
+    const [week2Plans, setWeek2Plans] = useState<Plan[]>([]);
+    const [dateRange, setDateRange] = useState<{ start: Date, end: Date }>(calculateTwoWeeksRange(new Date()));
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<any>();
     const [hubConnection, setHubConnection] = useState<HubConnection>();
@@ -47,7 +62,7 @@ export const MonthlyPlansProvider = ({ children }: { children: ReactNode }): JSX
                 .catch(setError);
 
             if (district) {
-                await connection.invoke('AddToPlanGroup', month, district.id);
+                await connection.invoke('AddToPlanGroup', district.id);
             }
 
             setHubConnection(connection);
@@ -61,67 +76,107 @@ export const MonthlyPlansProvider = ({ children }: { children: ReactNode }): JSX
                 hubConnection.stop();
             }
         };
-    }, [district, month]);
+    }, [district]);
 
-    // get current month in string format
-    function getCurrentMonth(): string {
-        const currentDate = new Date();
-        const currentMonth = currentDate.getMonth() + 1;
-        return `${currentDate.getFullYear()}-${currentMonth.toString().padStart(2, '0')}`;
-    }
-
-    // calculating start and end days of a month
-    function calculateMonthRange (month: string): { startDate: string, endDate: string } {
-        const start = new Date(month + '-01');
-        const end = new Date(start.getFullYear(), start.getMonth() + 1, 1);
-
-        const startDate = start.toISOString().split('T')[0];
-        const endDate = end.toISOString().split('T')[0];
-        return { startDate, endDate };
-    }
-
-    // fetch plans by date range
-    const fetchPlans = async (startDate: string, endDate: string) => {
-        try {
-            if (!district) {
-                throw new Error("Není vybrán žádný obvod.");
-            }
-            setLoading(true);
-            const fetchedPlans = await fetchPlansByDateRange(district.id, startDate, endDate);
-            setPlans(fetchedPlans);
-            setError(null);
-        } catch (err: any) {
-            setError(err);
-        } finally {
-            setLoading(false);
+    // fetch plans by date range 
+    const fetchPlans = (start: Date, end: Date) : Promise<Plan[]> => {
+        if (!district) {
+            throw new Error("Není vybrán žádný obvod.");
         }
+        const startDate = formatDate(start);
+        const endDate = formatDate(end);
+        const fetchedPlans = fetchPlansByDateRange(district.id, startDate, endDate);
+        return fetchedPlans;
     };
 
-    // fetch plans when month range or district changes, only if authentized
+    // reset plans when district or user changes
     useEffect(() => {
+        resetPlans();
+    }, [district, user]);
+
+    // reset plans, fetch new plans only if user is authorized
+    const resetPlans = () => {
         if (!user) {
             setPlans([]);
         }
         else {
-            fetchPlans(monthRange.startDate, monthRange.endDate);
+            setLoading(true);
+            const range = calculateTwoWeeksRange(new Date());
+            setDateRange(range);
+            initializePlans(range.start, range.end);
+            setLoading(false);
         }
-    }, [monthRange, district, user]);
-
-    // change month
-    const changeMonth = (newMonth: string) => {
-        if (newMonth === month) {
-            return;
-        }
-        setMonth(newMonth);
-        setMonthRange(calculateMonthRange(newMonth));
     };
 
-    // reset
-    const resetToCurrentMonth = () => {
-        const currentMonth = getCurrentMonth();
-        changeMonth(currentMonth);
-    };
+    // fetches and sets new plans according to the range
+    // start must be monday of one week, end is sunday of second week
+    const initializePlans = async (start: Date, end: Date) => {
+        try {
+            const endFirstWeek = getShiftedDate(start, 6);
+            const startSecondWeek = getShiftedDate(end, -6);
 
+            const [firstWeekPlans, secondWeekPlans] = await Promise.all([
+                fetchPlans(start, endFirstWeek),
+                fetchPlans(startSecondWeek, end),
+            ]);
+
+            setWeek1Plans(firstWeekPlans);
+            setWeek2Plans(secondWeekPlans);
+            setPlans([...firstWeekPlans, ...secondWeekPlans]);
+            setError(null);
+        }
+        catch (err: any) {
+            setError(err);
+        }
+    }
+
+    // move plans range a week forward and update plans
+    const weekForward = async () => {
+        try {
+            setLoading(true);
+
+            const nextWeekStart = getShiftedDate(dateRange.end, 1);
+            const nextWeekEnd = getShiftedDate(dateRange.end, 7);
+            const newSecondWeekPlans = await fetchPlans(nextWeekStart, nextWeekEnd);
+
+            setWeek1Plans(week2Plans);
+            setWeek2Plans(newSecondWeekPlans);
+            setPlans([...week2Plans, ...newSecondWeekPlans]);
+            setDateRange({start: getShiftedDate(nextWeekStart, -7),end: nextWeekEnd})
+            setError(null);
+        }
+        catch (err: any) {
+            setError(err);
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    // move plans range a week back and update plans
+    const weekBack = async() => {
+        try {
+            setLoading(true);
+
+            const previousWeekStart = getShiftedDate(dateRange.start, -7);
+            const previousWeekEnd = getShiftedDate(dateRange.start, -1);
+            const newFirstWeekPlans = await fetchPlans(previousWeekStart, previousWeekEnd);
+
+            setWeek1Plans(newFirstWeekPlans);
+            setWeek2Plans(week1Plans);
+            setPlans([...newFirstWeekPlans, ...week1Plans]);
+            setDateRange({ start: previousWeekStart, end: getShiftedDate(previousWeekEnd, 7) })
+            setError(null);
+        }
+        catch (err: any) {
+            setError(err);
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    // updates or adds a singular plan into an array and returns the updated array
     const updatePlans = (prevPlans: Plan[], updatedPlan: Plan): Plan[] => {
         const planIndex = prevPlans.findIndex(plan => plan.date === updatedPlan.date && plan.ranger.id === updatedPlan.ranger.id);
 
@@ -136,11 +191,12 @@ export const MonthlyPlansProvider = ({ children }: { children: ReactNode }): JSX
         }
     };
 
+
     const addPlannedVehicle = async (date: string, rangerId: number, vehicleId: number) => {
         try {
             var updatedPlan = await addVehicle(date, rangerId, vehicleId);
             setPlans(prevPlans =>  updatePlans(prevPlans, updatedPlan));
-            hubConnection?.invoke("UpdatePlan", month, district?.id, updatedPlan);
+            hubConnection?.invoke("UpdatePlan", district?.id, updatedPlan);
         }
         catch (error) {
             setError(error);
@@ -151,7 +207,7 @@ export const MonthlyPlansProvider = ({ children }: { children: ReactNode }): JSX
         try {
             var updatedPlan = await removeVehicle(date, rangerId, vehicleId);
             setPlans(prevPlans => updatePlans(prevPlans, updatedPlan));
-            hubConnection?.invoke("UpdatePlan", month, district?.id, updatedPlan);
+            hubConnection?.invoke("UpdatePlan", district?.id, updatedPlan);
         }
         catch (error) {
             setError(error);
@@ -162,7 +218,7 @@ export const MonthlyPlansProvider = ({ children }: { children: ReactNode }): JSX
         try {
             var updatedPlan = await addRoute(date, rangerId, routeId);
             setPlans(prevPlans => updatePlans(prevPlans, updatedPlan));
-            hubConnection?.invoke("UpdatePlan", month, district?.id, updatedPlan);
+            hubConnection?.invoke("UpdatePlan", district?.id, updatedPlan);
         }
         catch (error) {
             setError(error);
@@ -173,7 +229,7 @@ export const MonthlyPlansProvider = ({ children }: { children: ReactNode }): JSX
         try {
             var updatedPlan = await removeRoute(date, rangerId, routeId);
             setPlans(prevPlans => updatePlans(prevPlans, updatedPlan));
-            hubConnection?.invoke("UpdatePlan", month, district?.id, updatedPlan);
+            hubConnection?.invoke("UpdatePlan", district?.id, updatedPlan);
         }
         catch (error) {
             setError(error);
@@ -184,10 +240,10 @@ export const MonthlyPlansProvider = ({ children }: { children: ReactNode }): JSX
     const memoValue = useMemo(
         () => ({
             plans,
-            month,
-            monthRange,
-            resetToCurrentMonth,
-            changeMonth,
+            dateRange,
+            resetPlans,
+            weekForward,
+            weekBack,
             addPlannedVehicle,
             removePlannedVehicle,
             removePlannedRoute,
@@ -195,7 +251,7 @@ export const MonthlyPlansProvider = ({ children }: { children: ReactNode }): JSX
             loading,
             error,
         }),
-        [plans, loading, error]
+        [plans, dateRange, loading, error]
     );
 
     return (

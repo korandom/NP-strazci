@@ -6,7 +6,8 @@ import useDistrict from "../../DataProviders/DistrictDataProvider";
 const RouteItem: React.FC<{ route: Route }> = ({ route }): JSX.Element => {
     const [isEdited, setIsEdited] = useState(false);
     const { changeRoute, removeRoute } = useDistrict();
-    const priorities = ["Nízká", "Střední", "Vysoká"];
+    const priorities = ["Měsíční", "Čtrtnáctidenní", "Týdenní", "Denní"];
+
 
     const scratchChanges = () => {
         setIsEdited(false);

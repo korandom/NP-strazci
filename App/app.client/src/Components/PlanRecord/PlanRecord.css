@@ -42,14 +42,18 @@
 }
 
 .priority-0 {
-    background-color: #ffecb8;
+    background-color: #959292;
 }
 
 .priority-1 {
-    background-color: #f7c297;
+    background-color: #ffecb8;
 }
 
 .priority-2 {
+    background-color: #f7c297;
+}
+
+.priority-3 {
     background-color: #f6a6b2;
 }
 

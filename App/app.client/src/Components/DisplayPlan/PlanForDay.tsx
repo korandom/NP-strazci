@@ -7,8 +7,16 @@ interface PlanForDayProps {
     recordsData: Plan[];
 }
 
-// Zobrazení plánu strážců na určitý den
-const PlanForDay: React.FC<PlanForDayProps> = ({ recordsData }) => {
+/**
+ * A React functional component that displays the plans given in props.
+ * 
+ * Plans are rendered using PlanRecord components.
+ * 
+ * @component
+ * @param {PlanForDayProps} props - The props for the PlanForDay component, containing plans.
+ * @returns {JSX.Element} A rendered list of PlanRecord components.
+ */
+const PlanForDay: React.FC<PlanForDayProps> = ({ recordsData }): JSX.Element => {
     return (
         <div className="plan-for-day">
             <div className="records">

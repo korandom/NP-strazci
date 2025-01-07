@@ -1,7 +1,10 @@
-.planner-container{
+.planner-container {
     padding: 1em;
     max-width: 100%;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .month-picker{
@@ -33,7 +36,6 @@
 
 .plan{
     height: 100%;
-    width: 100%;
     min-width: 50px;
 }
 

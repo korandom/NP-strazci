@@ -9,7 +9,7 @@ interface RouteFormProps {
 
 const RouteForm: React.FC<RouteFormProps> = ({ initialRoute, onSave, onCancel }): JSX.Element => {
     const [editedRoute, setEditedRoute] = useState(initialRoute);
-    const priorities = ["Nízká", "Střední", "Vysoká"];
+    const priorities = ["Měsíční", "Čtrtnáctidenní", "Týdenní", "Denní"];
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;

@@ -1,65 +1,79 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import UseAuth from '../Components/Authentication/AuthProvider';
 import PlanRecord from '../Components/PlanRecord/PlanRecord'
 import RangerCell from '../Components/Planner/RangerCell';
 import './Style/Planner.css'; 
 import useDistrict from '../Components/DataProviders/DistrictDataProvider';
 import usePlans from '../Components/DataProviders/PlanDataProvider';
+import { formatDate } from '../Util/DateUtil';
 
-const Planner: React.FC = () => {
-    const { hasRole, user } = UseAuth();
-    const { rangers, locks, addLock, removeLock } = useDistrict();
-    const { plans, month, monthRange, resetToCurrentMonth, changeMonth, error } = usePlans();
 
-    const nameOfDays: string[] = ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"];
+
+/**
+ *  A React functional component, that displays the page Plans.
+ * 
+ *  This component allows an authorized user to view plans for the current time period and district.
+ *  The user can change the time period viewed.
+ *  On a mobile screen, plans are shown per day and changing days is possible.
+ *  Otherwise a 14 day period is viewed and paging +/- a week is possible.
+ *  User authorized as head of district can generate new plans and manually manage them.
+ * 
+ */
+
+const Planner: React.FC = () : JSX.Element=> {
+    const { hasRole} = UseAuth();
+    const { rangers } = useDistrict();
+    const { plans, dateRange,resetPlans, error, loading, weekBack, weekForward } = usePlans();
+    const [daily, setDaily] = useState<boolean>();
+    const [isMobile, setIsMobile] = useState<boolean>();
+
+    
+
+    const nameOfDaysCZ: string[] = ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"];
 
     useEffect(() => {
-        resetToCurrentMonth();
+        resetPlans();
     }, []);
 
-    const pickMonth = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedMonth = event.target.value;
-        changeMonth(selectedMonth);
+    const isMobileCheck = (): boolean => {
+        return window.matchMedia('(max-width: 560px)').matches;
     };
 
-    const generateDateRange = (start: string, end: string): Date[] => {
-        const endDate = new Date(end);
+    const generateDateRange = (start: Date, end: Date): Date[] => {
         const dateArray = [];
-        for (let date = new Date(start); date <= endDate; date.setDate(date.getDate() + 1)) {
+        for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
             dateArray.push(new Date(date));
         }
         return dateArray;
     };
 
     const dateArray = useMemo(() => {
-        return monthRange.startDate && monthRange.endDate ? generateDateRange(monthRange.startDate, monthRange.endDate) : [];
-    }, [monthRange]);
+        return dateRange.start && dateRange.end ? generateDateRange(dateRange.start, dateRange.end) : [];
+    }, [dateRange]);
 
-    const formatDate = (date: Date): string => {
-        return date.toISOString().split('T')[0];
-    };
-
-    const generateLocksArray = (): boolean[] => {
-        const locksArray = dateArray.map((date) => { return date < new Date || locks.some(l => l.date == formatDate(date)) });
-        return locksArray;
-    };
-
-    const isLockedArray = useMemo(() => {
-        return generateLocksArray()
-    }, [locks, dateArray]);
 
     return (
         <>
-            {error ? (
+            {error &&(
                 <div className="error">
                     {error.message}
                 </div>
-            ) : (
+            )}
+
+            {loading && (
+                <div className="loading-over">
+                   <div className="loading-text">Loading...</div>
+                </div>
+            )}
+
+            {!loading && (
 
                 <div className="planner-container">
-                    <div className="month-picker">
-                        <label htmlFor="monthPicker">Vyberte Měsíc: </label>
-                        <input id="monthPicker" aria-label="Měsíc" type="month" value={month} onChange={pickMonth} lang="cs" />
+                    <button></button>
+                    <div className="range-control">
+                        <button onClick={weekBack}>Předešlý</button>
+
+                        <button onClick={weekForward}>Další</button>
                     </div>
                     <div className="table-container">
                         {dateArray.length > 0 && (
@@ -71,17 +85,8 @@ const Planner: React.FC = () => {
                                             const Weekend = date.getDay() == 0 || date.getDay() == 6;
                                             return (
                                                 <th className={Weekend ? "weekend date-header" : "date-header"} key={index}>
-                                                    {hasRole("HeadOfDistrict") && (date > new Date) &&
-                                                        <div className="lock" >
-                                                            { isLockedArray[index] ?
-                                                                <button onClick={() => removeLock(formatDate(date))}>🔒</button>
-                                                             :
-                                                                <button onClick={() => addLock(formatDate(date))}>🔓</button>
-                                                            }
-                                                        </div>
-                                                    }
                                                     <div>
-                                                        {nameOfDays[date.getDay()]}
+                                                        {nameOfDaysCZ[date.getDay()]}
                                                     </div>
                                                     <div>
                                                         {date.getDate()}.{(date.getMonth() + 1)}.
@@ -95,7 +100,6 @@ const Planner: React.FC = () => {
                                     {rangers?.map(ranger => {
 
                                         const isheadOfDistrict = hasRole("HeadOfDistrict");
-                                        const isOwner = user?.rangerId == ranger.id;
 
                                         return (
                                             <tr key={ranger.id}>
@@ -112,7 +116,7 @@ const Planner: React.FC = () => {
                                                         <td className={Weekend ? "weekend plan" : "plan"} key={index}>
                                                             <PlanRecord
                                                                 plan={plan ? plan : { date: stringDate, ranger: ranger, routeIds: [], vehicleIds: [] }}
-                                                                isEditable={isheadOfDistrict||(isOwner && !isLockedArray[index])}
+                                                                isEditable={isheadOfDistrict}
                                                                 includeRangerName={false}
                                                             />
                                                         </td>
