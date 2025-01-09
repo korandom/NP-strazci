@@ -1,10 +1,10 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import './PlanRecord.css';
-import { Plan } from '../../Services/PlanService';
-import useDistrict from '../DataProviders/DistrictDataProvider';
-import useAuth from '../Authentication/AuthProvider';
-import usePlans from '../DataProviders/PlanDataProvider';
+import { Plan } from '../../../Services/PlanService';
+import useDistrict from '../../DataProviders/DistrictDataProvider';
+import useAuth from '../../Authentication/AuthProvider';
+import usePlans from '../../DataProviders/PlanDataProvider';
 
 // Konkrétní záznam plánu jednoho strážce, bez detailů
 const PlanRecord: React.FC<{ plan: Plan, includeRangerName: boolean, isEditable: boolean }> = ({ plan, includeRangerName, isEditable }) => {

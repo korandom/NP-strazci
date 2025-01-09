@@ -1,17 +1,18 @@
-.home-container {
+.daily-container {
     padding: 1em;
+    width: 100%;
 }
 
-.home-container .plan-for-day {
+.daily-container .plan-for-day {
     width: -webkit-fill-available;
 }
 
-.home-container::after {
+.daily-container::after {
     content: "";
     display: table;
     clear: both;
 }
-.home-container .calendar {
+.daily-container .calendar {
     float: right;
     display: flex;
     flex-wrap: wrap;
@@ -24,19 +25,19 @@
 }
 
 @media screen and (max-width: 560px) {
-    .home-container .plan-for-day,
-    .home-container .calendar {
+    .daily-container .plan-for-day,
+    .daily-container .calendar {
         float: none;
         max-width: 100%;
     }
 
-    .home-container .calendar {
+    .daily-container .calendar {
         justify-content: center;
 
     }
 }
 @media screen and (min-width: 1440px) {
-    .home-container{
+    .daily-container{
         padding-left: 10%;
         padding-right: 10%;
     }

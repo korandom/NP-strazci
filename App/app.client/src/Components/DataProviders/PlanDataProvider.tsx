@@ -12,6 +12,7 @@ interface PlanContextType {
     resetPlans: () => void,
     weekForward: () => void,
     weekBack: () => void,
+    changeDateOfPlans: (date:Date) => void,
     addPlannedVehicle: (date: string, rangerId: number, vehicleId: number) => void,
     removePlannedVehicle: (date: string, rangerId: number, vehicleId: number) => void,
     addPlannedRoute: (date: string, rangerId: number, routeId: number) => void,
@@ -96,12 +97,16 @@ export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Elemen
 
     // reset plans, fetch new plans only if user is authorized
     const resetPlans = () => {
+        changeDateOfPlans(new Date());
+    };
+
+    const changeDateOfPlans = (date: Date) => {
         if (!user) {
             setPlans([]);
         }
         else {
             setLoading(true);
-            const range = calculateTwoWeeksRange(new Date());
+            const range = calculateTwoWeeksRange(date);
             setDateRange(range);
             initializePlans(range.start, range.end);
             setLoading(false);
@@ -244,6 +249,7 @@ export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Elemen
             resetPlans,
             weekForward,
             weekBack,
+            changeDateOfPlans,
             addPlannedVehicle,
             removePlannedVehicle,
             removePlannedRoute,

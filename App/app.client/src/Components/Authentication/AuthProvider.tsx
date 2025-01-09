@@ -76,10 +76,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     }
 
     function hasRole(role: string): boolean {
-        if (user?.role == role) {
-            return true;
-        }
-        else return false;
+        return user?.role == role;
+        
     }
 
     const memoValue = useMemo(

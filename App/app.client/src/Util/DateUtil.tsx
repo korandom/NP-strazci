@@ -1,3 +1,7 @@
+/**
+ *  Abbr. of days of week in czech.
+ */
+export const nameOfDaysCZ: string[] = ["Ne", "Po", "Út", "St", "Èt", "Pá", "So"];
 
 /**
  * Function to format date to YYYY-MM-DD string.
@@ -40,3 +44,17 @@ export const getShiftedDate = (date: Date, shift: number): Date => {
     newDate.setDate(date.getDate() + shift);
     return newDate;
 }
+
+/**
+ * Generates an array of consecutive dates, from start to end, inclusive.
+ * @param start first date in array
+ * @param end last date in array
+ * @returns An array of dates 
+ */
+export const generateDateRange = (start: Date, end: Date): Date[] => {
+    const dateArray = [];
+    for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
+        dateArray.push(new Date(date));
+    }
+    return dateArray;
+};
