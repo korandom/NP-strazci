@@ -6,6 +6,14 @@ import { formatDate, generateDateRange, nameOfDaysCZ } from "../../../Util/DateU
 import RangerCell from "../RangerCell";
 import PlanRecord from "../PlanRecord/PlanRecord";
 
+
+/**
+ *  A React functional component, that displays a table of all plans within active range for all rangers in current district.
+ * 
+ *  This component uses RangerCell components to display ranger headers and PlanRecord Components to display plans.
+ *  User with a HeadOfDistrict Role can make edits to the via the PlanRecord components.
+ * 
+ */
 const PlanTable: React.FC = () : JSX.Element => {
     const { hasRole } = useAuth();
     const { rangers } = useDistrict();
@@ -26,10 +34,10 @@ const PlanTable: React.FC = () : JSX.Element => {
                                 const Weekend = date.getDay() == 0 || date.getDay() == 6;
                                 return (
                                     <th className={Weekend ? "weekend date-header" : "date-header"} key={index}>
-                                        <div>
+                                        <div className="dayOfWeek">
                                             {nameOfDaysCZ[date.getDay()]}
                                         </div>
-                                        <div>
+                                        <div className="date">
                                             {date.getDate()}.{(date.getMonth() + 1)}.
                                         </div>
                                     </th>

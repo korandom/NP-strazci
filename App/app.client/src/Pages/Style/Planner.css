@@ -7,9 +7,11 @@
     align-items: center;
 }
 
-.month-picker{
-    align-self:center;
+.date-picker {
+    display: flex;
+    justify-content: center;
 }
+
 .date-header {
     background-color: #f2f2f2;
 }
@@ -30,7 +32,7 @@
     z-index: 2;
 }
 
-.weekend {
+th.weekend, td.weekend {
     background-color: #ECFFE9;
 }
 
@@ -38,4 +40,68 @@
     height: 100%;
     min-width: 50px;
 }
+
+
+.date-picker {
+    display: flex;
+    padding-bottom: 0.5em;
+    max-width: 550px;
+    width: 100%;
+    justify-content: space-between;
+}
+
+    .date-pick-element.weekend > * {
+        color: #646464;
+        background-color: transparent;
+    }
+
+    .date-pick-element > .date {
+        font-size: larger;
+        border-radius: 50%;
+        align-content: center;
+        width: 33px;
+        height: 30px;
+        border: 1px solid transparent;
+        background-color: transparent;
+    }
+
+    .date-pick-element > .current-date {
+    background-color: black;
+    color: white;
+    border-radius: 50%;
+    }
+
+    .date-pick-element.weekend > .current-date {
+        background-color: #646464;
+    }
+
+    .today {
+        color: #f02c2c;
+    }
+
+    .today.current-date {
+        background-color: #f02c2c;
+        color: white;
+    }
+
+    .date-pick-element >  .dayOfWeek {
+        text-align: center;
+        margin-bottom: 0.3em;
+        font-size: small;
+        font-weight: 650;
+    }
+
+.range-movement {
+    display: flex;
+    padding-bottom: 0.5em;
+    width: 100%;
+    max-width: 550px;
+    justify-content: space-between;
+}
+
+    .range-movement > *{
+        font-size: large;
+        background-color: transparent;
+    }
+
 

@@ -8,7 +8,6 @@ import usePlans from '../../DataProviders/PlanDataProvider';
  * 
  * Plans are rendered using PlanRecord components.
  * 
- * @component
  * @param date - Date of plans.
  * @returns {JSX.Element} A rendered list of PlanRecord components.
  */

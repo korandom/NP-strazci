@@ -1,44 +1,20 @@
 .daily-container {
     padding: 1em;
     width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .daily-container .plan-for-day {
     width: -webkit-fill-available;
 }
 
-.daily-container::after {
-    content: "";
-    display: table;
-    clear: both;
-}
-.daily-container .calendar {
-    float: right;
-    display: flex;
-    flex-wrap: wrap;
-    min-width: 240px;
-    max-width: 35%;
-}
-.calendar .react-calendar{
-    width:auto;
-    max-width:350px;
-}
-
-@media screen and (max-width: 560px) {
-    .daily-container .plan-for-day,
-    .daily-container .calendar {
-        float: none;
-        max-width: 100%;
-    }
-
-    .daily-container .calendar {
-        justify-content: center;
-
-    }
-}
 @media screen and (min-width: 1440px) {
     .daily-container{
         padding-left: 10%;
         padding-right: 10%;
     }
 }
+ 

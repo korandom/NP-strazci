@@ -1,7 +1,7 @@
 /**
  *  Abbr. of days of week in czech.
  */
-export const nameOfDaysCZ: string[] = ["Ne", "Po", "Út", "St", "Èt", "Pá", "So"];
+export const nameOfDaysCZ: string[] = ["Ne", "Po", "Ãšt", "St", "ÄŒt", "PÃ¡", "So"];
 
 /**
  * Function to format date to YYYY-MM-DD string.

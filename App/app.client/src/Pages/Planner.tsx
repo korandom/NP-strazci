@@ -19,7 +19,7 @@ import DailyPlanner from '../Components/Planner/DailyPlanner/DailyPlanner';
  */
 
 const Planner: React.FC = () : JSX.Element=> {
-    const { resetPlans, error, loading, weekBack, weekForward } = usePlans();
+    const { resetPlans, error, weekBack, weekForward } = usePlans();
     const isMobile = useMediaQuery('(max-width: 560px)');
     const [showFortnight, setShowFortnight] = useState<boolean>(()=> isMobile ? false : true)
 
@@ -34,7 +34,6 @@ const Planner: React.FC = () : JSX.Element=> {
         else setShowFortnight(!showFortnight);
     };
 
-
     return (
         <>
             {error &&(
@@ -43,36 +42,31 @@ const Planner: React.FC = () : JSX.Element=> {
                 </div>
             )}
 
-            {loading && (
-                <div className="loading-over">
-                   <div className="loading-text">Loading...</div>
-                </div>
-            )}
 
-            {!loading && (
-
-                <div className="planner-container">
-                    {!isMobile &&
+            <div className="planner-container">
+                {isMobile ? (
+                    <DailyPlanner />
+                ) : (
+                    <>
                         <button onClick={toggleDaily}>
                             {!showFortnight ? "Zobrazit 14ti denní plán" : "Zobrazit detail dne"}
                         </button>
-                    }
+                        { showFortnight ? (
+                            <>
+                                <div className="range-control">
+                                    <button onClick={weekBack}>Předešlý</button>
+                                    <button onClick={weekForward}>Další</button>
+                                </div>
 
-                    {(!isMobile && showFortnight) ? (
-                        <>
-                            <div className="range-control">
-                                <button onClick={weekBack}>Předešlý</button>
-                                <button onClick={weekForward}>Další</button>
-                            </div>
-
-                            <PlanTable/>
-                        </>
-                    ) : (
-                        <DailyPlanner/>
-                    )}
+                                <PlanTable />
+                            </>
+                        ) : (
+                            <DailyPlanner />
+                        )}
+                    </>
+                )}
               
-                </div>
-            )}
+            </div>
         </>
     );
 }
