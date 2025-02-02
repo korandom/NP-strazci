@@ -68,6 +68,10 @@ export default defineConfig({
                 target,
                 secure: false
             },
+            '^/api/Lock': {
+                target,
+                secure: false
+            },
             '^/districtHub': {
                 target : hubTarget,
                 secure: false,

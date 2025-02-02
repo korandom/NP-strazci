@@ -1,18 +1,20 @@
 import { createContext, useContext, ReactNode, useState, useMemo, useEffect } from 'react';
-import {  Plan, addRoute, addVehicle, fetchPlansByDateRange, removeRoute, removeVehicle } from '../../Services/PlanService';
+import {  Plan, addRoute, addVehicle, removeRoute, removeVehicle } from '../../Services/PlanService';
 import useDistrict from './DistrictDataProvider';
 import useAuth from '../Authentication/AuthProvider';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { calculateTwoWeeksRange, formatDate, getShiftedDate } from '../../Util/DateUtil';
+import { RangerSchedule, fetchRangerSchedulesByDateRange } from '../../Services/RangerScheduleService';
+import { ReasonOfAbsence } from '../../Services/AttendenceService';
 
 
-interface PlanContextType {
-    plans: Plan[],
+interface ScheduleContextType {
+    schedules: RangerSchedule[],
     dateRange: { start: Date, end: Date },
-    resetPlans: () => void,
+    resetSchedules: () => void,
     weekForward: () => void,
     weekBack: () => void,
-    changeDateOfPlans: (date:Date) => void,
+    changeDate: (date:Date) => void,
     addPlannedVehicle: (date: string, rangerId: number, vehicleId: number) => void,
     removePlannedVehicle: (date: string, rangerId: number, vehicleId: number) => void,
     addPlannedRoute: (date: string, rangerId: number, routeId: number) => void,
@@ -22,26 +24,26 @@ interface PlanContextType {
     error: any,
 }
 
-const PlanContext = createContext<PlanContextType>({} as PlanContextType);
+const ScheduleContext = createContext<ScheduleContextType>({} as ScheduleContextType);
 
 /**
- * PlansProvider manages the state and logic for plans in the application in a centralized way.
- * It provides the context for making changes to plans and fetching plans for viewing. 
- * It receives updates of plans via HubConnection.
+ * SchedulesProvider manages the state and logic for ranger Schedules in the application in a centralized way.
+ * It provides the context for making changes to plans and attendences and  fetching ranger schedules for viewing. 
+ * It receives updates of plans and attendences via HubConnection.
  *
- * @param children - The child components that will have access to the plans context.
+ * @param children - The child components that will have access to the schedule context.
  * @returns A JSX.Element that provides the context to its children.
  * 
- * Automatically fetches new plans when the district or user changes.
- * Manages weekly navigation (forward/backward) and resets of plans.
- * Supports operations for adding/removing vehicles and routes from plans.
+ * Automatically fetches new schedules when the district or user changes.
+ * Manages weekly navigation (forward/backward) and resets of schedules.
+ * Supports operations for adding/removing vehicles and routes from schedules.
  */
-export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Element => {
+export const SchedulesProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     const { district } = useDistrict();
     const { user } = useAuth();
-    const [plans, setPlans] = useState<Plan[]>([]);
-    const [week1Plans, setWeek1Plans] = useState<Plan[]>([]);
-    const [week2Plans, setWeek2Plans] = useState<Plan[]>([]);
+    const [schedules, setSchedules] = useState<RangerSchedule[]>([]);
+    const [firstWeek, setFirstWeek] = useState<RangerSchedule[]>([]);
+    const [SecondWeek, setSecondWeek] = useState<RangerSchedule[]>([]);
     const [dateRange, setDateRange] = useState<{ start: Date, end: Date }>(calculateTwoWeeksRange(new Date()));
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<any>();
@@ -56,7 +58,7 @@ export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Elemen
                 .build();
 
             connection.on('PlanUpdated', (plan: Plan) => {
-                setPlans(prevPlans => updatePlans(prevPlans, plan));
+                setSchedules(prevPlans => updatePlanInSchedule(prevPlans, plan));
             });
 
             await connection.start()
@@ -79,55 +81,55 @@ export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Elemen
         };
     }, [district]);
 
-    // fetch plans by date range 
-    const fetchPlans = (start: Date, end: Date) : Promise<Plan[]> => {
+    // fetch schedules by date range 
+    const fetchSchedules = (start: Date, end: Date) : Promise<RangerSchedule[]> => {
         if (!district) {
-            throw new Error("Není vybrán žádný obvod.");
+            throw new Error("NenÃ­ vybrÃ¡n Å¾Ã¡dnÃ½ obvod.");
         }
         const startDate = formatDate(start);
         const endDate = formatDate(end);
-        const fetchedPlans = fetchPlansByDateRange(district.id, startDate, endDate);
-        return fetchedPlans;
+        const fetchedSchedules = fetchRangerSchedulesByDateRange(district.id, startDate, endDate);
+        return fetchedSchedules;
     };
 
-    // reset plans when district or user changes
+    // reset schedules when district or user changes
     useEffect(() => {
-        resetPlans();
+        resetSchedules();
     }, [district, user]);
 
-    // reset plans, fetch new plans only if user is authorized
-    const resetPlans = () => {
-        changeDateOfPlans(new Date());
+    // reset schedules, fetch new schedules only if user is authorized
+    const resetSchedules = () => {
+        changeDate(new Date());
     };
 
-    const changeDateOfPlans = (date: Date) => {
+    const changeDate= (date: Date) => {
         if (!user) {
-            setPlans([]);
+            setSchedules([]);
         }
         else {
             setLoading(true);
             const range = calculateTwoWeeksRange(date);
             setDateRange(range);
-            initializePlans(range.start, range.end);
+            initializeSchedules(range.start, range.end);
             setLoading(false);
         }
     };
 
-    // fetches and sets new plans according to the range
+    // fetches and sets new schedules according to the range
     // start must be monday of one week, end is sunday of second week
-    const initializePlans = async (start: Date, end: Date) => {
+    const initializeSchedules = async (start: Date, end: Date) => {
         try {
             const endFirstWeek = getShiftedDate(start, 6);
             const startSecondWeek = getShiftedDate(end, -6);
 
-            const [firstWeekPlans, secondWeekPlans] = await Promise.all([
-                fetchPlans(start, endFirstWeek),
-                fetchPlans(startSecondWeek, end),
+            const [firstWeekSchedules, secondWeekSchedules] = await Promise.all([
+                fetchSchedules(start, endFirstWeek),
+                fetchSchedules(startSecondWeek, end),
             ]);
 
-            setWeek1Plans(firstWeekPlans);
-            setWeek2Plans(secondWeekPlans);
-            setPlans([...firstWeekPlans, ...secondWeekPlans]);
+            setFirstWeek(firstWeekSchedules);
+            setSecondWeek(secondWeekSchedules);
+            setSchedules([...firstWeekSchedules, ...secondWeekSchedules]);
             setError(null);
         }
         catch (err: any) {
@@ -135,18 +137,18 @@ export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Elemen
         }
     }
 
-    // move plans range a week forward and update plans
+    // move schedules range a week forward and update schedules
     const weekForward = async () => {
         try {
             setLoading(true);
 
             const nextWeekStart = getShiftedDate(dateRange.end, 1);
             const nextWeekEnd = getShiftedDate(dateRange.end, 7);
-            const newSecondWeekPlans = await fetchPlans(nextWeekStart, nextWeekEnd);
+            const newSecondWeekSchedules = await fetchSchedules(nextWeekStart, nextWeekEnd);
 
-            setWeek1Plans(week2Plans);
-            setWeek2Plans(newSecondWeekPlans);
-            setPlans([...week2Plans, ...newSecondWeekPlans]);
+            setFirstWeek(SecondWeek);
+            setSecondWeek(newSecondWeekSchedules);
+            setSchedules([...SecondWeek, ...newSecondWeekSchedules]);
             setDateRange({start: getShiftedDate(nextWeekStart, -7),end: nextWeekEnd})
             setError(null);
         }
@@ -158,18 +160,18 @@ export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Elemen
         }
     }
 
-    // move plans range a week back and update plans
+    // move schedules range a week back and update schedules
     const weekBack = async() => {
         try {
             setLoading(true);
 
             const previousWeekStart = getShiftedDate(dateRange.start, -7);
             const previousWeekEnd = getShiftedDate(dateRange.start, -1);
-            const newFirstWeekPlans = await fetchPlans(previousWeekStart, previousWeekEnd);
+            const newFirstWeekSchedules = await fetchSchedules(previousWeekStart, previousWeekEnd);
 
-            setWeek1Plans(newFirstWeekPlans);
-            setWeek2Plans(week1Plans);
-            setPlans([...newFirstWeekPlans, ...week1Plans]);
+            setFirstWeek(newFirstWeekSchedules);
+            setSecondWeek(firstWeek);
+            setSchedules([...newFirstWeekSchedules, ...firstWeek]);
             setDateRange({ start: previousWeekStart, end: getShiftedDate(previousWeekEnd, 7) })
             setError(null);
         }
@@ -181,18 +183,19 @@ export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Elemen
         }
     }
 
-    // updates or adds a singular plan into an array and returns the updated array
-    const updatePlans = (prevPlans: Plan[], updatedPlan: Plan): Plan[] => {
-        const planIndex = prevPlans.findIndex(plan => plan.date === updatedPlan.date && plan.ranger.id === updatedPlan.ranger.id);
+    // when plan updates - it is updated in the schedule
+    const updatePlanInSchedule = (prevSchedules: RangerSchedule[], updatedPlan: Plan): RangerSchedule[] => {
+        const planIndex = prevSchedules.findIndex(plan => plan.date === updatedPlan.date && plan.ranger.id === updatedPlan.ranger.id);
 
         if (planIndex !== -1) {
-            // update existing plan
-            const updatedPlans = [...prevPlans];
-            updatedPlans[planIndex] = updatedPlan;
-            return updatedPlans;
+            // plan already exists - it ideally should even if empty
+            const updatedSchedules = [...prevSchedules];
+            updatedSchedules[planIndex].routeIds = updatedPlan.routeIds;
+            updatedSchedules[planIndex].vehicleIds = updatedPlan.vehicleIds;
+            return updatedSchedules;
         } else {
-            // add new plan
-            return [...prevPlans, updatedPlan];
+            // add new schedule
+            return [...prevSchedules, { date: updatedPlan.date, ranger: updatedPlan.ranger, routeIds: updatedPlan.routeIds, vehicleIds: updatedPlan.vehicleIds, reasonOfAbsence: ReasonOfAbsence.None, working: true, from: "" }];
         }
     };
 
@@ -200,7 +203,7 @@ export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Elemen
     const addPlannedVehicle = async (date: string, rangerId: number, vehicleId: number) => {
         try {
             var updatedPlan = await addVehicle(date, rangerId, vehicleId);
-            setPlans(prevPlans =>  updatePlans(prevPlans, updatedPlan));
+            setSchedules(prevSchedules =>  updatePlanInSchedule(prevSchedules, updatedPlan));
             hubConnection?.invoke("UpdatePlan", district?.id, updatedPlan);
         }
         catch (error) {
@@ -211,7 +214,7 @@ export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Elemen
     const removePlannedVehicle = async (date: string, rangerId: number, vehicleId: number) => {
         try {
             var updatedPlan = await removeVehicle(date, rangerId, vehicleId);
-            setPlans(prevPlans => updatePlans(prevPlans, updatedPlan));
+            setSchedules(prevPlans => updatePlanInSchedule(prevPlans, updatedPlan));
             hubConnection?.invoke("UpdatePlan", district?.id, updatedPlan);
         }
         catch (error) {
@@ -222,7 +225,7 @@ export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Elemen
     const addPlannedRoute = async (date: string, rangerId: number, routeId: number) => {
         try {
             var updatedPlan = await addRoute(date, rangerId, routeId);
-            setPlans(prevPlans => updatePlans(prevPlans, updatedPlan));
+            setSchedules(prevPlans => updatePlanInSchedule(prevPlans, updatedPlan));
             hubConnection?.invoke("UpdatePlan", district?.id, updatedPlan);
         }
         catch (error) {
@@ -233,7 +236,7 @@ export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Elemen
     const removePlannedRoute = async (date: string, rangerId: number, routeId: number) => {
         try {
             var updatedPlan = await removeRoute(date, rangerId, routeId);
-            setPlans(prevPlans => updatePlans(prevPlans, updatedPlan));
+            setSchedules(prevPlans => updatePlanInSchedule(prevPlans, updatedPlan));
             hubConnection?.invoke("UpdatePlan", district?.id, updatedPlan);
         }
         catch (error) {
@@ -244,12 +247,12 @@ export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Elemen
 
     const memoValue = useMemo(
         () => ({
-            plans,
+            schedules,
             dateRange,
-            resetPlans,
+            resetSchedules,
             weekForward,
             weekBack,
-            changeDateOfPlans,
+            changeDate,
             addPlannedVehicle,
             removePlannedVehicle,
             removePlannedRoute,
@@ -257,16 +260,16 @@ export const PlansProvider = ({ children }: { children: ReactNode }): JSX.Elemen
             loading,
             error,
         }),
-        [plans, dateRange, loading, error]
+        [schedules, dateRange, loading, error]
     );
 
     return (
-        <PlanContext.Provider value={memoValue}>
+        <ScheduleContext.Provider value={memoValue}>
             {children}
-        </PlanContext.Provider>
+        </ScheduleContext.Provider>
     );
 };
 
 export default function usePlans() {
-    return useContext(PlanContext);
+    return useContext(ScheduleContext);
 }

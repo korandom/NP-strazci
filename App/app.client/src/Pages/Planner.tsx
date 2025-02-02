@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Style/Planner.css'; 
-import usePlans from '../Components/DataProviders/PlanDataProvider';
+import usePlans from '../Components/DataProviders/ScheduleDataProvider';
 import { useMediaQuery } from '../Util/Hooks';
 import PlanTable from '../Components/Planner/PlanTable/PlanTable';
 import DailyPlanner from '../Components/Planner/DailyPlanner/DailyPlanner';
@@ -19,12 +19,12 @@ import DailyPlanner from '../Components/Planner/DailyPlanner/DailyPlanner';
  */
 
 const Planner: React.FC = () : JSX.Element=> {
-    const { resetPlans, error, weekBack, weekForward } = usePlans();
+    const { resetSchedules, error, weekBack, weekForward } = usePlans();
     const isMobile = useMediaQuery('(max-width: 560px)');
     const [showFortnight, setShowFortnight] = useState<boolean>(()=> isMobile ? false : true)
 
     useEffect(() => {
-        resetPlans();
+        resetSchedules();
     }, []);
 
 

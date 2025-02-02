@@ -12,6 +12,7 @@ namespace App.Server.Repositories
         private GenericRepository<Ranger>? rangerRepository;
         private GenericRepository<Lock>? lockRepository;
         private PlanRepository? planRepository;
+        private AttendenceRepository? attendenceRepository;
 
         public GenericRepository<District> DistrictRepository
         {
@@ -64,6 +65,15 @@ namespace App.Server.Repositories
             {
                 this.planRepository ??= new PlanRepository(_context);
                 return planRepository;
+            }
+        }
+
+        public AttendenceRepository AttendenceRepository
+        {
+            get
+            {
+                this.attendenceRepository ??= new AttendenceRepository(_context);
+                return attendenceRepository;
             }
         }
         public async Task SaveAsync()

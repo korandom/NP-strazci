@@ -13,6 +13,8 @@ namespace App.Server.Models.AppData
         public DbSet<Route> Routes { get; set; }
         public DbSet<District> Districts { get; set; }
 
+        public DbSet<Attendence> Attendences { get; set; }
+
         public DbSet<Lock> Locks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

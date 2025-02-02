@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Server", "App.Server\App.Server.csproj", "{1F01AF0E-8DA5-40DD-BAAE-101F78574051}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Server", "App.Server\App.Server.csproj", "{1F01AF0E-8DA5-40DD-BAAE-101F78574051}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "app.client", "app.client\app.client.esproj", "{DD1EFDBD-6E82-4556-9CB6-261623730646}"
 EndProject

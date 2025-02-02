@@ -3,7 +3,7 @@ import { Vehicle, createVehicle, deleteVehicle, fetchVehiclesByDistrict, updateV
 import { Ranger, createRanger, deleteRanger, fetchRangersByDistrict, updateRanger} from '../../Services/RangerService';
 import { District, fetchDistrictById} from '../../Services/DistrictService';
 import { createContext, useContext, ReactNode, useState, useMemo } from 'react';
-import { Locked, fetchLocks, lockPlans, unlockPlans } from '../../Services/PlanService';
+import { Locked, fetchLocks, lockPlans, unlockPlans } from '../../Services/LockService';
 import { HubConnection, HubConnectionBuilder, LogLevel} from '@microsoft/signalr';
 
 interface DistrictContextType {

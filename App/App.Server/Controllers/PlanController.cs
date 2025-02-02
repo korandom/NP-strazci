@@ -6,10 +6,17 @@ using App.Server.Models.AppData;
 using Microsoft.AspNetCore.Authorization;
 using App.Server.Services.Authentication;
 using App.Server.Services.Authorization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace App.Server.Controllers
 {
+    /// <summary>
+    /// API controller for managing plans and locks on plans, adding routes, vehicles to plans, getting plans etc.
+    /// </summary>
+    /// <param name="unitOfWork">Injected Unit of Work, for accessing repositories.</param>
+    /// <param name="authenticationService">Injected authentication service</param>
+    /// <param name="authorizationService">Injected authorization service</param>
     [ApiController]
     [Route("api/[controller]")]
     public class PlanController(IUnitOfWork unitOfWork, IAppAuthenticationService authenticationService, IAppAuthorizationService authorizationService) : ControllerBase
@@ -18,6 +25,14 @@ namespace App.Server.Controllers
         private readonly IAppAuthenticationService _authenticationService = authenticationService;
         private readonly IAppAuthorizationService _authorizationService = authorizationService;
 
+        /// <summary>
+        /// Creates a new plan, is a private function.
+        /// Plan is created when a route/vehicle is added to a so far 'empty' plan.
+        /// </summary>
+        /// <param name="date">Date of plan</param>
+        /// <param name="rangerId">Id of a ranger, owner of the plan</param>
+        /// <returns>Created plan</returns>
+        /// <exception cref="InvalidOperationException">Ranger with rangerId does not exist.</exception>
         private async Task<Plan> Create(DateOnly date, int rangerId)
         {
             Ranger? ranger = await _unitOfWork.RangerRepository.GetById(rangerId)
@@ -30,21 +45,15 @@ namespace App.Server.Controllers
             return plan;
         }
 
-        /* NOT NEEDED SO FAR
-        [HttpGet("{date}/{rangerId}")]
-        public async Task<ActionResult<PlanDto>> GetById(DateOnly date, int rangerId)
-        {
-            var plan = await _unitOfWork.PlanRepository.GetById(date, rangerId);
-
-            if (plan == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(plan.ToDto());
-        }
-        */
-
+        /// <summary>
+        /// Adds route with routeId to a plan with date and rangerId. 
+        /// If such plan doesnt exist, creates a new plan.
+        /// Requires user authorization - user must be either owner of the plan, or head of district.
+        /// </summary>
+        /// <param name="date">Date of plan</param>
+        /// <param name="rangerId">Id of plan owner ranger</param>
+        /// <param name="routeId">Id of added route</param>
+        /// <returns>Status Code 200 Ok, if succesful, else 400 Bad Request</returns>
         [Authorize(Roles = "Ranger,HeadOfDistrict")]
         [HttpPut("add-route/{date}/{rangerId}")]
         public async Task<IActionResult> AddRoute(DateOnly date, int rangerId, int routeId)
@@ -87,6 +96,15 @@ namespace App.Server.Controllers
             return Ok(plan.ToDto());
         }
 
+        /// <summary>
+        /// Removes route with routeId from a plan with date and rangerId.
+        /// Requires Authorization - user must be either owner of the plan or a head of district.
+        /// If after removing the route the plan is empty, it is deleted from the database.
+        /// </summary>
+        /// <param name="date">Date of plan</param>
+        /// <param name="rangerId">Id of plan owner ranger</param>
+        /// <param name="routeId">Id of route being removed</param>
+        /// <returns>Status Code 200 Ok, if succesful, else 400 Bad Request</returns>
         [Authorize(Roles = "Ranger,HeadOfDistrict")]
         [HttpPut("remove-route/{date}/{rangerId}")]
         public async Task<IActionResult> RemoveRoute(DateOnly date, int rangerId, int routeId)
@@ -104,7 +122,7 @@ namespace App.Server.Controllers
             var plan = await _unitOfWork.PlanRepository.GetById(date, rangerId);
 
             if (plan == null)
-                return NotFound("Plan not found.");
+                return BadRequest("Plan not found.");
 
             var route = await _unitOfWork.RouteRepository.GetById(routeId);
             if (route == null)
@@ -127,7 +145,15 @@ namespace App.Server.Controllers
             return Ok(plan.ToDto());
         }
 
-        // Add a vehicle to the plan
+        /// <summary>
+        /// Adds vehicle with vehicleId to a plan with date and rangerId. 
+        /// If such plan doesnt exist, creates a new plan.
+        /// Requires user authorization - user must be either owner of the plan, or head of district.
+        /// </summary>
+        /// <param name="date">Date of plan</param>
+        /// <param name="rangerId">Id of plan owner ranger</param>
+        /// <param name="vehicleId">Id of added vehicle</param>
+        /// <returns>Status Code 200 Ok, if succesful, else 400 Bad Request</returns>
         [Authorize(Roles = "HeadOfDistrict")]
         [HttpPut("add-vehicle/{date}/{rangerId}")]
         public async Task<IActionResult> AddVehicle(DateOnly date, int rangerId, int vehicleId)
@@ -162,7 +188,15 @@ namespace App.Server.Controllers
             return Ok(plan.ToDto());
         }
 
-        // Remove a vehicle from the plan
+        /// <summary>
+        /// Removes vehicle with vehicleId from a plan with date and rangerId.
+        /// Requires Authorization - user must be either owner of the plan or a head of district.
+        /// If after removing the vehicle the plan is empty, it is deleted from the database.
+        /// </summary>
+        /// <param name="date">Date of plan</param>
+        /// <param name="rangerId">Id of plan owner ranger</param>
+        /// <param name="vehicleId">Id of vehicle being removed</param>
+        /// <returns>Status Code 200 Ok, if succesful, else 400 Bad Request</returns>
         [Authorize(Roles = "HeadOfDistrict")]
         [HttpPut("remove-vehicle/{date}/{rangerId}")]
         public async Task<IActionResult> RemoveVehicle(DateOnly date, int rangerId, int vehicleId)
@@ -193,57 +227,17 @@ namespace App.Server.Controllers
             return Ok(plan.ToDto());
         }
 
-        
-        // Lock plans
-        [Authorize(Roles = "HeadOfDistrict")]
-        [HttpPost("lock/{districtId}/{date}")]
-        public async Task<IActionResult> LockPlans(DateOnly date, int districtId)
-        {
-            var district = await _unitOfWork.DistrictRepository.GetById(districtId);
-            if (district == null)
-            {
-                return BadRequest("District id not found");
-            }
-            Lock newLock = new()
-            {
-                Date = date,
-                DistrictId = districtId,
-                District = district
-            };
 
-            _unitOfWork.LockRepository.Add(newLock);
-            await _unitOfWork.SaveAsync();
-            return Ok("Plans succesfully locked.");
-        }
-        // Unlock plans
-        [Authorize(Roles = "HeadOfDistrict")]
-        [HttpDelete("unlock/{districtId}/{date}")]
-        public async Task<IActionResult> UnlockPlans(DateOnly date, int districtId)
-        {
-            var deleteLock = await _unitOfWork.LockRepository.Get(l=> l.Date == date && l.DistrictId == districtId);
-            if (deleteLock == null || !deleteLock.Any())
-            {
-                return BadRequest("Lock doesn't exist.");
-            }
-
-            _unitOfWork.LockRepository.Delete(deleteLock.First());
-            await _unitOfWork.SaveAsync();
-            return Ok("Succesfully unlocked plans.");
-        }
-
-        [Authorize()]
-        [HttpGet("locks/{districtId}")]
-        public async Task<ActionResult<IEnumerable<LockDto>>> GetLocks(int districtId)
-        {
-            var locks = await _unitOfWork.LockRepository.Get(l => l.DistrictId == districtId);
-            if (locks == null )
-            {
-                return BadRequest("Locks not found.");
-            }
-            return Ok(locks.Select(l=> new LockDto { Date=l.Date, DistrictId=l.DistrictId}));
-        }
-
-        // Get plans by date range
+        /// <summary>
+        /// Get plans by district and date range.
+        /// </summary>
+        /// <param name="districtId"> Id of the district.</param>
+        /// <param name="startDate">Start date of the range.</param>
+        /// <param name="endDate">End date of the range</param>
+        /// <returns>
+        /// A list of PlanDto representing the found plans in the given range and district.
+        /// Status Code 200 Ok, if succesful, else NotFound.     
+        /// </returns>
         [Authorize(Roles = "Ranger,HeadOfDistrict,Admin")]
         [HttpGet("by-dates/{districtId}/{startDate}/{endDate}")]
         public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDateRange(int districtId, DateOnly startDate, DateOnly endDate)
@@ -257,7 +251,14 @@ namespace App.Server.Controllers
             return Ok(planDtos);
         }
 
-        // get plans by date
+        /// <summary>
+        /// Get plans by date in district.
+        /// </summary>
+        /// <param name="districtId">Id of the district.</param>
+        /// <param name="date">Date of the plans.</param>
+        /// <returns>
+        /// A list of PlanDto representing the found plans in that date and district.
+        /// Status Code 200 Ok, if succesful.</returns>
         [Authorize(Roles = "Ranger,HeadOfDistrict,Admin")]
         [HttpGet("{districtId}/{date}")]
         public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDate(int districtId, DateOnly date)
@@ -266,6 +267,40 @@ namespace App.Server.Controllers
 
             var planDtos = plans.Select(plan => plan.ToDto()).ToList();
             return Ok(planDtos);
+        }
+
+        /// <summary>
+        /// Function that updates or creates multiple plans at once.
+        /// Useful for automatic generation of plans, to lessen the load of requests.
+        /// </summary>
+        /// <param name="plans">Updated plans</param>
+        /// <returns></returns>
+        [Authorize(Roles = "HeadOfDistrict")]
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdatePlans(IEnumerable<PlanDto> planDtos)
+        {
+            var updateTasks = planDtos.Select(UpdatePlan);
+            await Task.WhenAll(updateTasks);
+            await _unitOfWork.SaveAsync();
+            return Ok(); 
+        }
+
+        private async Task UpdatePlan(PlanDto planDto)
+        {
+            var plan = await _unitOfWork.PlanRepository.GetById(planDto.Date, planDto.Ranger.Id);
+
+            // if plan not yet created, try to create
+            if (plan == null) 
+            { 
+                plan = await Create(planDto.Date, planDto.Ranger.Id);
+            }
+
+            var routes = await _unitOfWork.RouteRepository.Get(r => planDto.RouteIds.Contains(r.Id));
+            plan.Routes = new List<Models.AppData.Route>(routes);
+
+            var vehicles = await _unitOfWork.VehicleRepository.Get(v => planDto.VehicleIds.Contains(v.Id));
+            plan.Vehicles = new List<Vehicle>(vehicles);
+            _unitOfWork.PlanRepository.Update(plan);
         }
     }
 }

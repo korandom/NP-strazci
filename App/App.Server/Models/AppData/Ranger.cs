@@ -11,6 +11,7 @@ namespace App.Server.Models.AppData
         public string LastName { get; set; }
         public string Email { get; set; }
         public ICollection<Plan> Plans { get; } = new List<Plan>();
+        public ICollection<Attendence> Attendences { get; } = new List<Attendence>();
         public District District { get; set; }
         public int DistrictId { get; set; }
     }

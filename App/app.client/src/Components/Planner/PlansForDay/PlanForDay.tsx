@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import './PlanForDay.css';
 import PlanRecord from '../PlanRecord/PlanRecord';
-import usePlans from '../../DataProviders/PlanDataProvider';
+import usePlans from '../../DataProviders/ScheduleDataProvider';
 
 /**
- * A React functional component that displays the plans for a given day.
+ * A React functional component that displays the schedule for a given day.
  * 
  * Plans are rendered using PlanRecord components.
  * 
@@ -12,12 +12,12 @@ import usePlans from '../../DataProviders/PlanDataProvider';
  * @returns {JSX.Element} A rendered list of PlanRecord components.
  */
 const PlansForDay: React.FC<{ date: Date }> = ({ date }) : JSX.Element => {
-    const { plans } = usePlans();
+    const { schedules } = usePlans();
 
     const dayPlans = useMemo(() => {
         const dateString = date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2, '0') + "-" + date.getDate().toString().padStart(2, '0');
-        return plans.filter(plan => plan.date === dateString);
-    }, [plans, date]);
+        return schedules.filter(plan => plan.date === dateString);
+    }, [schedules, date]);
 
     return (
         <div className="plan-for-day">

@@ -10,8 +10,8 @@ namespace App.Server.Models.AppData
         public int RangerId { get; set; }
         public Ranger Ranger { get; set; }
 
-        public ICollection<Route> Routes { get; } = new List<Route>();
-        public ICollection<Vehicle> Vehicles { get; } = new List<Vehicle>();
+        public ICollection<Route> Routes { get; set; } = new List<Route>();
+        public ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
 
         public Plan() { }
         public Plan(DateOnly date, Ranger ranger)

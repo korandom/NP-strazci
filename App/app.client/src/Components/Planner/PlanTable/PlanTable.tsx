@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import useAuth from "../../Authentication/AuthProvider";
 import useDistrict from "../../DataProviders/DistrictDataProvider";
-import usePlans from "../../DataProviders/PlanDataProvider";
+import usePlans from "../../DataProviders/ScheduleDataProvider";
 import { formatDate, generateDateRange, nameOfDaysCZ } from "../../../Util/DateUtil";
 import RangerCell from "../RangerCell";
 import PlanRecord from "../PlanRecord/PlanRecord";
@@ -17,7 +17,7 @@ import PlanRecord from "../PlanRecord/PlanRecord";
 const PlanTable: React.FC = () : JSX.Element => {
     const { hasRole } = useAuth();
     const { rangers } = useDistrict();
-    const { plans, dateRange } = usePlans();
+    const { schedules, dateRange } = usePlans();
 
     const dateArray = useMemo(() => {
         return dateRange.start && dateRange.end ? generateDateRange(dateRange.start, dateRange.end) : [];
@@ -59,12 +59,12 @@ const PlanTable: React.FC = () : JSX.Element => {
                                     {dateArray.map((date, index) => {
                                         const Weekend = date.getDay() == 0 || date.getDay() == 6;
                                         const stringDate = formatDate(date);
-                                        const plan = plans.find(p => (p.ranger.id === ranger.id && p.date === stringDate));
+                                        const schedule = schedules.find(p => (p.ranger.id === ranger.id && p.date === stringDate));
                                         return (
 
                                             <td className={Weekend ? "weekend plan" : "plan"} key={index}>
                                                 <PlanRecord
-                                                    plan={plan ? plan : { date: stringDate, ranger: ranger, routeIds: [], vehicleIds: [] }}
+                                                    plan={schedule ? schedule : { date: stringDate, ranger: ranger, routeIds: [], vehicleIds: [] }}
                                                     isEditable={isheadOfDistrict}
                                                     includeRangerName={false}
                                                 />

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import usePlans from '../../DataProviders/PlanDataProvider';
+import usePlans from '../../DataProviders/ScheduleDataProvider';
 import PlansForDay from '../PlansForDay/PlanForDay';
 import './DailyPlanner.css';
 import { generateDateRange, getShiftedDate, nameOfDaysCZ } from '../../../Util/DateUtil';

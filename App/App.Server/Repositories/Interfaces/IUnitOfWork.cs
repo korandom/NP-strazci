@@ -13,6 +13,8 @@ namespace App.Server.Repositories.Interfaces
         public GenericRepository<Ranger> RangerRepository { get; }
         public GenericRepository<Lock> LockRepository { get; }
         public PlanRepository PlanRepository { get; }
+
+        public AttendenceRepository AttendenceRepository { get; }
         public Task SaveAsync();
     }
 }
