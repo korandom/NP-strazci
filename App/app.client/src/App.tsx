@@ -8,7 +8,6 @@ import { AuthProvider } from './Components/Authentication/AuthProvider';
 import AuthRoute from './Components/Authentication/AuthRoutes';
 import { DistrictDataProvider } from './Components/DataProviders/DistrictDataProvider';
 import { SchedulesProvider } from './Components/DataProviders/ScheduleDataProvider';
-import Attendence from './Pages/Attendence';
 
 
 function App() {
@@ -21,7 +20,6 @@ function App() {
                             <Route path="/prihlasit" element={<Login />} />
                             <Route element={<AuthRoute />}>
                                 <Route element={<Menu />}>
-                                    <Route path="/dochazka" element={<Attendence/>} />
                                     <Route path="/" element={<Planner />} />
                                     <Route element={<AuthRoute roles={["Admin", "HeadOfDistrict"]} />}>
                                         <Route path="/sprava" element={<SourceManagement />} />

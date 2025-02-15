@@ -276,16 +276,29 @@ namespace App.Server.Controllers
         /// <param name="plans">Updated plans</param>
         /// <returns></returns>
         [Authorize(Roles = "HeadOfDistrict")]
-        [HttpPost("update")]
+        [HttpPost("updateAll")]
         public async Task<IActionResult> UpdatePlans(IEnumerable<PlanDto> planDtos)
         {
-            var updateTasks = planDtos.Select(UpdatePlan);
+            var updateTasks = planDtos.Select(UpdatePlanInternal);
             await Task.WhenAll(updateTasks);
             await _unitOfWork.SaveAsync();
             return Ok(); 
         }
+        /// <summary>
+        /// Creates a new plan or updates it if it already exists.
+        /// </summary>
+        /// <param name="planDto">Plan to be updated</param>
+        /// <returns></returns>
+        [Authorize(Roles = "HeadOfDistrict,Ranger")]
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdatePlan(PlanDto planDto)
+        {
 
-        private async Task UpdatePlan(PlanDto planDto)
+            await UpdatePlanInternal(planDto);
+            await _unitOfWork.SaveAsync();
+            return Ok();
+        }
+        private async Task UpdatePlanInternal(PlanDto planDto)
         {
             var plan = await _unitOfWork.PlanRepository.GetById(planDto.Date, planDto.Ranger.Id);
 

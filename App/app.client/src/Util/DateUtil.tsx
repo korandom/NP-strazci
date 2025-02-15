@@ -4,13 +4,24 @@
 export const nameOfDaysCZ: string[] = ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"];
 
 /**
+ * Names of months in czech in chronological order.
+ */
+export const nameOfMonthsCZ: string[] = ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"];
+
+export const nameOfMonthsGenetiveCZ: string[] = ["ledna", "února", "března", "dubna", "května", "června", "července", "srpna", "září", "října", "listopadu", "prosince"];
+
+/**
  * Function to format date to YYYY-MM-DD string.
  * 
  * @param date Date.
  * @returns The date in a string format.
  */
 export const formatDate = (date: Date): string => {
-    return date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
 };
 
 

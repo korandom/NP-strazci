@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './Style/Planner.css'; 
-import usePlans from '../Components/DataProviders/ScheduleDataProvider';
+import useSchedule from '../Components/DataProviders/ScheduleDataProvider';
 import { useMediaQuery } from '../Util/Hooks';
 import PlanTable from '../Components/Planner/PlanTable/PlanTable';
 import DailyPlanner from '../Components/Planner/DailyPlanner/DailyPlanner';
+import { getShiftedDate, nameOfMonthsCZ } from '../Util/DateUtil';
 
 
 
@@ -19,7 +20,7 @@ import DailyPlanner from '../Components/Planner/DailyPlanner/DailyPlanner';
  */
 
 const Planner: React.FC = () : JSX.Element=> {
-    const { resetSchedules, error, weekBack, weekForward } = usePlans();
+    const { resetSchedules, error, weekBack, weekForward, dateRange } = useSchedule();
     const isMobile = useMediaQuery('(max-width: 560px)');
     const [showFortnight, setShowFortnight] = useState<boolean>(()=> isMobile ? false : true)
 
@@ -34,6 +35,9 @@ const Planner: React.FC = () : JSX.Element=> {
         else setShowFortnight(!showFortnight);
     };
 
+    const decidingDate = useMemo(() => {
+        return getShiftedDate(dateRange.start, 6);
+    }, [dateRange]);
     return (
         <>
             {error &&(
@@ -47,14 +51,18 @@ const Planner: React.FC = () : JSX.Element=> {
                 {isMobile ? (
                     <DailyPlanner />
                 ) : (
-                    <>
-                        <button onClick={toggleDaily}>
-                            {!showFortnight ? "Zobrazit 14ti denní plán" : "Zobrazit detail dne"}
-                        </button>
+                        <>
+                            <div className="control-day">
+                                <button className="showFortNight" onClick={toggleDaily}>
+                                    {!showFortnight ? "Zobrazit 14ti denní plán" : "Zobrazit detail dne"}
+                                </button>
+                            </div>
+                        
                         { showFortnight ? (
                             <>
                                 <div className="range-control">
-                                    <button onClick={weekBack}>Předešlý</button>
+                                        <button onClick={weekBack}>Předešlý</button>
+                                        <strong className="month-label">{nameOfMonthsCZ[decidingDate.getMonth()]} {decidingDate.getFullYear()}</strong>
                                     <button onClick={weekForward}>Další</button>
                                 </div>
 

@@ -30,6 +30,18 @@ export const fetchPlansByDateRange = async (districtId: number, start: string, e
     return result;
 };
 */
+export const updatePlan = async (plan: Plan) => {
+    const response = await fetch(`${BASE_URL}/update`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(plan)
+    });
+    if (!response.ok) {
+        throw new Error("Při updatování plánu nastala chyba.");
+    }
+}
 export const addRoute = async (date: string, rangerId: number, routeId: number): Promise<Plan> => {
     const response = await fetch(`${BASE_URL}/add-route/${date}/${rangerId}?routeId=${routeId}`, {method: 'PUT'})
     if (!response.ok) {

@@ -1,7 +1,7 @@
 /* Menu style */
 .menu-wrapper {
     background: lightgray;
-    padding: 1.1rem;
+    padding: 0.2rem;
     display: flex;
     flex-direction: column;
     justify-content: center;

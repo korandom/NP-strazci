@@ -21,7 +21,7 @@
     gap: 0.3em;
     align-content: center;
 }
-.editing{
+.plan > .planRecord > .editing{
     flex-wrap: nowrap;
 }
 
@@ -73,7 +73,9 @@
     box-sizing: border-box;
     justify-content: space-between;
 }
-
+.identification{
+    width: max-content;
+}
 .tools{
     display: flex;
     flex-direction: column;
@@ -115,3 +117,47 @@
     visibility: visible;
     opacity: 1;
 }
+
+.workingButton {
+    align-self: center;
+    margin: 0.3em
+}
+
+.workingButton > button {
+    margin: 0.1em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 1em;
+    line-height: 1em;
+    text-align: center;
+    height: 1em;
+    padding-bottom: 0.2em;
+    font-size: x-large;
+}
+
+.negative{
+    background-color: #9f1717;
+    color: white;
+}
+
+.negative:disabled {
+    background-color: transparent;
+    color: #9f1717;
+    border: 1px solid #9f1717;
+    cursor: not-allowed;
+}
+
+.positive {
+    background-color: #226c38;
+    color: white;
+
+}
+
+.positive:disabled {
+    background-color: transparent;
+    color: #226c38;
+    border: 1px solid #226c38;
+    cursor: not-allowed;
+}
+

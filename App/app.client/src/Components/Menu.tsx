@@ -52,7 +52,6 @@ const Menu = () => {
                 <nav className="menu-up">
 
                         <Link to="/" onClick={closeMenu} className="menu-item">Plánování</Link>
-                        <Link to="/dochazka" onClick={closeMenu} className="menu-item">Docházka</Link>
                         {
                             (hasRole("HeadOfDistrict") || hasRole("Admin")) &&
                             <Link to="/sprava" onClick={closeMenu} className="menu-item">Správa objektů</Link>

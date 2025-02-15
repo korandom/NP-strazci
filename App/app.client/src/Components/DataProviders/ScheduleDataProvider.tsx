@@ -1,11 +1,12 @@
 import { createContext, useContext, ReactNode, useState, useMemo, useEffect } from 'react';
-import {  Plan, addRoute, addVehicle, removeRoute, removeVehicle } from '../../Services/PlanService';
+import {  Plan, addRoute, addVehicle, removeRoute, removeVehicle, updatePlan } from '../../Services/PlanService';
 import useDistrict from './DistrictDataProvider';
 import useAuth from '../Authentication/AuthProvider';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { calculateTwoWeeksRange, formatDate, getShiftedDate } from '../../Util/DateUtil';
 import { RangerSchedule, fetchRangerSchedulesByDateRange } from '../../Services/RangerScheduleService';
-import { ReasonOfAbsence } from '../../Services/AttendenceService';
+import { Attendence, ReasonOfAbsence, updateAttendence } from '../../Services/AttendenceService';
+import { Ranger } from '../../Services/RangerService';
 
 
 interface ScheduleContextType {
@@ -14,7 +15,14 @@ interface ScheduleContextType {
     resetSchedules: () => void,
     weekForward: () => void,
     weekBack: () => void,
-    changeDate: (date:Date) => void,
+    changeDate: (date: Date) => void,
+
+    //attendence updating
+    updateWorking: (date: string, ranger: Ranger, working: boolean) => void,
+    updateAttendenceFrom: (date: string, ranger: Ranger, from: string) => void,
+    updateReasonOfAbsence: (date: string, ranger: Ranger, reasonOfAbsence: ReasonOfAbsence) => void,
+    
+    //plan updating
     addPlannedVehicle: (date: string, rangerId: number, vehicleId: number) => void,
     removePlannedVehicle: (date: string, rangerId: number, vehicleId: number) => void,
     addPlannedRoute: (date: string, rangerId: number, routeId: number) => void,
@@ -53,13 +61,17 @@ export const SchedulesProvider = ({ children }: { children: ReactNode }): JSX.El
         const connect = async () => {
             if (!district) return;
             const connection = new HubConnectionBuilder()
-                .withUrl('/planHub')
+                .withUrl('/rangerScheduleHub')
                 .configureLogging(LogLevel.Information)
                 .build();
 
             connection.on('PlanUpdated', (plan: Plan) => {
-                setSchedules(prevPlans => updatePlanInSchedule(prevPlans, plan));
+                setSchedules(prevSchedules => updatePlanInSchedule(prevSchedules, plan));
             });
+
+            connection.on('AttendenceUpdated', (attendence: Attendence) => {
+                setSchedules(prevSchedules => updateAttendenceInSchedule(prevSchedules, attendence));
+            })
 
             await connection.start()
                 .catch(setError);
@@ -195,11 +207,77 @@ export const SchedulesProvider = ({ children }: { children: ReactNode }): JSX.El
             return updatedSchedules;
         } else {
             // add new schedule
-            return [...prevSchedules, { date: updatedPlan.date, ranger: updatedPlan.ranger, routeIds: updatedPlan.routeIds, vehicleIds: updatedPlan.vehicleIds, reasonOfAbsence: ReasonOfAbsence.None, working: true, from: "" }];
+            return [...prevSchedules, { date: updatedPlan.date, ranger: updatedPlan.ranger, routeIds: updatedPlan.routeIds, vehicleIds: updatedPlan.vehicleIds, reasonOfAbsence: ReasonOfAbsence.None, working: true, from: null}];
         }
     };
 
+    // when attendence is updated, update it in schedule structure
+    const updateAttendenceInSchedule = (prevSchedules: RangerSchedule[], updatedAttendence: Attendence): RangerSchedule[] => {
+        const attendenceIndex = prevSchedules.findIndex(attendence => attendence.date === updatedAttendence.date && attendence.ranger.id === updatedAttendence.ranger.id);
 
+        if (attendenceIndex !== -1) {
+            // attendence already exists
+            const updatedSchedules = [...prevSchedules];
+            updatedSchedules[attendenceIndex].working = updatedAttendence.working;
+            updatedSchedules[attendenceIndex].reasonOfAbsence = updatedAttendence.reasonOfAbsence;
+            updatedSchedules[attendenceIndex].from = updatedAttendence.from;
+
+            return updatedSchedules;
+        } else {
+            // add new schedule
+            return [...prevSchedules, { date: updatedAttendence.date, ranger: updatedAttendence.ranger, routeIds: [], vehicleIds: [], reasonOfAbsence: updatedAttendence.reasonOfAbsence, working: updatedAttendence.working, from: updatedAttendence.from }];
+        }
+    }
+
+    const updateWorking = async (date: string, ranger: Ranger, working: boolean) => {
+        try {
+            if (!working) {
+                clearPlan(date, ranger);
+            }
+            const updatedAttendence : Attendence = {date: date, ranger: ranger, from: null, reasonOfAbsence: ReasonOfAbsence.None, working: working }
+            await updateAttendence(updatedAttendence);
+            setSchedules(prevSchedules => updateAttendenceInSchedule(prevSchedules, updatedAttendence));
+            hubConnection?.invoke("UpdateAttendence", district?.id, { ...updatedAttendence, reasonOfAbsence: Number(updatedAttendence.reasonOfAbsence) });
+        }
+        catch (error) {
+            setError(error);
+        }
+    }
+
+    const updateAttendenceFrom = async (date: string, ranger: Ranger, from: string) => {
+        try {
+            const updatedAttendence: Attendence = { date: date, ranger: ranger, from: from, reasonOfAbsence: ReasonOfAbsence.None, working: true };
+            await updateAttendence(updatedAttendence);
+            setSchedules(prevSchedules => updateAttendenceInSchedule(prevSchedules, updatedAttendence));
+            hubConnection?.invoke("UpdateAttendence", district?.id, { ...updatedAttendence,  reasonOfAbsence: Number(updatedAttendence.reasonOfAbsence)});
+        }
+        catch (error) {
+            setError(error);
+        }
+    }
+
+    const updateReasonOfAbsence = async (date: string, ranger: Ranger, reasonOfAbsence: ReasonOfAbsence) => {
+        try {
+            const updatedAttendence: Attendence = { date: date, ranger: ranger, from: null, reasonOfAbsence: reasonOfAbsence, working: false };
+            await updateAttendence(updatedAttendence);
+            setSchedules(prevSchedules => updateAttendenceInSchedule(prevSchedules, updatedAttendence));
+            hubConnection?.invoke("UpdateAttendence", district?.id, { ...updatedAttendence, reasonOfAbsence: Number(updatedAttendence.reasonOfAbsence) });
+        }
+        catch (error) {
+            setError(error);
+        }
+    }
+    const clearPlan = async (date: string, ranger: Ranger) => {
+        const clearedPlan: Plan = { date: date, ranger: ranger, vehicleIds: [], routeIds: [] };
+        try {
+            await updatePlan(clearedPlan);
+            setSchedules(prevSchedules => updatePlanInSchedule(prevSchedules, clearedPlan));
+            hubConnection?.invoke("UpdatePlan", district?.id, clearedPlan);
+        }
+        catch (error) {
+            setError(error);
+        }
+    }
     const addPlannedVehicle = async (date: string, rangerId: number, vehicleId: number) => {
         try {
             var updatedPlan = await addVehicle(date, rangerId, vehicleId);
@@ -253,6 +331,9 @@ export const SchedulesProvider = ({ children }: { children: ReactNode }): JSX.El
             weekForward,
             weekBack,
             changeDate,
+            updateWorking,
+            updateReasonOfAbsence,
+            updateAttendenceFrom,
             addPlannedVehicle,
             removePlannedVehicle,
             removePlannedRoute,
@@ -270,6 +351,6 @@ export const SchedulesProvider = ({ children }: { children: ReactNode }): JSX.El
     );
 };
 
-export default function usePlans() {
+export default function useSchedule() {
     return useContext(ScheduleContext);
 }

@@ -7,7 +7,7 @@ export interface RangerSchedule {
     date: string;
     ranger: Ranger;
     working: Boolean;
-    from: string;
+    from: string | null;
     reasonOfAbsence: ReasonOfAbsence;
     routeIds: number[];
     vehicleIds: number[];

@@ -44,6 +44,10 @@ export default defineConfig({
     },
     server: {
         proxy: {
+            '^/api/Attendence': {
+                target,
+                secure: false
+            },
             '^/api/Plan': {
                 target,
                 secure: false
@@ -77,7 +81,7 @@ export default defineConfig({
                 secure: false,
                 ws: true
             },
-            '^/planHub': {
+            '^/rangerScheduleHub': {
                 target: hubTarget,
                 secure: false,
                 ws: true
