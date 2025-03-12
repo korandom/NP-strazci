@@ -37,6 +37,15 @@ interface DistrictContextType {
 
 const DistrictContext = createContext<DistrictContextType>({} as DistrictContextType);
 
+/**
+ * DistrictDataProvider manages the sources of a district - routes, vehicles, rangers and their operations in a centralized way.
+ * It provides the context for removing, adding or updating sources. 
+ * It receives updates via HubConnection.
+ *
+ * @param children - The child components that will have access to the district context.
+ * @returns A JSX.Element that provides the context to its children.
+ * 
+ */
 export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     const [district, setDistrict] = useState<District | undefined>(undefined);
     const [routes, setRoutes] = useState<Route[]>([]);

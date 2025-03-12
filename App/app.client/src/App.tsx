@@ -8,6 +8,7 @@ import { AuthProvider } from './Components/Authentication/AuthProvider';
 import AuthRoute from './Components/Authentication/AuthRoutes';
 import { DistrictDataProvider } from './Components/DataProviders/DistrictDataProvider';
 import { SchedulesProvider } from './Components/DataProviders/ScheduleDataProvider';
+import GeneratedPreview from './Components/Planner/GeneratedPreview/GeneratedPreview';
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
                                     <Route path="/" element={<Planner />} />
                                     <Route element={<AuthRoute roles={["Admin", "HeadOfDistrict"]} />}>
                                         <Route path="/sprava" element={<SourceManagement />} />
+                                        <Route path="/generovani/:date" element={<GeneratedPreview />} />
                                     </Route>
                                 </Route>
                             </Route>

@@ -14,6 +14,7 @@
 
 .date-header {
     background-color: #f2f2f2;
+    min-width: 90px;
 }
 .table-container{
     overflow-x: auto;
@@ -25,6 +26,14 @@
     border-collapse: collapse;
 }
 
+.plan-table tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.plan-table th, .plan-table td {
+    border: 1px solid #e0e0e0;
+}
+
 .sticky {
     position: sticky;
     left: 0;
@@ -32,8 +41,8 @@
     z-index: 2;
 }
 
-th.weekend, td.weekend {
-    background-color: #ECFFE9;
+.plan-table tr:nth-child(even) > td.weekend {
+    background:  #e9f5e1;
 }
 
 .plan {
@@ -129,4 +138,33 @@ th.weekend, td.weekend {
 
 .month-label{
     font-size: larger;
+}
+
+.generate-buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.generating-loading {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+}
+
+.generating-container {
+    display: flex;
+    justify-content: center;
+    min-height: 50%;
+    width: 100%;
+    align-content: center;
+    flex-wrap: wrap;
+    padding: 1em;
+    box-sizing: border-box;
+    flex-direction: column;
+}
+
+.no-routes {
+    text-align: center;
+    font-size: xx-large;
+    color: darkred;
 }

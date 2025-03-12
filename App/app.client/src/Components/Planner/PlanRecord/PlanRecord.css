@@ -1,9 +1,9 @@
 .planRecord {
     display: flex;
     width: 100%;
-    border: 2px solid black;
     box-sizing: border-box;
     height: 100%;
+    border: 2px solid black;
 }
 
 .planRecord > p {
@@ -39,10 +39,11 @@
     padding: 4px;
     box-sizing: border-box;
     justify-content: space-between;
+    border-radius: 0.7em;
 }
 
 .priority-0 {
-    background-color: #959292;
+    background-color: #b0cf88;
 }
 
 .priority-1 {

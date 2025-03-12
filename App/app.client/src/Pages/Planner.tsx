@@ -4,7 +4,8 @@ import useSchedule from '../Components/DataProviders/ScheduleDataProvider';
 import { useMediaQuery } from '../Util/Hooks';
 import PlanTable from '../Components/Planner/PlanTable/PlanTable';
 import DailyPlanner from '../Components/Planner/DailyPlanner/DailyPlanner';
-import { getShiftedDate, nameOfMonthsCZ } from '../Util/DateUtil';
+import { formatDate, getShiftedDate, nameOfMonthsCZ } from '../Util/DateUtil';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -21,6 +22,7 @@ import { getShiftedDate, nameOfMonthsCZ } from '../Util/DateUtil';
 
 const Planner: React.FC = () : JSX.Element=> {
     const { resetSchedules, error, weekBack, weekForward, dateRange } = useSchedule();
+    const navigate = useNavigate();
     const isMobile = useMediaQuery('(max-width: 560px)');
     const [showFortnight, setShowFortnight] = useState<boolean>(()=> isMobile ? false : true)
 
@@ -35,9 +37,18 @@ const Planner: React.FC = () : JSX.Element=> {
         else setShowFortnight(!showFortnight);
     };
 
-    const decidingDate = useMemo(() => {
+    const dateForMonthLabel = useMemo(() => {
         return getShiftedDate(dateRange.start, 6);
     }, [dateRange]);
+
+    const startOfGeneratingDate = useMemo(() => {
+        return getShiftedDate(dateRange.end, 1);
+    }, [dateRange]);
+
+    const handleGenerate = () => {
+        navigate(`/generovani/${formatDate(startOfGeneratingDate)}`);
+    }
+
     return (
         <>
             {error &&(
@@ -52,7 +63,10 @@ const Planner: React.FC = () : JSX.Element=> {
                     <DailyPlanner />
                 ) : (
                         <>
-                            <div className="control-day">
+                            <div className="range-control">
+                                <button className="generate" onClick={handleGenerate}>
+                                    Generovat trasy na týden od {startOfGeneratingDate.getDate()}. {startOfGeneratingDate.getMonth() + 1}.
+                                </button>
                                 <button className="showFortNight" onClick={toggleDaily}>
                                     {!showFortnight ? "Zobrazit 14ti denní plán" : "Zobrazit detail dne"}
                                 </button>
@@ -62,7 +76,7 @@ const Planner: React.FC = () : JSX.Element=> {
                             <>
                                 <div className="range-control">
                                         <button onClick={weekBack}>Předešlý</button>
-                                        <strong className="month-label">{nameOfMonthsCZ[decidingDate.getMonth()]} {decidingDate.getFullYear()}</strong>
+                                        <strong className="month-label">{nameOfMonthsCZ[dateForMonthLabel.getMonth()]} {dateForMonthLabel.getFullYear()}</strong>
                                     <button onClick={weekForward}>Další</button>
                                 </div>
 
