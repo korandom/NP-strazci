@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode, useState, useMemo, useEffect } from 'react';
+import { createContext, useContext, ReactNode, useState, useMemo, useEffect, useRef } from 'react';
 import {  Plan, addRoute, addVehicle, removeRoute, removeVehicle, updatePlan } from '../../Services/PlanService';
 import useDistrict from './DistrictDataProvider';
 import useAuth from '../Authentication/AuthProvider';
@@ -16,6 +16,7 @@ interface ScheduleContextType {
     weekForward: () => void,
     weekBack: () => void,
     changeDate: (date: Date) => void,
+    triggerReload: ()=> void,
 
     //attendence updating
     updateWorking: (date: string, ranger: Ranger, working: boolean) => void,
@@ -56,10 +57,14 @@ export const SchedulesProvider = ({ children }: { children: ReactNode }): JSX.El
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<any>();
     const [hubConnection, setHubConnection] = useState<HubConnection>();
+    const isInitializing = useRef(false);
 
     useEffect(() => {
         const connect = async () => {
+            if (isInitializing.current) return;
             if (!district) return;
+            isInitializing.current = true;
+
             const connection = new HubConnectionBuilder()
                 .withUrl('/rangerScheduleHub')
                 .configureLogging(LogLevel.Information)
@@ -73,6 +78,10 @@ export const SchedulesProvider = ({ children }: { children: ReactNode }): JSX.El
                 setSchedules(prevSchedules => updateAttendenceInSchedule(prevSchedules, attendence));
             })
 
+            connection.on('Reload', () => {
+                changeDate(dateRange.start);
+            })
+
             await connection.start()
                 .catch(setError);
 
@@ -84,7 +93,7 @@ export const SchedulesProvider = ({ children }: { children: ReactNode }): JSX.El
             return connection;
         };
 
-        connect().catch(setError);
+        connect().catch(setError).finally(() => isInitializing.current = false);
 
         return () => {
             if (hubConnection) {
@@ -93,6 +102,16 @@ export const SchedulesProvider = ({ children }: { children: ReactNode }): JSX.El
         };
     }, [district]);
 
+    // triggers other clients on major changes, requiring reloading data from server
+    const triggerReload = () => {
+        try {
+            hubConnection?.invoke("TriggerReload", district?.id);
+        }
+        catch (error){
+            setError(error);
+        }
+    }
+    
     // fetch schedules by date range 
     const fetchSchedules = (start: Date, end: Date) : Promise<RangerSchedule[]> => {
         if (!district) {
@@ -104,10 +123,10 @@ export const SchedulesProvider = ({ children }: { children: ReactNode }): JSX.El
         return fetchedSchedules;
     };
 
-    // reset schedules when district or user changes
+    // reset schedules when district changes
     useEffect(() => {
         resetSchedules();
-    }, [district, user]);
+    }, [district]);
 
     // reset schedules to today
     const resetSchedules = () => {
@@ -352,6 +371,7 @@ export const SchedulesProvider = ({ children }: { children: ReactNode }): JSX.El
             weekForward,
             weekBack,
             changeDate,
+            triggerReload,
             updateWorking,
             updateReasonOfAbsence,
             updateAttendenceFrom,

@@ -10,7 +10,10 @@ namespace App.Server.Services.Hubs
     [Authorize]
     public class RangerScheduleHub :  Hub
     {
-
+        public async Task TriggerReload(int districtId)
+        {
+            await Clients.OthersInGroup($"{districtId}").SendAsync("Reload");
+        }
         public async Task UpdatePlan( int districtId, PlanDto plan)
         { 
             await Clients.OthersInGroup($"{districtId}").SendAsync("PlanUpdated", plan);

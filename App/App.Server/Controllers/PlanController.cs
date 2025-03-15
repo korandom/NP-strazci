@@ -278,9 +278,11 @@ namespace App.Server.Controllers
         [Authorize(Roles = "HeadOfDistrict")]
         [HttpPost("updateAll")]
         public async Task<IActionResult> UpdatePlans(IEnumerable<PlanDto> planDtos)
-        {
-            var updateTasks = planDtos.Select(UpdatePlanInternal);
-            await Task.WhenAll(updateTasks);
+        {   
+            foreach(var planDto in planDtos)
+            {
+                await UpdatePlanInternal(planDto);
+            }
             await _unitOfWork.SaveAsync();
             return Ok(); 
         }
@@ -293,7 +295,6 @@ namespace App.Server.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> UpdatePlan(PlanDto planDto)
         {
-
             await UpdatePlanInternal(planDto);
             await _unitOfWork.SaveAsync();
             return Ok();

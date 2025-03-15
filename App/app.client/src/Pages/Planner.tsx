@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import './Style/Planner.css'; 
 import useSchedule from '../Components/DataProviders/ScheduleDataProvider';
 import { useMediaQuery } from '../Util/Hooks';
@@ -21,14 +21,11 @@ import { useNavigate } from 'react-router-dom';
  */
 
 const Planner: React.FC = () : JSX.Element=> {
-    const { resetSchedules, error, weekBack, weekForward, dateRange } = useSchedule();
+    const { error, weekBack, weekForward, dateRange } = useSchedule();
     const navigate = useNavigate();
     const isMobile = useMediaQuery('(max-width: 560px)');
     const [showFortnight, setShowFortnight] = useState<boolean>(()=> isMobile ? false : true)
 
-    useEffect(() => {
-        resetSchedules();
-    }, []);
 
 
     const toggleDaily = () => {

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Plan, generateRoutePlanMock } from "../../../Services/PlanService";
+import { Plan, generateRoutePlanMock, updatePlans } from "../../../Services/PlanService";
 import { formatDate, generateDateRange, getShiftedDate, nameOfDaysCZ } from "../../../Util/DateUtil";
 import useDistrict from "../../DataProviders/DistrictDataProvider";
 import RangerCell from "../RangerCell";
+import useSchedule from "../../DataProviders/ScheduleDataProvider";
 
 
 /**
@@ -13,6 +14,7 @@ import RangerCell from "../RangerCell";
 const GeneratedPreview: React.FC = (): JSX.Element => {
     const { date } = useParams();
     const { rangers, routes } = useDistrict();
+    const { triggerReload } = useSchedule();
     const parsedDate = new Date(date!);
     const navigate = useNavigate();
     const [generating, setGenerating] = useState<Boolean>(true);
@@ -29,6 +31,12 @@ const GeneratedPreview: React.FC = (): JSX.Element => {
         setGenerating(false);
     }
 
+    const save = async () => {
+        await updatePlans(generatedPlan);
+        triggerReload();
+        navigate("/");
+    }
+
     const dateArray = generateDateRange(parsedDate, getShiftedDate(parsedDate, 6));
 
     return (
@@ -43,7 +51,7 @@ const GeneratedPreview: React.FC = (): JSX.Element => {
                 <>
                         <div className="generate-buttons">
                             <button onClick={() => navigate("/")}>Zahodit</button>
-                            <button>Uložit</button>
+                            <button onClick={save}>Uložit</button>
                         </div>
                     <div className="table-container">
                         {dateArray.length > 0 && (

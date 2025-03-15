@@ -32,6 +32,23 @@ export const updatePlan = async (plan: Plan) => {
 }
 
 /**
+ * Update multiple plans on the server.
+ * @param plans Plans being updated.
+ */
+export const updatePlans = async (plans: Plan[]) => {
+    const response = await fetch(`${BASE_URL}/updateAll`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(plans)
+    });
+    if (!response.ok) {
+        throw new Error("Při updatování plánu nastala chyba.");
+    }
+}
+
+/**
  * Add route to a plan of a ranger for a day on the backend.
  * @param date Date of the plan.
  * @param rangerId Id of Ranger, whoms is the route being assigned to.

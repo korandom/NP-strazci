@@ -10,11 +10,12 @@ import { Ranger } from '../../../Services/RangerService';
 import { RangerSchedule } from '../../../Services/RangerScheduleService';
 
 /**
- * A React functional component that displays the schedule for a given day.
+ * A React functional component that displays a list of schedules for a given date.
  * 
  * Plans are rendered using PlanRecord components.
  * 
  * @param date - Date of plans.
+ * @param onlyWorking - When true, displays only schedules of rangers that are working the given date.
  * @returns {JSX.Element} A rendered list of PlanRecord components.
  */
 const PlansForDay: React.FC<{ date: Date, onlyWorking: boolean}> = ({ date, onlyWorking }) : JSX.Element => {
