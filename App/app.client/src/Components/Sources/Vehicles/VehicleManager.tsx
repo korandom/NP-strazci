@@ -11,8 +11,8 @@ const VehicleManager = ({ districtId }: { districtId: number }): JSX.Element => 
 
     const emptyVehicle: Vehicle = {
         id: 0,
-        name: "Nový dopravní prostředek",
-        type: "typ",
+        name: "",
+        type: "",
         districtId: districtId
     }
 

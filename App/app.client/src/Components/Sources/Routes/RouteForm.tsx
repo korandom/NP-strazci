@@ -61,7 +61,7 @@ const RouteForm: React.FC<RouteFormProps> = ({ initialRoute, onSave, onCancel })
     };
 
     return (
-        <div className="item">
+        <form onSubmit={save} className="item">
             <label className="item-edit-label" htmlFor="name">Jméno:</label>
             <input
                 className="item-edit-input"
@@ -70,6 +70,7 @@ const RouteForm: React.FC<RouteFormProps> = ({ initialRoute, onSave, onCancel })
                 name="name"
                 value={editedRoute.name}
                 onChange={handleInputChange}
+                required
             />
             <label className="item-edit-label" htmlFor="priority">Priorita:</label>
             <select
@@ -97,6 +98,7 @@ const RouteForm: React.FC<RouteFormProps> = ({ initialRoute, onSave, onCancel })
                         name="controlTime"
                         value={editedRoute.controlPlace.controlTime}
                         onChange={handleControlChange}
+                        required
                     />
                     <label className="item-edit-label" htmlFor="controlPlaceDescription">Místo kontroly:</label>
                     <input
@@ -107,15 +109,16 @@ const RouteForm: React.FC<RouteFormProps> = ({ initialRoute, onSave, onCancel })
                         name="controlPlaceDescription"
                         value={editedRoute.controlPlace.controlPlaceDescription}
                         onChange={handleControlChange}
+                        required
                     />
                     <button className="control-button" onClick={removeControl} >Odebrat kontrolu</button>
                 </>
             ) : (
                 <button className="control-button" onClick={addControl} >Přidat kontrolu</button>
             )}
-            <button className="save-button" onClick={save}>Uložit</button>
+            <button type="submit" className="save-button">Uložit</button>
             <button className="scratch-button" onClick={onCancel}>Zrušit</button>
-        </div>
+        </form>
     )
 }
 

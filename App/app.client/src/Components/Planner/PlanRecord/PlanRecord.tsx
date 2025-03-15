@@ -7,7 +7,16 @@ import useSchedule from '../../DataProviders/ScheduleDataProvider';
 import { RangerSchedule } from '../../../Services/RangerScheduleService';
 import { ReasonOfAbsence } from '../../../Services/AttendenceService';
 
-// Konkrétní záznam plánu a docházky jednoho strážce, bez detailů
+/**
+ * PlanRecord is a component for rendering a single RangerSchedule for viewing. 
+ * 
+ * @param param0 - props
+ * @param param0[schedule] - specific rangerSchedule
+ * @param param0[includeRangerName] - whether name of the ranger should be rendered as well (name is not showed in a table for every cell)
+ * @param param0[isEditable] - is editing of the record allowed
+ * 
+ * @returns {JSX.Element} A rendered record of a rangerSchedule.
+ */
 const PlanRecord: React.FC<{ schedule: RangerSchedule, includeRangerName: boolean, isEditable: boolean }> = ({ schedule, includeRangerName, isEditable }) => {
     const { hasRole } = useAuth();
     const { routes, vehicles } = useDistrict();
@@ -162,7 +171,7 @@ const PlanRecord: React.FC<{ schedule: RangerSchedule, includeRangerName: boolea
                             </div>
                         )}
                     </div>
-                    {/* add not only routes, but other actions as well?*/}
+                    {/* could add not only routes, but other actions as well?*/}
                     <div className='planned-items-container'>
                         {plannedRouteIds.map((id, index) => {
                             const route = routes.find(route => route.id === id);

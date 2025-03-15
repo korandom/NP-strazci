@@ -15,6 +15,13 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
+/**
+ * AuthProvider manages the user state and provides functions to sign up and sign out.
+ *
+ * @param children - The child components that will have access to the authentication context.
+ * @returns A JSX.Element that provides the context to its children.
+ * 
+ */
 export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     const [user, setUser] = useState<User | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(false);

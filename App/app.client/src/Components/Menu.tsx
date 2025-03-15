@@ -5,6 +5,12 @@ import './Menu.css';
 import { District, fetchAllDistricts } from '../Services/DistrictService';
 import useDistrict from './DataProviders/DistrictDataProvider';
 
+/**
+ * Menu is a responsive component that allows redirecting between "pages".
+ * Also includes changing of district for admins.
+ * 
+ * @returns {JSX.Element} A rendered menu with links to planning and optionally source management for HeadOfDistrict Roles.
+ */
 const Menu = () => {
     const [isOpen, setIsOpen] = useState(false);
     const { signout, hasRole } = useAuth();

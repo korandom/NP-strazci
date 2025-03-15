@@ -11,7 +11,7 @@ const RoutesManager = ({ districtId }: { districtId: number }): JSX.Element => {
 
     const emptyRoute: Route = {
         id: 0,
-        name: "Nová trasa",
+        name: "",
         priority: 0, 
         controlPlace: undefined, 
         districtId: districtId

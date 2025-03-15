@@ -7,6 +7,16 @@ interface RangerFormProps {
     onCancel: () => void;
 }
 
+/**
+ * RangerForm is a component, that renders a form for creating and editing a ranger details.
+ * 
+ * @param param0 - props
+ * @param param0[initialRanger] - The initial data for the ranger or default (empty)
+ * @param param0[onSave] - Callback function for saving the data
+ * @param param0[onCancel] - Callback function for cancelling changes
+ * 
+ * @returns {JSX.Element} of a form for creating and editing ranger details.
+ */
 const RangerForm: React.FC<RangerFormProps> = ({ initialRanger, onSave, onCancel }): JSX.Element => {
     const [editedRanger, setEditedRanger] = useState(initialRanger);
 
@@ -18,8 +28,9 @@ const RangerForm: React.FC<RangerFormProps> = ({ initialRanger, onSave, onCancel
         });
     };
 
+
     return (
-        <div className="item">
+        <form onSubmit={()=> onSave(editedRanger)} className="item">
             <label className="item-edit-label" htmlFor="firstName">Jméno:</label>
             <input
                 className="item-edit-input"
@@ -28,6 +39,7 @@ const RangerForm: React.FC<RangerFormProps> = ({ initialRanger, onSave, onCancel
                 name="firstName"
                 value={editedRanger.firstName}
                 onChange={handleInputChange}
+                required
             />
             <label className="item-edit-label" htmlFor="lastName">Příjmení:</label>
             <input
@@ -37,6 +49,7 @@ const RangerForm: React.FC<RangerFormProps> = ({ initialRanger, onSave, onCancel
                 name="lastName"
                 value={editedRanger.lastName}
                 onChange={handleInputChange}
+                required
             />
             <label className="item-edit-label" htmlFor="type">Email:</label>
             <input
@@ -46,11 +59,12 @@ const RangerForm: React.FC<RangerFormProps> = ({ initialRanger, onSave, onCancel
                 name="email"
                 value={editedRanger.email}
                 onChange={handleInputChange}
+                required
             />
 
-            <button className="save-button" onClick={() => onSave(editedRanger)}>Uložit</button>
+            <button type="submit" className="save-button">Uložit</button>
             <button className="scratch-button" onClick={onCancel}>Zrušit</button>
-        </div>
+        </form>
     )
 }
 

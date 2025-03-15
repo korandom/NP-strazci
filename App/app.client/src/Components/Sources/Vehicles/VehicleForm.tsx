@@ -19,7 +19,7 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSave, onCan
     };
 
     return (
-        <div className="item">
+        <form onSubmit={() => onSave(editedVehicle) } className="item">
             <label className="item-edit-label" htmlFor="name">Identifikační jméno:</label>
             <input
                 className="item-edit-input"
@@ -28,6 +28,7 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSave, onCan
                 name="name"
                 value={editedVehicle.name}
                 onChange={handleInputChange}
+                required
             />
 
             <label className="item-edit-label" htmlFor="type">Typ:</label>
@@ -38,11 +39,12 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSave, onCan
                 name="type"
                 value={editedVehicle.type}
                 onChange={handleInputChange}
+                required
             />
 
-            <button className="save-button" onClick={()=> onSave(editedVehicle)}>Uložit</button>
+            <button type="submit" className="save-button" >Uložit</button>
             <button className="scratch-button" onClick={onCancel}>Zrušit</button>
-        </div>
+        </form>
     )
 }
 
