@@ -109,11 +109,12 @@ export const SchedulesProvider = ({ children }: { children: ReactNode }): JSX.El
         resetSchedules();
     }, [district, user]);
 
-    // reset schedules, fetch new schedules only if user is authorized
+    // reset schedules to today
     const resetSchedules = () => {
         changeDate(new Date());
     };
 
+    // change date, fetch new schedule data based on date, only if the user is authorized
     const changeDate= (date: Date) => {
         if (!user) {
             setSchedules([]);
@@ -195,38 +196,58 @@ export const SchedulesProvider = ({ children }: { children: ReactNode }): JSX.El
         }
     }
 
+    //splits schedules into first and second week for synchronization after update 
+    const splitSchedules = (newSchedules: RangerSchedule[], range: { start: Date, end: Date }) => {
+        const firstWeekEnd = getShiftedDate(range.start, 6);
+        const secondWeekStart = getShiftedDate(range.end, -6);
+
+        const firstWeekSchedules = newSchedules.filter(schedule =>
+            new Date(schedule.date) >= range.start && new Date(schedule.date) <= firstWeekEnd
+        );
+        const secondWeekSchedules = newSchedules.filter(schedule =>
+            new Date(schedule.date) >= secondWeekStart && new Date(schedule.date) <= range.end
+        );
+
+        setFirstWeek(firstWeekSchedules);
+        setSecondWeek(secondWeekSchedules);
+    }
+
     // when plan updates - it is updated in the schedule
     const updatePlanInSchedule = (prevSchedules: RangerSchedule[], updatedPlan: Plan): RangerSchedule[] => {
-        const planIndex = prevSchedules.findIndex(plan => plan.date === updatedPlan.date && plan.ranger.id === updatedPlan.ranger.id);
+        // update existing plan if it already exists
+        const updatedSchedules = prevSchedules.map(schedule =>
+            schedule.date === updatedPlan.date && schedule.ranger.id === updatedPlan.ranger.id
+                ? { ...schedule, routeIds: updatedPlan.routeIds, vehicleIds: updatedPlan.vehicleIds }
+                : schedule
+        );
+        // add new plan if it didnt exist
+        const finalSchedules = updatedSchedules.some(schedule =>
+            schedule.date === updatedPlan.date && schedule.ranger.id === updatedPlan.ranger.id
+        )
+            ? updatedSchedules
+            : [...updatedSchedules, { date: updatedPlan.date, ranger: updatedPlan.ranger, routeIds: updatedPlan.routeIds, vehicleIds: updatedPlan.vehicleIds, reasonOfAbsence: ReasonOfAbsence.None, working: true, from: null }];
 
-        if (planIndex !== -1) {
-            // plan already exists - it ideally should even if empty
-            const updatedSchedules = [...prevSchedules];
-            updatedSchedules[planIndex].routeIds = updatedPlan.routeIds;
-            updatedSchedules[planIndex].vehicleIds = updatedPlan.vehicleIds;
-            return updatedSchedules;
-        } else {
-            // add new schedule
-            return [...prevSchedules, { date: updatedPlan.date, ranger: updatedPlan.ranger, routeIds: updatedPlan.routeIds, vehicleIds: updatedPlan.vehicleIds, reasonOfAbsence: ReasonOfAbsence.None, working: true, from: null}];
-        }
+        splitSchedules(finalSchedules, dateRange);
+        return finalSchedules;
     };
 
     // when attendence is updated, update it in schedule structure
     const updateAttendenceInSchedule = (prevSchedules: RangerSchedule[], updatedAttendence: Attendence): RangerSchedule[] => {
-        const attendenceIndex = prevSchedules.findIndex(attendence => attendence.date === updatedAttendence.date && attendence.ranger.id === updatedAttendence.ranger.id);
+        // update existing attendence if it already exists
+        const updatedSchedules = prevSchedules.map(schedule =>
+            schedule.date === updatedAttendence.date && schedule.ranger.id === updatedAttendence.ranger.id
+                ? { ...schedule, working: updatedAttendence.working, reasonOfAbsence: updatedAttendence.reasonOfAbsence, from: updatedAttendence.from }
+                : schedule
+        );
+        // add new attendence if it didnt exist
+        const finalSchedules = updatedSchedules.some(schedule =>
+            schedule.date === updatedAttendence.date && schedule.ranger.id === updatedAttendence.ranger.id
+        )
+            ? updatedSchedules
+            : [...updatedSchedules, { date: updatedAttendence.date, ranger: updatedAttendence.ranger, routeIds: [], vehicleIds: [], reasonOfAbsence: updatedAttendence.reasonOfAbsence, working: updatedAttendence.working, from: updatedAttendence.from }];
 
-        if (attendenceIndex !== -1) {
-            // attendence already exists
-            const updatedSchedules = [...prevSchedules];
-            updatedSchedules[attendenceIndex].working = updatedAttendence.working;
-            updatedSchedules[attendenceIndex].reasonOfAbsence = updatedAttendence.reasonOfAbsence;
-            updatedSchedules[attendenceIndex].from = updatedAttendence.from;
-
-            return updatedSchedules;
-        } else {
-            // add new schedule
-            return [...prevSchedules, { date: updatedAttendence.date, ranger: updatedAttendence.ranger, routeIds: [], vehicleIds: [], reasonOfAbsence: updatedAttendence.reasonOfAbsence, working: updatedAttendence.working, from: updatedAttendence.from }];
-        }
+        splitSchedules(finalSchedules, dateRange);
+        return finalSchedules;
     }
 
     const updateWorking = async (date: string, ranger: Ranger, working: boolean) => {

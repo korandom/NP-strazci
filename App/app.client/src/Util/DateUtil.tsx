@@ -24,11 +24,24 @@ export const formatDate = (date: Date): string => {
     return `${year}-${month}-${day}`;
 };
 
+/**
+ * Sets a date to the start of the day (00:00:00.000).
+ */
+const setHoursToMin = (date: Date): Date => {
+    return new Date(date.setHours(0, 0, 0, 0));
+};
+
+/**
+ * Sets a date to the end of the day (23:59:59.999).
+ */
+const setHoursToMax = (date: Date): Date => {
+    return new Date(date.setHours(23, 59, 59, 999));
+};
 
 /**
  * Calculates a range of two weeks, containing the given date.
  * The given date is from the first of the two weeks.
- * The range starts with a Monday and ends with a Sunday.
+ * The range starts with a Monday midnight and ends with a Sunday before midnight.
  * 
  * @param date Given Date
  * @returns an object with start and end Date.
@@ -36,9 +49,9 @@ export const formatDate = (date: Date): string => {
 export const calculateTwoWeeksRange = (date: Date): { start: Date, end: Date } => { 
     const daysToMonday = date.getDay() === 0 ? 6 : date.getDay() - 1;
     
-    const startDate = getShiftedDate(date, - daysToMonday);
+    const startDate = setHoursToMin(getShiftedDate(date, - daysToMonday));
 
-    const endDate = getShiftedDate(startDate, 13);
+    const endDate = setHoursToMax(getShiftedDate(startDate, 13));
 
     return { start: startDate, end: endDate };
 };
