@@ -45,7 +45,8 @@ const RouteForm: React.FC<RouteFormProps> = ({ initialRoute, onSave, onCancel })
         });
     };
 
-    const save = async () => {
+    const save = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
         let checkedRoute = { ...editedRoute };
 
         if (
@@ -111,13 +112,13 @@ const RouteForm: React.FC<RouteFormProps> = ({ initialRoute, onSave, onCancel })
                         onChange={handleControlChange}
                         required
                     />
-                    <button className="control-button" onClick={removeControl} >Odebrat kontrolu</button>
+                    <button type="button" className="control-button" onClick={removeControl} >Odebrat kontrolu</button>
                 </>
             ) : (
-                <button className="control-button" onClick={addControl} >Přidat kontrolu</button>
+                    <button type="button" className="control-button" onClick={addControl} >Přidat kontrolu</button>
             )}
             <button type="submit" className="save-button">Uložit</button>
-            <button className="scratch-button" onClick={onCancel}>Zrušit</button>
+            <button type="button" className="scratch-button" onClick={onCancel}>Zrušit</button>
         </form>
     )
 }

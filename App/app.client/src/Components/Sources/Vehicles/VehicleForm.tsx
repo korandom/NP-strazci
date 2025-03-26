@@ -17,9 +17,12 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSave, onCan
             [name]: value
         });
     };
-
+    const save = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        onSave(editedVehicle)
+    }
     return (
-        <form onSubmit={() => onSave(editedVehicle) } className="item">
+        <form onSubmit={save} className="item">
             <label className="item-edit-label" htmlFor="name">Identifikační jméno:</label>
             <input
                 className="item-edit-input"

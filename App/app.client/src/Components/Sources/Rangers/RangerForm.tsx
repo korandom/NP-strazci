@@ -28,9 +28,12 @@ const RangerForm: React.FC<RangerFormProps> = ({ initialRanger, onSave, onCancel
         });
     };
 
-
+    const save = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        onSave(editedRanger);
+    }
     return (
-        <form onSubmit={()=> onSave(editedRanger)} className="item">
+        <form onSubmit={save} className="item">
             <label className="item-edit-label" htmlFor="firstName">Jméno:</label>
             <input
                 className="item-edit-input"
