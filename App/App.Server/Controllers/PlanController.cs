@@ -6,7 +6,7 @@ using App.Server.Models.AppData;
 using Microsoft.AspNetCore.Authorization;
 using App.Server.Services.Authentication;
 using App.Server.Services.Authorization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using App.Server.CSP;
 
 
 namespace App.Server.Controllers
@@ -299,6 +299,67 @@ namespace App.Server.Controllers
             await _unitOfWork.SaveAsync();
             return Ok();
         }
+
+
+        /// <summary>
+        /// Generates a route plan for a week, considering preexisting plans, ranger attendence, route priorities and route distribution between rangers in a given district.
+        /// 
+        /// </summary>
+        /// <param name="districtId">Id of the district</param>
+        /// <param name="startDate">Start of the week, for which generating is done</param>
+        /// <returns> A GenerateResultDto. </returns>
+        [Authorize(Roles = "HeadOfDistrict,Admin")]
+        [HttpGet("generate/{districtId}/{startDate}")]
+        public async Task<ActionResult<GenerateResultDto>> GenerateRoutePlan(int districtId, DateOnly startDate)
+        {
+            int planningPeriod = 7;
+            int numberOfDaysPreprocess = 7 * 3;
+            var preexistingPlans = new List<PlanDto>();
+            var previousPlans = await _unitOfWork.PlanRepository.Get(
+                plan => plan.Ranger.DistrictId == districtId &&
+                plan.Date < startDate &&
+                plan.Date >= startDate.AddDays(-numberOfDaysPreprocess),
+                null, "Routes,Vehicles,Ranger");
+            if (previousPlans == null)
+            {
+                return NotFound("Getting previous plans was not successful.");
+            }
+            List<PlanDto> previousPlansDto = previousPlans.Select(plan => plan.ToDto()).ToList();
+            var attendence = await _unitOfWork.AttendenceRepository.Get
+                (
+                    att => att.Ranger.DistrictId == districtId && 
+                    att.Date >= startDate && 
+                    att.Date < startDate.AddDays(planningPeriod),
+                    null, "Ranger"
+
+
+                );
+            if (attendence == null)
+            {
+                return NotFound("Getting attendence for planning was not successful");
+            }
+            List<AttendenceDto> attendenceDtos = attendence.Select(a => a.ToDto()).ToList();
+
+            var routes = await _unitOfWork.RouteRepository.Get(route => route.DistrictId == districtId);
+            if (routes == null)
+            {
+                return NotFound("Getting routes of district was not succesfull");
+            }
+            List<RouteDto> routeDto = routes.Select(r => r.ToDto()).ToList();
+
+            var rangers = await _unitOfWork.RangerRepository.Get(ranger => ranger.DistrictId == districtId);
+            if (rangers == null)
+            {
+                return NotFound("Getting rangers of district was not succesfull");
+            }
+            List<RangerDto> rangersDto = rangers.Select(r => r.ToDto()).ToList();
+
+            var routePlanGenerator = new RoutePlanGenerator(previousPlansDto, preexistingPlans, attendenceDtos, routeDto, rangersDto, startDate);
+            var result = routePlanGenerator.Generate();
+
+            return Ok(result);
+        }
+
         private async Task UpdatePlanInternal(PlanDto planDto)
         {
             var plan = await _unitOfWork.PlanRepository.GetById(planDto.Date, planDto.Ranger.Id);

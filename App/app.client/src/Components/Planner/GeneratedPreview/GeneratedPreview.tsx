@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Plan, generateRoutePlanMock, updatePlans } from "../../../Services/PlanService";
+import { Plan, fetchGeneratedRoutePlan,  updatePlans } from "../../../Services/PlanService";
 import { formatDate, generateDateRange, getShiftedDate, nameOfDaysCZ } from "../../../Util/DateUtil";
 import useDistrict from "../../DataProviders/DistrictDataProvider";
 import RangerCell from "../RangerCell";
@@ -13,7 +13,7 @@ import useSchedule from "../../DataProviders/ScheduleDataProvider";
  */
 const GeneratedPreview: React.FC = (): JSX.Element => {
     const { date } = useParams();
-    const { rangers, routes } = useDistrict();
+    const { rangers, routes, district } = useDistrict();
     const { triggerReload } = useSchedule();
     const parsedDate = new Date(date!);
     const navigate = useNavigate();
@@ -26,8 +26,10 @@ const GeneratedPreview: React.FC = (): JSX.Element => {
 
     const generatePlans = async () => {
         setGenerating(true);
-        const fetchedPlans = await generateRoutePlanMock(date!, rangers, routes);
-        setGeneratedPlan(fetchedPlans);
+        if (district != undefined) {
+            const fetchedPlans = await fetchGeneratedRoutePlan(district?.id, date!);
+            setGeneratedPlan(fetchedPlans.plans);
+        }
         setGenerating(false);
     }
 

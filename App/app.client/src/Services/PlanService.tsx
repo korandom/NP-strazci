@@ -14,6 +14,12 @@ export interface Plan {
     vehicleIds: number[];
 };
 
+export interface GenerateResult {
+    success: Boolean;
+    message: string;
+    plans: Plan[];
+}
+
 /**
  * Update plan on the server.
  * @param plan Plan being updated.
@@ -148,4 +154,14 @@ export const generateRoutePlanMock = async (startDate: string, rangers: Ranger[]
     ]
     return fakePlans;
 }
+
+export const fetchGeneratedRoutePlan = async (districtId: number, start: string): Promise<GenerateResult> => {
+    const response = await fetch(`${BASE_URL}/generate/${districtId}/${start}`);
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message);
+    }
+    const result = await response.json();
+    return result;
+};
 

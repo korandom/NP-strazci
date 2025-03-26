@@ -26,13 +26,12 @@ namespace App.Server.Models.AppData
     {
         public static PlanDto ToDto(this Plan plan)
         {
-            return new PlanDto
-            {
-                Date = plan.Date,
-                Ranger = plan.Ranger.ToDto(),
-                RouteIds = plan.Routes.Select(r => r.Id).ToArray(),
-                VehicleIds = plan.Vehicles.Select(v => v.Id).ToArray()
-            };
+            return new PlanDto(
+                plan.Date,
+                plan.Ranger.ToDto(),
+                plan.Routes.Select(r => r.Id).ToArray(),
+                plan.Vehicles.Select(v => v.Id).ToArray()
+            );
         }
     }
 }
