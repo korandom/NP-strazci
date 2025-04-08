@@ -8,9 +8,9 @@ interface RangerFormProps {
 }
 
 /**
- * RangerForm is a component, that renders a form for creating and editing a ranger details.
+ * RangerForm is a component, that renders a form for creating and editing ranger details.
  * 
- * @param param0 - props
+ * @param param0- RangerFormProps
  * @param param0[initialRanger] - The initial data for the ranger or default (empty)
  * @param param0[onSave] - Callback function for saving the data
  * @param param0[onCancel] - Callback function for cancelling changes
@@ -20,6 +20,7 @@ interface RangerFormProps {
 const RangerForm: React.FC<RangerFormProps> = ({ initialRanger, onSave, onCancel }): JSX.Element => {
     const [editedRanger, setEditedRanger] = useState(initialRanger);
 
+    // handle changing data of edited ranger
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setEditedRanger({
@@ -28,10 +29,12 @@ const RangerForm: React.FC<RangerFormProps> = ({ initialRanger, onSave, onCancel
         });
     };
 
+    // save the changes
     const save = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         onSave(editedRanger);
     }
+
     return (
         <form onSubmit={save} className="item">
             <label className="item-edit-label" htmlFor="firstName">Jméno:</label>

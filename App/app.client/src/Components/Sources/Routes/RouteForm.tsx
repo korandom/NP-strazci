@@ -7,10 +7,21 @@ interface RouteFormProps {
     onCancel: () => void;
 }
 
+/**
+ * RouteForm is a component, that renders a form for creating and editing route details.
+ * 
+ * @param param0- RouteFormProps
+ * @param param0[initialRoute] - The initial data for the route or default (empty)
+ * @param param0[onSave] - Callback function for saving the data
+ * @param param0[onCancel] - Callback function for cancelling changes
+ * 
+ * @returns {JSX.Element} of a form for creating and editing route details.
+ */
 const RouteForm: React.FC<RouteFormProps> = ({ initialRoute, onSave, onCancel }): JSX.Element => {
     const [editedRoute, setEditedRoute] = useState(initialRoute);
     const priorities = ["Měsíční", "Čtrtnáctidenní", "Týdenní", "Denní"];
 
+    // handle change in other than control point data
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setEditedRoute({
@@ -19,6 +30,7 @@ const RouteForm: React.FC<RouteFormProps> = ({ initialRoute, onSave, onCancel })
         });
     };
 
+    // handle chage in control point data
     const handleControlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         editedRoute.controlPlace ?
@@ -31,6 +43,7 @@ const RouteForm: React.FC<RouteFormProps> = ({ initialRoute, onSave, onCancel })
             }) : null;
     };
 
+    // adding control point data
     const addControl = () => {
         setEditedRoute({
             ...editedRoute,
@@ -38,6 +51,7 @@ const RouteForm: React.FC<RouteFormProps> = ({ initialRoute, onSave, onCancel })
         });
     };
 
+    // removing control point data
     const removeControl = () => {
         setEditedRoute({
             ...editedRoute,
@@ -45,6 +59,7 @@ const RouteForm: React.FC<RouteFormProps> = ({ initialRoute, onSave, onCancel })
         });
     };
 
+    // save changes
     const save = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         let checkedRoute = { ...editedRoute };

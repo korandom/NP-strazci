@@ -3,20 +3,30 @@ import { Route } from "../../../Services/RouteService";
 import RouteForm from "./RouteForm";
 import useDistrict from "../../DataProviders/DistrictDataProvider";
 
+/**
+ * Route item manages and displays information of a single route.
+ * It allows editing or deleting the route.
+ * It uses RouteForm to provide editing.
+ * @param route Route
+ * @returns A JSX.Element of Route information.
+ */
 const RouteItem: React.FC<{ route: Route }> = ({ route }): JSX.Element => {
     const [isEdited, setIsEdited] = useState(false);
     const { changeRoute, removeRoute } = useDistrict();
     const priorities = ["Měsíční", "Čtrtnáctidenní", "Týdenní", "Denní"];
 
-
+    // stop editing without saving changes
     const scratchChanges = () => {
         setIsEdited(false);
     };
 
+    // save changes
     const saveChanges = async (updatedRoute:Route) => {
         setIsEdited(false);
         changeRoute(updatedRoute);
     };
+
+    // delete route with confirmation
     const confirmDeleteRoute = async() => {
         if (window.confirm(`Opravdu chcete smazat trasu ${route.name}? Tuto akci nelze vrátit.`)) {
             removeRoute(route);
