@@ -27,14 +27,14 @@ namespace App.Server.Repositories
             _dbSet.Remove(entityToDelete);
         }
 
-        public async Task<IEnumerable<T>> Get(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = "")
+        public async Task<IEnumerable<T>> Get(Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, string includeProperties = "")
         {
             IQueryable<T> query = _dbSet;
 
             if (filter != null)
             {
                 query = query.Where(filter);
-            }  
+            }
 
             foreach (var includeProperty in includeProperties.Split
                 (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
@@ -54,7 +54,7 @@ namespace App.Server.Repositories
 
         public virtual async Task<T?> GetById(params object[] id)
         {
-                return await _dbSet.FindAsync(id);
+            return await _dbSet.FindAsync(id);
         }
 
         public void Add(T entity)

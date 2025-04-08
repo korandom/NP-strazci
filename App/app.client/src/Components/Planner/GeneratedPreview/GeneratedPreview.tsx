@@ -19,6 +19,8 @@ const GeneratedPreview: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const [generating, setGenerating] = useState<Boolean>(true);
     const [generatedPlan, setGeneratedPlan] = useState<Plan[]>([]);
+    const [message, setMessage] = useState<String>("");
+    const [success, setSuccess] = useState<Boolean>(false);
 
     useEffect(() => {
         generatePlans();
@@ -27,8 +29,10 @@ const GeneratedPreview: React.FC = (): JSX.Element => {
     const generatePlans = async () => {
         setGenerating(true);
         if (district != undefined) {
-            const fetchedPlans = await fetchGeneratedRoutePlan(district?.id, date!);
-            setGeneratedPlan(fetchedPlans.plans);
+            const fetchedResult = await fetchGeneratedRoutePlan(district?.id, date!);
+            setMessage(fetchedResult.message);
+            setSuccess(fetchedResult.success);
+            setGeneratedPlan(fetchedResult.plans);
         }
         setGenerating(false);
     }
@@ -49,8 +53,19 @@ const GeneratedPreview: React.FC = (): JSX.Element => {
                     <button onClick={() => navigate("/")}>Zrušit</button>
                 </div>
 
-            ) : (
-                <>
+            ) : (<>
+                    {!success &&
+                        <div className="message">
+                            <div>{message}</div>
+                            <button onClick={() => navigate("/")}>Zpět</button>
+                        </div>
+                    }
+
+                    {success && 
+                        <>
+                        <div className="message">
+                            <div>{message}</div>
+                        </div>
                         <div className="generate-buttons">
                             <button onClick={() => navigate("/")}>Zahodit</button>
                             <button onClick={save}>Uložit</button>
@@ -120,10 +135,9 @@ const GeneratedPreview: React.FC = (): JSX.Element => {
                                 </tbody>
                             </table>
                         )}
-                    </div>
-
+                        </div>
+                    </>}
                 </>
-
             )}
         </div>
     )

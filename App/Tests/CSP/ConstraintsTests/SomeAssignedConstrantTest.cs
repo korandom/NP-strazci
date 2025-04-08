@@ -15,14 +15,14 @@ namespace Tests.CSP.ConstraintsTests
         {
             //assign
             int[] variables = [.. variablesArray];
-            Dictionary<int, int?> assigned = new Dictionary<int, int?>
+            Dictionary<int, int?> assigned = new()
             {
                 { 1, 1 },
                 { 2, null },
                 { 3, null },
 
             };
-            SomeAssignedConstraint constraint = new SomeAssignedConstraint(variables);
+            SomeAssignedConstraint constraint = new(variables);
 
             //act
             bool result = constraint.IsSatisfied(assigned);

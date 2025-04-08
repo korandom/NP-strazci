@@ -4,6 +4,6 @@
     {
         public required string Email { get; set; }
         public required string Role { get; set; }
-        public int? RangerId {  get; set; }
+        public int? RangerId { get; set; }
     }
 }

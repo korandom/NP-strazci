@@ -1,16 +1,13 @@
-
-using Microsoft.EntityFrameworkCore;
-using App.Server.Repositories;
-using App.Server.Repositories.Interfaces;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using App.Server.Models.AppData;
 using App.Server.Models.Identity;
+using App.Server.Repositories;
+using App.Server.Repositories.Interfaces;
 using App.Server.Services.Authentication;
 using App.Server.Services.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication;
-using App.Server.Util;
 using App.Server.Services.Hubs;
+using App.Server.Util;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.Server
 {

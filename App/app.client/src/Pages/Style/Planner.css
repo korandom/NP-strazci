@@ -168,3 +168,8 @@
     font-size: xx-large;
     color: darkred;
 }
+
+.message {
+    display: flex;
+    flex-direction: column;
+}

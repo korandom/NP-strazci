@@ -105,6 +105,7 @@ export const SchedulesProvider = ({ children }: { children: ReactNode }): JSX.El
     // triggers other clients on major changes, requiring reloading data from server
     const triggerReload = () => {
         try {
+            changeDate(dateRange.start);
             hubConnection?.invoke("TriggerReload", district?.id);
         }
         catch (error){

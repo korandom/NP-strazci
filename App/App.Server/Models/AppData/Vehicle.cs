@@ -10,7 +10,7 @@ namespace App.Server.Models.AppData
         public string? Name { get; set; }
 
         public int DistrictId { get; set; }
-        public ICollection<Plan> Plans { get; } = new List<Plan>();
+        public ICollection<Plan> Plans { get; } = [];
     }
 
     public static class VehicleExtensions

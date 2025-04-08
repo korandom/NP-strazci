@@ -1,10 +1,10 @@
 ﻿using App.Server.DTOs;
-using Microsoft.AspNetCore.Mvc;
-using App.Server.Repositories.Interfaces;
 using App.Server.Models.AppData;
-using Microsoft.AspNetCore.Authorization;
+using App.Server.Repositories.Interfaces;
 using App.Server.Services.Authentication;
 using App.Server.Services.Authorization;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace App.Server.Controllers

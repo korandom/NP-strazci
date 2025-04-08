@@ -1,12 +1,11 @@
-﻿using App.Server.Models;
+﻿using App.Server.CSP;
 using App.Server.DTOs;
-using Microsoft.AspNetCore.Mvc;
-using App.Server.Repositories.Interfaces;
 using App.Server.Models.AppData;
-using Microsoft.AspNetCore.Authorization;
+using App.Server.Repositories.Interfaces;
 using App.Server.Services.Authentication;
 using App.Server.Services.Authorization;
-using App.Server.CSP;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace App.Server.Controllers
@@ -60,9 +59,10 @@ namespace App.Server.Controllers
         {
             var user = await _authenticationService.GetUserAsync(User);
             // if user is not authorized
-            if (user == null 
-            || ( !_authorizationService.IsUserOwner(user, rangerId) && !await _authorizationService.IsInRoleAsync(user, "HeadOfDistrict"))
-            ){
+            if (user == null
+            || (!_authorizationService.IsUserOwner(user, rangerId) && !await _authorizationService.IsInRoleAsync(user, "HeadOfDistrict"))
+            )
+            {
                 return Unauthorized("User is not authorized to change this plan.");
             }
 
@@ -243,7 +243,7 @@ namespace App.Server.Controllers
         public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDateRange(int districtId, DateOnly startDate, DateOnly endDate)
         {
             var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Ranger.DistrictId == districtId && plan.Date >= startDate && plan.Date <= endDate, null, "Routes,Vehicles,Ranger");
-            if(plans == null)
+            if (plans == null)
             {
                 return NotFound("No plans found in range");
             }
@@ -278,13 +278,13 @@ namespace App.Server.Controllers
         [Authorize(Roles = "HeadOfDistrict")]
         [HttpPost("updateAll")]
         public async Task<IActionResult> UpdatePlans(IEnumerable<PlanDto> planDtos)
-        {   
-            foreach(var planDto in planDtos)
+        {
+            foreach (var planDto in planDtos)
             {
                 await UpdatePlanInternal(planDto);
             }
             await _unitOfWork.SaveAsync();
-            return Ok(); 
+            return Ok();
         }
         /// <summary>
         /// Creates a new plan or updates it if it already exists.
@@ -314,7 +314,17 @@ namespace App.Server.Controllers
         {
             int planningPeriod = 7;
             int numberOfDaysPreprocess = 7 * 3;
-            var preexistingPlans = new List<PlanDto>();
+            var preexistingPlans = await _unitOfWork.PlanRepository.Get(
+                plan => plan.Ranger.DistrictId == districtId &&
+                plan.Date >= startDate &&
+                plan.Date < startDate.AddDays(planningPeriod),
+                null, "Routes,Vehicles,Ranger");
+            if (preexistingPlans == null)
+            {
+                return NotFound("Getting previous plans was not successful.");
+            }
+            List<PlanDto> preexistingPlansDto = preexistingPlans.Select(plan => plan.ToDto()).ToList();
+
             var previousPlans = await _unitOfWork.PlanRepository.Get(
                 plan => plan.Ranger.DistrictId == districtId &&
                 plan.Date < startDate &&
@@ -325,14 +335,13 @@ namespace App.Server.Controllers
                 return NotFound("Getting previous plans was not successful.");
             }
             List<PlanDto> previousPlansDto = previousPlans.Select(plan => plan.ToDto()).ToList();
+
             var attendence = await _unitOfWork.AttendenceRepository.Get
                 (
-                    att => att.Ranger.DistrictId == districtId && 
-                    att.Date >= startDate && 
+                    att => att.Ranger.DistrictId == districtId &&
+                    att.Date >= startDate &&
                     att.Date < startDate.AddDays(planningPeriod),
                     null, "Ranger"
-
-
                 );
             if (attendence == null)
             {
@@ -354,8 +363,8 @@ namespace App.Server.Controllers
             }
             List<RangerDto> rangersDto = rangers.Select(r => r.ToDto()).ToList();
 
-            var routePlanGenerator = new RoutePlanGenerator(previousPlansDto, preexistingPlans, attendenceDtos, routeDto, rangersDto, startDate);
-            var result = routePlanGenerator.Generate();
+            var routePlanGenerator = new RoutePlanGenerator();
+            var result = routePlanGenerator.Generate(previousPlansDto, preexistingPlansDto, attendenceDtos, routeDto, rangersDto, startDate);
 
             return Ok(result);
         }
@@ -365,8 +374,8 @@ namespace App.Server.Controllers
             var plan = await _unitOfWork.PlanRepository.GetById(planDto.Date, planDto.Ranger.Id);
 
             // if plan not yet created, try to create
-            if (plan == null) 
-            { 
+            if (plan == null)
+            {
                 plan = await Create(planDto.Date, planDto.Ranger.Id);
             }
 

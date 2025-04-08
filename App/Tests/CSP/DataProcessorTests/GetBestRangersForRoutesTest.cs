@@ -1,72 +1,38 @@
 
+using App.Server.CSP;
 using App.Server.DTOs;
 
-namespace Tests.CSP.DataProcessor
+namespace Tests.CSP.DataProcessorTests
 {
     public class GetBestRangersForRoutesTest
     {
-        App.Server.CSP.DataProcessor dataProcessor;
+        readonly List<RouteDto> routes;
         public GetBestRangersForRoutesTest()
         {
-            DateOnly start = new DateOnly(2025, 1, 1);
-            List<RangerDto> rangers = new List<RangerDto>
-            {
-                new RangerDto
-                {
-                    Id = 1,
-                    FirstName = "Jan",
-                    LastName = "Novak",
-                    DistrictId = 1,
-                    Email = "abc@gmail"
-                },
-                new RangerDto
-                {
-                    Id = 2,
-                    FirstName = "Pavel",
-                    LastName = "Novak",
-                    DistrictId = 1,
-                    Email = "abc@gmail"
-                },
-                new RangerDto
-                {
-                    Id = 3,
-                    FirstName = "Jakub",
-                    LastName = "Novak",
-                    DistrictId = 1,
-                    Email = "abc@gmail"
-                }
-            };
-            List<RouteDto> routes = new List<RouteDto>
-            {
-                new RouteDto
-                {
+            routes =
+            [
+                new() {
                     Id= 1,
                     Name = "route1",
                     DistrictId= 1,
                     Priority = 1,
                     ControlPlace= null
                 },
-                new RouteDto
-                {
+                new() {
                     Id= 2,
                     Name = "route2",
                     DistrictId= 1,
                     Priority = 2,
                     ControlPlace= null
                 }
-            };
-
-            dataProcessor = new App.Server.CSP.DataProcessor(new List<PlanDto>(), rangers, routes, start);
-
+            ];
         }
+
         [Fact]
         public void NoDataTest()
         {
-            //assign
-            var dataProcessorNoData = new App.Server.CSP.DataProcessor(new List<PlanDto>(), new List<RangerDto>(), new List<RouteDto>(), new DateOnly(2025, 1, 1));
-
             //act
-            var bestRangers = dataProcessor.GetBestRangersForRoutes(new Dictionary<int, Dictionary<int, int>>());
+            var bestRangers = DataProcessor.GetBestRangersForRoutes([], routes, []);
 
             //assert
             Assert.NotNull(bestRangers);
@@ -89,8 +55,9 @@ namespace Tests.CSP.DataProcessor
                     { 1, 1000 }, {2, 0}
                 }
             };
+
             //act
-            var bestRangers = dataProcessor.GetBestRangersForRoutes(distributions);
+            var bestRangers = DataProcessor.GetBestRangersForRoutes(distributions, routes, []);
 
             //assert
             Assert.NotNull(bestRangers);
@@ -121,7 +88,7 @@ namespace Tests.CSP.DataProcessor
                 }
             };
             //act
-            var bestRangers = dataProcessor.GetBestRangersForRoutes(distributions);
+            var bestRangers = DataProcessor.GetBestRangersForRoutes(distributions, routes, []);
 
             //assert
             Assert.NotNull(bestRangers);

@@ -18,7 +18,7 @@ import { ReasonOfAbsence } from "../../../Services/AttendenceService";
 const PlanTable: React.FC = () : JSX.Element => {
     const { user, hasRole } = useAuth();
     const { rangers, locks, removeLock, addLock  } = useDistrict();
-    const { schedules, dateRange, loading } = useSchedule();
+    const { schedules, dateRange } = useSchedule();
 
     const dateArray = useMemo(() => {
         return dateRange.start && dateRange.end ? generateDateRange(dateRange.start, dateRange.end) : [];
@@ -75,9 +75,7 @@ const PlanTable: React.FC = () : JSX.Element => {
                                     <td className="sticky">
                                         <RangerCell ranger={ranger} />
                                     </td>
-                                    {loading ? (
-                                        <td>Loading...</td>
-                                    ): (
+                                    {
                                         dateArray.map((date, index) => {
                                             const Weekend = date.getDay() == 0 || date.getDay() == 6;
                                             const stringDate = formatDate(date);
@@ -93,7 +91,7 @@ const PlanTable: React.FC = () : JSX.Element => {
                                                 </td>
                                             );
                                         })
-                                    )}
+                                    }
                                 </tr>
                             );
                         })}

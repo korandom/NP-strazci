@@ -1,18 +1,15 @@
 using App.Server.CSP;
 using App.Server.DTOs;
 
-namespace Tests.CSP.DataProcessor
+namespace Tests.CSP.DataProcessorTests
 {
     public class GetRouteDistributions
     {
         [Fact]
         public void NoDataTest()
         {
-            //assign
-            var dataProcessor = new App.Server.CSP.DataProcessor(new List<PlanDto>(), new List<RangerDto>(), new List<RouteDto>(), new DateOnly(2025, 1, 1));
-            
             //act
-            var distributions = dataProcessor.GetRouteDistributions();
+            var distributions = DataProcessor.GetRouteDistributions([], [], []);
 
             //assert
             Assert.NotNull(distributions);
@@ -22,10 +19,9 @@ namespace Tests.CSP.DataProcessor
         [Fact]
         public void SimpleExistenceTest()
         {
-            //assign
-            DateOnly start = new DateOnly(2025, 1, 1);
-            List<RangerDto> rangers = new List<RangerDto>
-            {
+            //arrange
+            List<RangerDto> rangers =
+            [
                 new RangerDto
                 {
                     Id = 1,
@@ -34,9 +30,9 @@ namespace Tests.CSP.DataProcessor
                     DistrictId = 1,
                     Email = "abc@gmail"
                 }
-            };
-            List<RouteDto> routes = new List<RouteDto>
-            {
+            ];
+            List<RouteDto> routes =
+            [
                 new RouteDto
                 {
                     Id= 1,
@@ -53,12 +49,11 @@ namespace Tests.CSP.DataProcessor
                     Priority = 2,
                     ControlPlace= null
                 }
-            };
-            
-            var dataProcessor = new App.Server.CSP.DataProcessor(new List<PlanDto>(), rangers, routes, start);
-            
+            ];
+
+
             //act
-            var distributions = dataProcessor.GetRouteDistributions();
+            var distributions = DataProcessor.GetRouteDistributions([], rangers, routes);
 
             //assert
             Assert.NotNull(distributions);
@@ -76,10 +71,10 @@ namespace Tests.CSP.DataProcessor
         [Fact]
         public void CorrectDistributionTest()
         {
-            //assign
-            DateOnly start = new DateOnly(2025, 1, 1);
-            List<RangerDto> rangers = new List<RangerDto>
-            {
+            //arrange
+            DateOnly start = new(2025, 1, 1);
+            List<RangerDto> rangers =
+            [
                 new RangerDto
                 {
                     Id = 1,
@@ -88,9 +83,9 @@ namespace Tests.CSP.DataProcessor
                     DistrictId = 1,
                     Email = "abc@gmail"
                 }
-            };
-            List<RouteDto> routes = new List<RouteDto>
-            {
+            ];
+            List<RouteDto> routes =
+            [
                 new RouteDto
                 {
                     Id= 1,
@@ -107,10 +102,10 @@ namespace Tests.CSP.DataProcessor
                     Priority = 2,
                     ControlPlace= null
                 }
-            };
+            ];
             // route1 1 times, route2 4 times
-            List<PlanDto> previousPlans = new List<PlanDto>
-            {
+            List<PlanDto> plans =
+            [
                 new PlanDto
                 (
                     start.AddDays(-2),
@@ -140,11 +135,10 @@ namespace Tests.CSP.DataProcessor
                     [2],
                     []
                 )
-            };
-            var dataProcessor = new App.Server.CSP.DataProcessor(previousPlans, rangers, routes, new DateOnly(2025, 1, 1));
+            ];
 
             //act
-            var distributions = dataProcessor.GetRouteDistributions();
+            var distributions = DataProcessor.GetRouteDistributions(plans, rangers, routes);
 
             //assert
             Assert.NotNull(distributions);

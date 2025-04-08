@@ -27,22 +27,23 @@ namespace App.Server.Util
 
             string adminEmail = "admin@admin.com";
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
-            
+
             // Admin is already seeded in system
             if (adminUser != null)
             {
                 return;
             }
-            
-            adminUser = new ApplicationUser {
+
+            adminUser = new ApplicationUser
+            {
                 UserName = adminEmail,
                 Email = adminEmail,
                 EmailConfirmed = true
             };
-            
+
 
             var result = await userManager.CreateAsync(adminUser, "DebugAdminPass123.");
-            
+
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(adminUser, "Admin");

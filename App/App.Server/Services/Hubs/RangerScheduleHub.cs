@@ -1,24 +1,22 @@
 ﻿using App.Server.DTOs;
-using App.Server.Models.AppData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using System.Numerics;
 
 
 namespace App.Server.Services.Hubs
 {
     [Authorize]
-    public class RangerScheduleHub :  Hub
+    public class RangerScheduleHub : Hub
     {
         public async Task TriggerReload(int districtId)
         {
             await Clients.OthersInGroup($"{districtId}").SendAsync("Reload");
         }
-        public async Task UpdatePlan( int districtId, PlanDto plan)
-        { 
+        public async Task UpdatePlan(int districtId, PlanDto plan)
+        {
             await Clients.OthersInGroup($"{districtId}").SendAsync("PlanUpdated", plan);
         }
-        public async Task UpdateAttendence (int districtId, AttendenceDto attendence)
+        public async Task UpdateAttendence(int districtId, AttendenceDto attendence)
         {
             await Clients.OthersInGroup($"{districtId}").SendAsync("AttendenceUpdated", attendence);
 

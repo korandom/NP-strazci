@@ -16,7 +16,7 @@ namespace App.Server.Controllers
         public async Task<ActionResult<IEnumerable<VehicleDto>>> GetVehiclesInDistrict(int DistrictId)
         {
             var vehicles = await _unitOfWork.VehicleRepository.Get(vehicle => vehicle.DistrictId == DistrictId);
-            if (vehicles == null )
+            if (vehicles == null)
             {
                 return NotFound("Failed to fetch vehicles.");
             }
@@ -29,7 +29,7 @@ namespace App.Server.Controllers
         public async Task<ActionResult<VehicleDto>> Create(VehicleDto vehicleDto)
         {
             var district = await _unitOfWork.DistrictRepository.GetById(vehicleDto.DistrictId);
-            if (district== null)
+            if (district == null)
             {
                 return BadRequest("District id not found");
             }

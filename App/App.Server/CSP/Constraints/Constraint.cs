@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace App.Server.CSP.Constraints
+﻿namespace App.Server.CSP.Constraints
 {
     public abstract class Constraint<TVariable, TDomain>(TVariable[] variables)
         where TVariable : notnull

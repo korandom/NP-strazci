@@ -1,9 +1,7 @@
-﻿using System.Collections.Immutable;
-
-namespace App.Server.CSP.Constraints
+﻿namespace App.Server.CSP.Constraints
 {
-    using VariableID = int;
     using RangerID = int?;
+    using VariableID = int;
 
     public class FilledAttendenceConstraint(VariableID[] variables, int minimalPlanned) : Constraint<VariableID, RangerID>(variables)
     {

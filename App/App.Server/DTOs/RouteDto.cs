@@ -1,5 +1,4 @@
 ﻿using App.Server.Models.AppData;
-using System.ComponentModel.DataAnnotations;
 
 namespace App.Server.DTOs
 {

@@ -1,5 +1,4 @@
-﻿using App.Server.Models.AppData;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace App.Server.Models.Identity
 {

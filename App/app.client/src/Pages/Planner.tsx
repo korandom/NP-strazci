@@ -39,7 +39,7 @@ const Planner: React.FC = () : JSX.Element=> {
     }, [dateRange]);
 
     const startOfGeneratingDate = useMemo(() => {
-        return getShiftedDate(dateRange.end, 1);
+        return getShiftedDate(dateRange.start, 7);
     }, [dateRange]);
 
     const handleGenerate = () => {

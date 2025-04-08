@@ -1,10 +1,10 @@
 ﻿using App.Server.DTOs;
-using Microsoft.AspNetCore.Mvc;
-using App.Server.Repositories.Interfaces;
 using App.Server.Models.AppData;
-using Microsoft.AspNetCore.Authorization;
+using App.Server.Repositories.Interfaces;
 using App.Server.Services.Authentication;
 using App.Server.Services.Authorization;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace App.Server.Controllers
@@ -92,7 +92,7 @@ namespace App.Server.Controllers
         public async Task<ActionResult<IEnumerable<AttendenceDto>>> GetAttendenceByDateRange(int districtId, DateOnly startDate, DateOnly endDate)
         {
             var attendences = await _unitOfWork.AttendenceRepository.Get(attend => attend.Ranger.DistrictId == districtId && attend.Date >= startDate && attend.Date <= endDate, null, "Ranger");
-            if(attendences == null)
+            if (attendences == null)
             {
                 return NotFound("No attendences found in range");
             }

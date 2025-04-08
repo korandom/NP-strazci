@@ -1,47 +1,25 @@
 ﻿using App.Server.DTOs;
-using System.Collections.Immutable;
 
 namespace App.Server.CSP
 {
 
-    using RouteDistribution = Dictionary<int, int>;
     using Rangers = List<int>;
-    public interface IRouteTypeDeterminer
-    {
-        public RouteType DetermineRouteType(RouteDto route);
-    }
+    using RouteDistribution = Dictionary<int, int>;
+
     /// <summary>
-    /// DataProcessor is a class for extracting information - like route distribution, from past plans to use for generating new route plan.
+    /// DataProcessor is a class for extracting information - like route distribution, from plans to use for generating new route plan.
     /// It takes into account rangers and routes, that should be included into the processing.
     /// </summary>
-    public class DataProcessor : IRouteTypeDeterminer
+    public static class DataProcessor
     {
-        private readonly List<PlanDto> previousPlans;
-        private readonly List<RangerDto> rangers;
-        private readonly List<RouteDto> routes;
-        private readonly DateOnly start;
-
-        /// <summary>
-        /// Contructor of DataProcessor.
-        /// </summary>
-        /// <param name="previousPlans">Previous plans, should be all plans in a 3 week span before start of generated.</param>
-        /// <param name="rangers">Rangers for who the information will be created.</param>
-        /// <param name="routes">Routes for which the information will be created.</param>
-        public DataProcessor(List<PlanDto> previousPlans, List<RangerDto> rangers, List<RouteDto> routes, DateOnly start)
-        {
-            this.previousPlans = previousPlans;
-            this.rangers = rangers;
-            this.routes = routes;
-            this.start = start;
-        }
 
         /// <summary>
         /// Calculates distribution for all rangers. viz <see cref="CalculateRouteDistribution"/>
         /// </summary>
         /// <returns>A Dictionary<int, RouteDistribution> where key is rangerId. </returns>
-        public Dictionary<int, RouteDistribution> GetRouteDistributions()
+        public static Dictionary<int, RouteDistribution> GetRouteDistributions(List<PlanDto> plans, List<RangerDto> rangers, List<RouteDto> routes)
         {
-            var rangersPlansDic = previousPlans
+            var rangersPlansDic = plans
                 .GroupBy(plan => plan.Ranger.Id)
                 .ToDictionary(group => group.Key, group => group.ToList());
 
@@ -49,7 +27,7 @@ namespace App.Server.CSP
 
             foreach (var ranger in rangers)
             {
-                distributionDic[ranger.Id] = CalculateRouteDistribution(rangersPlansDic.TryGetValue(ranger.Id, out var plans) ? plans : new List<PlanDto>());
+                distributionDic[ranger.Id] = CalculateRouteDistribution(rangersPlansDic.TryGetValue(ranger.Id, out var rangerPlans) ? plans : [], routes);
             }
 
             return distributionDic;
@@ -60,7 +38,7 @@ namespace App.Server.CSP
         ///  If plans of one ranger are given, the result can be compared to results of other rangers
         ///  to assess data not by absolute numbers ("ranger went to this route 5 times this month") 
         ///  but by relative numbers ("ranger went to this route 80% of the time")
-        ///  This is helpful, because some rangers can go to work much less than others and absolute numbers woudlnt be telling.
+        ///  This is helpful, because some rangers can go to work much less than others and absolute numbers wouldnt be telling.
         ///  
         ///  The distribution is represented as an int between 0 and 1000 which is coresponding to percentage * 10.  
         /// </summary>
@@ -68,7 +46,7 @@ namespace App.Server.CSP
         /// <returns>
         /// A Dictionary<int,int>, where the key is a routeId and the value is distribution of that route in the given plans.
         /// </returns>
-        private RouteDistribution CalculateRouteDistribution(List<PlanDto> plans)
+        private static RouteDistribution CalculateRouteDistribution(List<PlanDto> plans, List<RouteDto> routes)
         {
             var distributionDic = routes.ToDictionary(route => route.Id, route => 0);
             var allPlannedRoutes = plans.SelectMany(plan => plan.RouteIds).ToList();
@@ -93,12 +71,22 @@ namespace App.Server.CSP
         /// <summary>
         /// Orders all rangers for each route from best suited to least -- according to the routeDistribution.
         /// Rangers with least route distribution come first.
+        /// If some are preplanned, they are moved to the back.
         /// </summary>
         /// <param name="routeDistributions">Route distribution of all rangers.</param>
         /// <returns>A Dictionary with key being RouteId and value are Rangers - a list of rangerIDs, ordered by best to worst for route.</returns>
-        public Dictionary<int, Rangers> GetBestRangersForRoutes(Dictionary<int, RouteDistribution> routeDistributions)
+        public static Dictionary<int, Rangers> GetBestRangersForRoutes(Dictionary<int, RouteDistribution> routeDistributions, List<RouteDto> routes, List<PlanDto> preexistingPlans)
         {
-            return routes.ToDictionary(route => route.Id, route => DetermineBestRangers(route.Id, routeDistributions));
+            var bestRangers = routes.ToDictionary(route => route.Id, route => DetermineBestRangers(route.Id, routeDistributions));
+            foreach (var plan in preexistingPlans)
+            {
+                foreach (var routeId in plan.RouteIds)
+                {
+                    bestRangers[routeId].Remove(plan.Ranger.Id);
+                    bestRangers[routeId].Add(plan.Ranger.Id);
+                }
+            }
+            return bestRangers;
         }
 
         /// <summary>
@@ -139,78 +127,32 @@ namespace App.Server.CSP
         }
 
         /// <summary>
-        /// Determines what type of route the given route is in the context of recent plans.
-        /// This implementation is based on a dayCount of 7 - one week! 
-        /// If the planning period would change, this method does not work as intended and must be refactored.
-        /// Routes with a Daily priority have a RouteType Daily.
-        /// Routes with a Weekly priority have a RouteType Once.
-        /// Routes with a Forthnighly priority have a RouteType of Once if not planned the previous week, else Meh.
-        /// Routes with a Monthly priority have a RouteType of Once if not planned the previous 3 weeks, else Meh.
+        /// Get preexisting plans that cant be reassigned.
         /// </summary>
-        /// <param name="route">Given Route</param>
-        /// <returns>RouteType of the route</returns>
-        public RouteType DetermineRouteType(RouteDto route)
+        /// <param name="preexistingPlans"></param>
+        /// <returns></returns>
+        public static List<PlanDto> GetFixedPreviousPlans(List<PlanDto> preexistingPlans)
         {
-            switch (route.Priority)
-            {
-                //Monthly
-                case 0:
-                    if (WasRoutePlanned(route.Id, 28))
-                    {
-                        return RouteType.Meh;
-                    }
-                    return RouteType.Once;
-
-                //Fortnightly
-                case 1:
-                    if (WasRoutePlanned(route.Id, 7))
-                    {
-                        return RouteType.Meh;
-                    }
-                    return RouteType.Once;
-
-                //Weekly
-                case 2:
-                    return RouteType.Once;
-
-                //Daily
-                case 3:
-                    return RouteType.Daily;
-
-                //Unknown
-                default:
-                    return RouteType.Meh;
-
-            }
+            return preexistingPlans.Where(plan =>
+                plan.RouteIds.Length >= 2 ||
+                preexistingPlans.Any(second =>
+                    plan.Date == second.Date &&
+                    plan.Ranger.Id != second.Ranger.Id &&
+                    plan.RouteIds.Intersect(second.RouteIds).Any()))
+            .ToList();
         }
 
-        /// <summary>
-        /// Checks if given route was planned in the recent past with at most shift number of days before start.
-        /// </summary>
-        /// <param name="routeId">Id of given route</param>
-        /// <param name="shift">Shift determines the range in which we are searching</param>
-        /// <returns></returns>
-        private bool WasRoutePlanned(int routeId, int shift)
-        {
-            DateOnly end = start.AddDays(-shift);
 
-            bool exists = previousPlans.Any(
-                    plan => plan.Date >= end &&
-                    plan.Date < start &&
-                    plan.RouteIds.Any(route => route == routeId)
-            );
-            return exists;
-        }
 
         /// <summary>
-        /// From the 
+        /// Converts assignment of values to variables to plans.
         /// </summary>
-        /// <param name="assignment"></param>
-        /// <param name="variables"></param>
+        /// <param name="assignment">Generated assignment.</param>
+        /// <param name="variables">Variables.</param>
         /// <returns></returns>
-        public List<PlanDto> ConvertAssignmentToPlan(Dictionary<int, int?> assignment, List<Variable> variables)
+        public static List<PlanDto> ConvertAssignmentToPlan(Dictionary<int, int?> assignment, List<Variable> variables, List<RangerDto> rangers, DateOnly start)
         {
-            List<PlanDto> plans = new List<PlanDto>();
+            List<PlanDto> plans = [];
             Dictionary<int, Variable> variableDictionary = variables.ToDictionary(variable => variable.VariableId, variable => variable);
             Dictionary<int, RangerDto> rangerDictionary = rangers.ToDictionary(ranger => ranger.Id, ranger => ranger);
             foreach (var assigned in assignment)
@@ -224,5 +166,6 @@ namespace App.Server.CSP
             }
             return plans;
         }
+
     }
 }

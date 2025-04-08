@@ -1,7 +1,8 @@
-﻿using App.Server.DTOs;
+﻿using App.Server.CSP;
+using App.Server.DTOs;
 
 
-namespace Tests.CSP.DataProcessor
+namespace Tests.CSP.DataProcessorTests
 {
     public class GetWorkingRangersTest
     {
@@ -10,7 +11,7 @@ namespace Tests.CSP.DataProcessor
         {
 
             //act
-            var workingRangers = App.Server.CSP.DataProcessor.GetWorkingRangers(new List<AttendenceDto>(), 0, new DateOnly(2025, 1, 1));
+            var workingRangers = DataProcessor.GetWorkingRangers([], 0, new DateOnly(2025, 1, 1));
 
             //assert
             Assert.NotNull(workingRangers);
@@ -22,7 +23,7 @@ namespace Tests.CSP.DataProcessor
         {
 
             //act
-            var workingRangers = App.Server.CSP.DataProcessor.GetWorkingRangers(new List<AttendenceDto>(), 2, new DateOnly(2025, 1, 1));
+            var workingRangers = DataProcessor.GetWorkingRangers([], 2, new DateOnly(2025, 1, 1));
 
             //assert
             Assert.NotNull(workingRangers);
@@ -36,10 +37,10 @@ namespace Tests.CSP.DataProcessor
         [Fact]
         public void AllNegativeAttendenceTest()
         {
-            //assign
-            DateOnly start = new DateOnly(2025, 1, 1);
-            List<RangerDto> rangers = new List<RangerDto>
-            {
+            //arrange
+            DateOnly start = new(2025, 1, 1);
+            List<RangerDto> rangers =
+            [
                 new RangerDto
                 {
                     Id = 1,
@@ -64,9 +65,9 @@ namespace Tests.CSP.DataProcessor
                     DistrictId = 1,
                     Email = "abc@gmail"
                 }
-            };
-            List<AttendenceDto> attendences = new List<AttendenceDto>()
-            {
+            ];
+            List<AttendenceDto> attendences =
+            [
                 new AttendenceDto
                 {
                     Date = start,
@@ -109,11 +110,11 @@ namespace Tests.CSP.DataProcessor
                     ReasonOfAbsence = App.Server.Models.AppData.ReasonOfAbsence.None,
                     Working= false
                 }
-            };
+            ];
 
 
             //act
-            var workingRangers = App.Server.CSP.DataProcessor.GetWorkingRangers(attendences, 2, start);
+            var workingRangers = DataProcessor.GetWorkingRangers(attendences, 2, start);
 
             //assert
             Assert.NotNull(workingRangers);
@@ -127,10 +128,10 @@ namespace Tests.CSP.DataProcessor
         [Fact]
         public void SimpleAttendenceTest()
         {
-            //assign
-            DateOnly start = new DateOnly(2025, 1, 1);
-            List<RangerDto> rangers = new List<RangerDto>
-            {
+            //arrange
+            DateOnly start = new(2025, 1, 1);
+            List<RangerDto> rangers =
+            [
                 new RangerDto
                 {
                     Id = 1,
@@ -155,10 +156,10 @@ namespace Tests.CSP.DataProcessor
                     DistrictId = 1,
                     Email = "abc@gmail"
                 }
-            };
+            ];
             // first day ranger 2,3 working, second day ranger 1 working
-            List<AttendenceDto> attendences = new List<AttendenceDto>()
-            {
+            List<AttendenceDto> attendences =
+            [
                 new AttendenceDto
                 {
                     Date = start,
@@ -198,18 +199,18 @@ namespace Tests.CSP.DataProcessor
                     ReasonOfAbsence = App.Server.Models.AppData.ReasonOfAbsence.None,
                     Working= false
                 }
-            };
+            ];
 
 
             //act
-            var workingRangers = App.Server.CSP.DataProcessor.GetWorkingRangers(attendences, 2, start);
+            var workingRangers = DataProcessor.GetWorkingRangers(attendences, 2, start);
 
             //assert
             Assert.NotNull(workingRangers);
             Assert.Equal(2, workingRangers.Count);
             Assert.Contains(0, workingRangers);
             Assert.Contains(1, workingRangers);
-            List<int> expectedFirst = [2,3];
+            List<int> expectedFirst = [2, 3];
             List<int> expectedSecodn = [1];
             Assert.Equal(expectedFirst, workingRangers[0]);
             Assert.Equal(expectedSecodn, workingRangers[1]);

@@ -17,7 +17,7 @@ namespace Tests.CSP.VariableManagerTests
         public void NoRoutes()
         {
             //assign
-            VariableManager variableManager = new(_mockDeterminer.Object, new List<RouteDto>(), 2);
+            VariableManager variableManager = new(_mockDeterminer.Object, [], 2);
 
             //act
             List<Variable> variables = variableManager.GetVariables();
@@ -36,7 +36,7 @@ namespace Tests.CSP.VariableManagerTests
         public void CorrectVariableCount(int routeCount, int dayCount)
         {
             //assign
-            List<RouteDto> routes = new List<RouteDto>();
+            List<RouteDto> routes = [];
             for (int i = 0; i < routeCount; i++)
             {
                 routes.Add(new RouteDto() { Id = i, Priority = 0, DistrictId = 1 });

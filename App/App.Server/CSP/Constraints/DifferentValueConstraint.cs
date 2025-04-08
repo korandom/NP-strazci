@@ -1,9 +1,7 @@
-﻿using System.Collections.Immutable;
-
-namespace App.Server.CSP.Constraints
+﻿namespace App.Server.CSP.Constraints
 {
-    using VariableID = int;
     using RangerID = int?;
+    using VariableID = int;
 
     public class DifferentValueConstraint(VariableID[] variables) : Constraint<VariableID, RangerID>(variables)
     {

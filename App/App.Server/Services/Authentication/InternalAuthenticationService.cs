@@ -21,7 +21,7 @@ namespace App.Server.Services.Authentication
 
         public async Task<IdentityResult> RegisterUserAsync(ApplicationUser user)
         {
-            var result =  await _userManager.CreateAsync(user);
+            var result = await _userManager.CreateAsync(user);
             if (result.Succeeded)
             {
                 await _userManager.AddPasswordAsync(user, user.UserName ?? "tempPass123.");

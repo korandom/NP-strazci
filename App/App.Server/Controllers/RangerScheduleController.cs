@@ -26,9 +26,9 @@ namespace App.Server.Controllers
         [HttpGet("by-dates/{districtId}/{startDate}/{endDate}")]
         public async Task<ActionResult<IEnumerable<RangerScheduleDto>>> GetRangerSchedulesInRange(int districtId, DateOnly startDate, DateOnly endDate)
         {
-            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Ranger.DistrictId == districtId && plan.Date >= startDate && plan.Date <= endDate,null,"Routes,Vehicles,Ranger");
+            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Ranger.DistrictId == districtId && plan.Date >= startDate && plan.Date <= endDate, null, "Routes,Vehicles,Ranger");
 
-            var attendances = await _unitOfWork.AttendenceRepository.Get(attend => attend.Ranger.DistrictId == districtId && attend.Date >= startDate && attend.Date <= endDate,null,"Ranger");
+            var attendances = await _unitOfWork.AttendenceRepository.Get(attend => attend.Ranger.DistrictId == districtId && attend.Date >= startDate && attend.Date <= endDate, null, "Ranger");
 
             var mergeDict = new Dictionary<string, RangerScheduleDto>();
 
@@ -59,7 +59,7 @@ namespace App.Server.Controllers
                         Date = attend.Date,
                         Working = attend.Working,
                         From = attend.From,
-                        ReasonOfAbsence = attend.ReasonOfAbsenceEnum 
+                        ReasonOfAbsence = attend.ReasonOfAbsenceEnum
                     };
                 }
                 else

@@ -11,7 +11,7 @@ namespace App.Server.DTOs
         public RangerDto Ranger { get; set; }
 
         public bool Working { get; set; }
-        
+
         public TimeOnly? From { get; set; }
 
         public ReasonOfAbsence ReasonOfAbsence { get; set; }

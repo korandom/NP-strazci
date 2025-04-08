@@ -11,13 +11,13 @@ namespace Tests.CSP.ConstraintsTests
         {
             //assign
             int[] variables = [1];
-            Dictionary<int, int?> assigned =  new Dictionary<int, int?>
+            Dictionary<int, int?> assigned = new()
             {
                 { 1, 1 },
                 { 2, 1 },
                 { 3, 1 }
             };
-            DifferentValueConstraint constraint = new DifferentValueConstraint(variables);
+            DifferentValueConstraint constraint = new(variables);
 
             //act
             bool result = constraint.IsSatisfied(assigned);
@@ -30,14 +30,14 @@ namespace Tests.CSP.ConstraintsTests
         public void TwoVariablesBothNull()
         {
             //assign
-            int[] variables = [1,2];
-            Dictionary<int, int?> assigned = new Dictionary<int, int?>
+            int[] variables = [1, 2];
+            Dictionary<int, int?> assigned = new()
             {
                 { 1, null },
                 { 2, null },
                 { 3, null }
             };
-            DifferentValueConstraint constraint = new DifferentValueConstraint(variables);
+            DifferentValueConstraint constraint = new(variables);
 
             //act
             bool result = constraint.IsSatisfied(assigned);
@@ -51,13 +51,13 @@ namespace Tests.CSP.ConstraintsTests
         {
             //assign
             int[] variables = [1, 2];
-            Dictionary<int, int?> assigned = new Dictionary<int, int?>
+            Dictionary<int, int?> assigned = new()
             {
                 { 1, 1 },
                 { 2, 2 },
                 { 3, null }
             };
-            DifferentValueConstraint constraint = new DifferentValueConstraint(variables);
+            DifferentValueConstraint constraint = new(variables);
 
             //act
             bool result = constraint.IsSatisfied(assigned);
@@ -72,13 +72,13 @@ namespace Tests.CSP.ConstraintsTests
         {
             //assign
             int[] variables = [1, 2];
-            Dictionary<int, int?> assigned = new Dictionary<int, int?>
+            Dictionary<int, int?> assigned = new()
             {
                 { 1, 1 },
                 { 2, 1 },
                 { 3, 2 }
             };
-            DifferentValueConstraint constraint = new DifferentValueConstraint(variables);
+            DifferentValueConstraint constraint = new(variables);
 
             //act
             bool result = constraint.IsSatisfied(assigned);
@@ -92,7 +92,7 @@ namespace Tests.CSP.ConstraintsTests
         {
             //assign
             int[] variables = [1, 2, 3, 4];
-            Dictionary<int, int?> assigned = new Dictionary<int, int?>
+            Dictionary<int, int?> assigned = new()
             {
                 { 1, 1 },
                 { 2, null },
@@ -100,7 +100,7 @@ namespace Tests.CSP.ConstraintsTests
                 { 4, 3 },
                 { 5, 1 }
             };
-            DifferentValueConstraint constraint = new DifferentValueConstraint(variables);
+            DifferentValueConstraint constraint = new(variables);
 
             //act
             bool result = constraint.IsSatisfied(assigned);
@@ -114,14 +114,14 @@ namespace Tests.CSP.ConstraintsTests
         {
             //assign
             int[] variables = [1, 2, 3, 4];
-            Dictionary<int, int?> assigned = new Dictionary<int, int?>
+            Dictionary<int, int?> assigned = new()
             {
                 { 5, 1 },
                 { 6, null },
                 { 7, 2 },
                 { 8, 1 }
             };
-            DifferentValueConstraint constraint = new DifferentValueConstraint(variables);
+            DifferentValueConstraint constraint = new(variables);
 
             //act
             bool result = constraint.IsSatisfied(assigned);
@@ -135,7 +135,7 @@ namespace Tests.CSP.ConstraintsTests
         {
             //assign
             int[] variables = [1, 2, 3, 4];
-            Dictionary<int, int?> assigned = new Dictionary<int, int?>
+            Dictionary<int, int?> assigned = new()
             {
                 { 1, 1 },
                 { 2, null },
@@ -143,7 +143,7 @@ namespace Tests.CSP.ConstraintsTests
                 { 4, 3 },
                 { 5, 3 }
             };
-            DifferentValueConstraint constraint = new DifferentValueConstraint(variables);
+            DifferentValueConstraint constraint = new(variables);
 
             //act
             bool result = constraint.IsSatisfied(assigned);

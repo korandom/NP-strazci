@@ -2,8 +2,8 @@
 
 namespace App.Server.CSP.Constraints
 {
-    using VariableID = int;
     using RangerID = int?;
+    using VariableID = int;
 
     public class SomeAssignedConstraint(VariableID[] variables) : Constraint<VariableID, RangerID>(variables)
     {

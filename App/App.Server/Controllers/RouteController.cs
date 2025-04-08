@@ -1,5 +1,4 @@
 ﻿using App.Server.DTOs;
-using App.Server.Models;
 using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;

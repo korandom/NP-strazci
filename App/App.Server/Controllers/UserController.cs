@@ -1,9 +1,9 @@
-﻿using App.Server.Services.Authorization;
-using App.Server.Services.Authentication;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using App.Server.DTOs;
+﻿using App.Server.DTOs;
 using App.Server.Models.Identity;
+using App.Server.Services.Authentication;
+using App.Server.Services.Authorization;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace App.Server.Controllers
 {
@@ -28,7 +28,8 @@ namespace App.Server.Controllers
             };
             var result = await _authenticationService.RegisterUserAsync(user);
 
-            if (result.Succeeded) {
+            if (result.Succeeded)
+            {
                 await _authorizationService.AssignRoleAsync(user, "Ranger");
             }
 
@@ -48,12 +49,12 @@ namespace App.Server.Controllers
             var result = await _authorizationService.AssignRoleAsync(user, role);
 
 
-            if(result == null)
+            if (result == null)
             {
                 return BadRequest("Assigning role was not succesfull");
             }
 
-            if(result.Succeeded) 
+            if (result.Succeeded)
             {
                 return Ok($"Successfully assigned role {role} to {userEmail}");
             }
@@ -63,7 +64,7 @@ namespace App.Server.Controllers
 
         // signin
         [HttpPost("signin")]
-        public async Task<ActionResult<UserDto>> SignIn([FromBody] SignInRequest request )
+        public async Task<ActionResult<UserDto>> SignIn([FromBody] SignInRequest request)
         {
             var result = await _authenticationService.SignInAsync(request.Email, request.Password);
 

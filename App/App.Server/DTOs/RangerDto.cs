@@ -1,6 +1,4 @@
-﻿using App.Server.Models;
-
-namespace App.Server.DTOs
+﻿namespace App.Server.DTOs
 {
     public class RangerDto
     {

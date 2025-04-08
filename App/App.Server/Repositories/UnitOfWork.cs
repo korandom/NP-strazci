@@ -5,7 +5,7 @@ namespace App.Server.Repositories
 {
     public class UnitOfWork(PlannerNPContext context) : IUnitOfWork
     {
-        private PlannerNPContext _context = context;
+        private readonly PlannerNPContext _context = context;
         private GenericRepository<District>? districtRepository;
         private GenericRepository<Models.AppData.Route>? routeRepository;
         private GenericRepository<Vehicle>? vehicleRepository;
@@ -25,7 +25,7 @@ namespace App.Server.Repositories
 
         public GenericRepository<Models.AppData.Route> RouteRepository
         {
-            get 
+            get
             {
                 this.routeRepository ??= new GenericRepository<Models.AppData.Route>(_context);
                 return routeRepository;
@@ -78,7 +78,7 @@ namespace App.Server.Repositories
         }
         public async Task SaveAsync()
         {
-           await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 }

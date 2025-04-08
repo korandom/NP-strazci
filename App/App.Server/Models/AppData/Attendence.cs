@@ -1,5 +1,4 @@
 ﻿using App.Server.DTOs;
-using App.Server.Migrations;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Server.Models.AppData

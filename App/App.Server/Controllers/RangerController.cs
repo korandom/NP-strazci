@@ -1,5 +1,4 @@
 ﻿using App.Server.DTOs;
-using App.Server.Models;
 using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
 using App.Server.Services.Authentication;
@@ -42,7 +41,7 @@ namespace App.Server.Controllers
         public async Task<ActionResult<IEnumerable<RangerDto>>> GetRangersInDistrict(int DistrictId)
         {
             var rangers = await _unitOfWork.RangerRepository.Get(ranger => ranger.DistrictId == DistrictId);
-            if (rangers == null )
+            if (rangers == null)
             {
                 return NotFound("Failed to fetch rangers.");
             }
@@ -75,7 +74,7 @@ namespace App.Server.Controllers
 
         [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpDelete("delete/{RangerId}")]
-        public async  Task<ActionResult> Delete(int RangerId)
+        public async Task<ActionResult> Delete(int RangerId)
         {
             var ranger = await _unitOfWork.RangerRepository.GetById(RangerId);
             if (ranger == null)
@@ -106,7 +105,7 @@ namespace App.Server.Controllers
             _unitOfWork.RangerRepository.Update(ranger);
             await _unitOfWork.SaveAsync();
 
-            return Ok(ranger.ToDto());  
+            return Ok(ranger.ToDto());
         }
     }
 }

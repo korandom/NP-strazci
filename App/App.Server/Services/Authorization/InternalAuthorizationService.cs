@@ -1,6 +1,5 @@
 ﻿using App.Server.Models.Identity;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 
 namespace App.Server.Services.Authorization
 {
@@ -18,7 +17,7 @@ namespace App.Server.Services.Authorization
             string[] roles = { "Admin", "HeadOfDistrict", "Ranger" };
             foreach (string role in roles)
             {
-                if(await _userManager.IsInRoleAsync(user, role))
+                if (await _userManager.IsInRoleAsync(user, role))
                 {
                     return role;
                 }
@@ -33,7 +32,7 @@ namespace App.Server.Services.Authorization
 
         public bool IsUserOwner(ApplicationUser user, int rangerId)
         {
-            return user!= null && user.RangerId == rangerId;
+            return user != null && user.RangerId == rangerId;
         }
 
     }

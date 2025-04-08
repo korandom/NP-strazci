@@ -1,17 +1,16 @@
 ﻿using App.Server.DTOs;
-using Microsoft.EntityFrameworkCore;
 
 namespace App.Server.Models.AppData
 {
 
     public class Ranger
-    {   
+    {
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public ICollection<Plan> Plans { get; } = new List<Plan>();
-        public ICollection<Attendence> Attendences { get; } = new List<Attendence>();
+        public ICollection<Plan> Plans { get; } = [];
+        public ICollection<Attendence> Attendences { get; } = [];
         public District District { get; set; }
         public int DistrictId { get; set; }
     }

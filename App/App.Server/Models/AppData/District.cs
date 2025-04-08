@@ -6,8 +6,8 @@ namespace App.Server.Models.AppData
     {
         public int Id { get; set; }
 
-        public ICollection<Ranger> Rangers { get; } = new List<Ranger>();
-        public ICollection<Vehicle> Vehicles { get; } = new List<Vehicle>();
+        public ICollection<Ranger> Rangers { get; } = [];
+        public ICollection<Vehicle> Vehicles { get; } = [];
         public required string Name { get; set; }
     }
 

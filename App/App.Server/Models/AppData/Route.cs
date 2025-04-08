@@ -11,11 +11,11 @@ namespace App.Server.Models.AppData
         public ControlPlace? ControlPlace { get; set; }
         public int DistrictId { get; set; }
         public District District { get; set; }
-        public ICollection<Plan> Plans { get; } = new List<Plan>();
+        public ICollection<Plan> Plans { get; } = [];
     }
 
     [Owned]
-    public class ControlPlace 
+    public class ControlPlace
     {
         public string ControlTime { get; set; }
         public string ControlPlaceDescription { get; set; }

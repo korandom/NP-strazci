@@ -1,6 +1,7 @@
 ﻿using App.Server.CSP.Constraints;
 using App.Server.DTOs;
-using App.Server.Models.AppData;
+using System.Data;
+
 
 namespace App.Server.CSP
 {
@@ -11,76 +12,91 @@ namespace App.Server.CSP
     /// </summary>
     public class RoutePlanGenerator
     {
-        private readonly DataProcessor _dataProcessor;
-        private readonly VariableManager _variableManager;
-        private readonly List<PlanDto> _preexistingPlans;
-        private readonly Dictionary<int, Rangers> _workingRangers;
-        static readonly int dayCount = 7; // logic is heavily based on planning for 7 days, changing this would require a lot of refactoring
-
-
-        public RoutePlanGenerator(List<PlanDto> previousPlans, List<PlanDto> preexistingPlans, List<AttendenceDto> attendences, List<RouteDto> routes, List<RangerDto> rangers, DateOnly start)
-        {
-            this._dataProcessor = new DataProcessor(previousPlans, rangers, routes, start);
-            this._variableManager = new VariableManager(_dataProcessor, routes, dayCount);
-            this._preexistingPlans = preexistingPlans;
-            this._workingRangers = DataProcessor.GetWorkingRangers(attendences, dayCount, start);
-        }
+        private static readonly int dayCount = 7;
 
         /// <summary>
-        /// Generates a new route plan for a week.
+        /// Generates a new route plan for a week or gives a reason why no route plan was planned by returning a generated result.
         /// </summary>
         /// <returns>
         /// A Successful result with generated route plan upon finding solution.
         /// A Semi succesfull result with generated route plan and a warning, if preselected routes had to be rewritten.
         /// A Failed result if finding solution was not sucessful.
         /// </returns>
-        public GenerateResultDto Generate()
+        public GenerateResultDto Generate(List<PlanDto> previousPlans, List<PlanDto> preexistingPlans, List<AttendenceDto> attendences, List<RouteDto> routes, List<RangerDto> rangers, DateOnly start)
         {
-            // process data 
-            var routeDistributions = _dataProcessor.GetRouteDistributions();
-            var bestRangersForRoutes = _dataProcessor.GetBestRangersForRoutes(routeDistributions);
+            List<PlanDto> fixedPlans = DataProcessor.GetFixedPreviousPlans(preexistingPlans);
 
-            // set up variables and domains and check if possible at all to solve
-            var variables = _variableManager.GetVariables();
-            var variableIDs = VariableManager.GetOrderedVariableIds(variables);
+            // try to generate a result that accomodates all preexistingPlans
+            List<AttendenceDto> filteredAttendence = attendences.Where(att => !preexistingPlans.Any(plan => plan.Date == att.Date && plan.Ranger.Id == att.Ranger.Id && plan.RouteIds.Length > 0)).ToList();
+            var result = TrySolving([.. previousPlans, .. preexistingPlans], preexistingPlans, filteredAttendence, routes, rangers, start);
 
-            if (!CheckEnoughAvailableRangers(variables, _workingRangers))
+            if (result.Success)
             {
-                return new GenerateResultDto() { 
-                    Success=false, 
-                    Message="Nedostatečná docházka pro naplnění důležitosti tras."
-                }; 
+                result.Plans = result.Plans.Concat(preexistingPlans);
+                return result;
             }
 
-            var domains = VariableManager.CreateDomains(variables, _workingRangers, bestRangersForRoutes);
+            List<AttendenceDto> lessRestraintAttendence = attendences.Where(att => !fixedPlans.Any(plan => plan.Date == att.Date && plan.Ranger.Id == att.Ranger.Id && plan.RouteIds.Length > 0)).ToList();
+            var resultWithoutPreferences = TrySolving([.. previousPlans, .. fixedPlans], fixedPlans, lessRestraintAttendence, routes, rangers, start);
+            if (resultWithoutPreferences.Success)
+            {
+                resultWithoutPreferences.Plans = resultWithoutPreferences.Plans.Concat(fixedPlans);
+                resultWithoutPreferences.Message = "Pro naplnění priority tras došlo k přeplánování manuálně naplánovaných tras.";
+            }
+            return resultWithoutPreferences;
+        }
+
+        private GenerateResultDto TrySolving(List<PlanDto> allPlans, List<PlanDto> preplanned, List<AttendenceDto> attendences, List<RouteDto> routes, List<RangerDto> rangers, DateOnly start)
+        {
+
+            RouteDeterminer determiner = new(start, allPlans);
+            VariableManager variableManager = new(determiner, routes, dayCount);
+
+            // process data 
+            var routeDistributions = DataProcessor.GetRouteDistributions(allPlans, rangers, routes);
+            var bestRangersForRoutes = DataProcessor.GetBestRangersForRoutes(routeDistributions, routes, preplanned);
+            var workingRangers = DataProcessor.GetWorkingRangers(attendences, dayCount, start);
+
+            // set up variables and check 
+            var variables = variableManager.GetVariables();
+
+            // check if possible to solve 
+            if (!CheckEnoughAvailableRangers(variables, workingRangers))
+            {
+                return new GenerateResultDto
+                {
+                    Success = false,
+                    Message = "Nedostatečná docházka pro naplnění důležitosti tras."
+                };
+
+            }
+
+            List<Variable> orderedVariables = VariableManager.GetOrderedVariables(variables);
 
             // set up constraints
-            var builder = new ConstraintSolverBuilder<int,int?>(variableIDs, domains);
-            AddConstraints(builder, variables);
+            var constraints = GetConstraints(orderedVariables);
+            Solver solver = new(orderedVariables, workingRangers, bestRangersForRoutes, constraints);
 
-            //solve
-            var solver = builder.Build();
-
-            //TODO set up preexisting plans 
             var assignedVariables = solver.Solve();
+
             if (assignedVariables == null)
             {
-                return new GenerateResultDto()
+                return new GenerateResultDto
                 {
                     Success = false,
                     Message = "Generování nebylo úspěšné."
                 };
             }
+
             else
             {
-                return new GenerateResultDto()
+                return new GenerateResultDto
                 {
                     Success = true,
-                    Plans = _dataProcessor.ConvertAssignmentToPlan(assignedVariables, variables)
+                    Plans = DataProcessor.ConvertAssignmentToPlan(assignedVariables, variables, rangers, start)
                 };
             }
         }
-
         /// <summary>
         /// Checks if there is enough working rangers to cover the route priorities for this time period expressed in variables.
         /// </summary>
@@ -89,15 +105,15 @@ namespace App.Server.CSP
         /// <returns></returns>
         private static bool CheckEnoughAvailableRangers(List<Variable> variables, Dictionary<int, Rangers> workingRangers)
         {
-            int dailyVariableCount = variables.Where(variable => variable.RouteType == RouteType.Daily).Count();
-            int onceVariableCount = variables.Where(variable => variable.RouteType == RouteType.Once).Count();
+            var dailyVariables = variables.Where(variable => variable.RouteType == RouteType.Daily).GroupBy(variable => variable.DaysFromStart).ToDictionary(group => group.Key, group => group.Count());
+            int onceVariableCount = variables.Where(variable => variable.RouteType == RouteType.Once || variable.RouteType == RouteType.MinOnce).GroupBy(variable => variable.RouteId).Count();
             int rangerDaysCount = workingRangers.SelectMany(workingRangers => workingRangers.Value).Count();
 
             // each day has at least enough working rangers to cover daily routes
-            bool satisfiesMinDayCapacity = workingRangers.All(rangers => rangers.Value.Count() >= dailyVariableCount / dayCount);
+            bool satisfiesMinDayCapacity = workingRangers.All(rangers => rangers.Value.Count >= dailyVariables[rangers.Key]);
 
             // enough working rangers in whole to cover daily and at least once routes
-            int minimalCoverage = dailyVariableCount + onceVariableCount / dayCount;
+            int minimalCoverage = dailyVariables.Sum(daily => daily.Value) + onceVariableCount;
             bool satisfiesMinCumulative = rangerDaysCount - minimalCoverage >= 0;
 
             return satisfiesMinDayCapacity && satisfiesMinCumulative;
@@ -105,27 +121,35 @@ namespace App.Server.CSP
 
 
         /// <summary>
-        /// Add all constraints derived from the variables to the solver builder.
+        /// Add all constraints derived from the variables.
         /// </summary>
-        /// <param name="builder">Given Builder</param>
-        /// <param name="variables">Given Variables</param>
-        private void AddConstraints(ConstraintSolverBuilder<int, int?> builder, List<Variable> variables)
-        {
-            var dateGrouping = variables.GroupBy(variable => variable.DaysFromStart);
-            foreach (var dateGroup in dateGrouping)
-            {
-                int[] varIds = dateGroup.Select(group => group.VariableId).ToArray();
-                int rangerCount = _workingRangers[dateGroup.Key].Count;
-                builder.AddConstraint(new FilledAttendenceConstraint(varIds, rangerCount));
-                builder.AddConstraint(new DifferentValueConstraint(varIds));
-            }
 
+        /// <param name="variables">Given Variables</param>
+        private Dictionary<int, List<Constraint<int, int?>>> GetConstraints(List<Variable> variables)
+        {
+            Dictionary<int, List<Constraint<int, int?>>> constraints = [];
             var onceRouteGrouping = variables.Where(variable => variable.RouteType == RouteType.Once)
                                              .GroupBy(variable => variable.RouteId);
             foreach (var onceRouteGroup in onceRouteGrouping)
             {
                 int[] varIds = onceRouteGroup.Select(group => group.VariableId).ToArray();
-                builder.AddConstraint(new SomeAssignedConstraint(varIds));
+                AddConstraint(new SomeAssignedConstraint(varIds), constraints);
+            }
+            return constraints;
+        }
+
+        private void AddConstraint(Constraint<int, int?> constraint, Dictionary<int, List<Constraint<int, int?>>> constraints)
+        {
+            foreach (var variable in constraint.Variables)
+            {
+                if (constraints.TryGetValue(variable, out var varConstraints))
+                {
+                    varConstraints.Add(constraint);
+                }
+                else
+                {
+                    constraints.Add(variable, [constraint]);
+                }
             }
         }
     }

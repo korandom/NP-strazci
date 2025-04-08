@@ -1,6 +1,5 @@
 ﻿using App.Server.Models.Identity;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 
 namespace App.Server.Services.Authorization
 {

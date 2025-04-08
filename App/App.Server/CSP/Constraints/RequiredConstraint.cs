@@ -1,10 +1,10 @@
 ﻿
 namespace App.Server.CSP.Constraints
 {
-    using VariableID = int;
     using RangerID = int?;
+    using VariableID = int;
 
-    public class RequiredConstraint(VariableID variable) : Constraint<VariableID, RangerID>([ variable ])
+    public class RequiredConstraint(VariableID variable) : Constraint<VariableID, RangerID>([variable])
     {
         public override bool IsSatisfied(Dictionary<VariableID, RangerID> assigned)
         {
