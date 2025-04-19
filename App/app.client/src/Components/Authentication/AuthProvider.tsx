@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                 const user = await getCurrentUser();
                 const ranger = await getCurrentRanger();
                 if (ranger != undefined) {
-                    await assignDistrict(ranger.districtId);
+                    assignDistrict(ranger.districtId);
                 }
                 setUser(user);
             } catch (error) {
@@ -61,11 +61,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
             const user = await signIn(email, password);
             const ranger = await getCurrentRanger();
             if (ranger != undefined) {
-                await assignDistrict(ranger.districtId);
+                assignDistrict(ranger.districtId);
             }
             setError(null);
             setUser(user);
-            navigate("/");
+            navigate("/planovani");
         }
         catch (error) {
             setError(error);

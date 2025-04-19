@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route} from 'react-router-dom';
 import './App.css';
 import Login from './Pages/Login';
 import Menu from './Components/Menu';
@@ -21,7 +21,8 @@ function App() {
                             <Route path="/prihlasit" element={<Login />} />
                             <Route element={<AuthRoute />}>
                                 <Route element={<Menu />}>
-                                    <Route path="/" element={<Planner />} />
+                                    <Route path="/"/>
+                                    <Route path="/planovani" element={<Planner />} />
                                     <Route element={<AuthRoute roles={["Admin", "HeadOfDistrict"]} />}>
                                         <Route path="/sprava" element={<SourceManagement />} />
                                         <Route path="/generovani/:date" element={<GeneratedPreview />} />

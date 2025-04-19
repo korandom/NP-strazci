@@ -40,7 +40,7 @@ const GeneratedPreview: React.FC = (): JSX.Element => {
     const save = async () => {
         await updatePlans(generatedPlan);
         triggerReload();
-        navigate("/");
+        navigate("/planovani");
     }
 
     const dateArray = generateDateRange(parsedDate, getShiftedDate(parsedDate, 6));
@@ -57,7 +57,7 @@ const GeneratedPreview: React.FC = (): JSX.Element => {
                     {!success &&
                         <div className="message">
                             <div>{message}</div>
-                            <button onClick={() => navigate("/")}>Zpět</button>
+                            <button onClick={() => navigate("/planovani")}>Zpět</button>
                         </div>
                     }
 
@@ -67,7 +67,7 @@ const GeneratedPreview: React.FC = (): JSX.Element => {
                             <div>{message}</div>
                         </div>
                         <div className="generate-buttons">
-                            <button onClick={() => navigate("/")}>Zahodit</button>
+                            <button onClick={() => navigate("/planovani")}>Zahodit</button>
                             <button onClick={save}>Uložit</button>
                         </div>
                     <div className="table-container">

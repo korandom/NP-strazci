@@ -57,10 +57,10 @@ const Menu = () => {
             <div className={isOpen ? "menu open" : "menu"}>
                 <nav className="menu-up">
 
-                        <Link to="/" onClick={closeMenu} className="menu-item">Plánování</Link>
+                        <Link to="/planovani" onClick={closeMenu} className="menu-item">Plánování</Link>
                         {
                             (hasRole("HeadOfDistrict") || hasRole("Admin")) &&
-                            <Link to="/sprava" onClick={closeMenu} className="menu-item">Správa objektů</Link>
+                            <Link to="/sprava" onClick={closeMenu} className="menu-item">Správa zdrojů</Link>
 
                         }
                         {

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import useAuth from "../../Authentication/AuthProvider";
 import useDistrict from "../../DataProviders/DistrictDataProvider";
 import useSchedule from "../../DataProviders/ScheduleDataProvider";
-import { formatDate, generateDateRange, nameOfDaysCZ } from "../../../Util/DateUtil";
+import { formatDate, generateDateRange, getShiftedDate, nameOfDaysCZ, nameOfMonthsCZ } from "../../../Util/DateUtil";
 import RangerCell from "../RangerCell";
 import PlanRecord from "../PlanRecord/PlanRecord";
 import { ReasonOfAbsence } from "../../../Services/AttendenceService";
@@ -10,15 +10,16 @@ import { ReasonOfAbsence } from "../../../Services/AttendenceService";
 
 /**
  *  A React functional component, that displays a table of all plans within active range for all rangers in current district.
- * 
+ *  Paging +/- one week is possible.
  *  This component uses RangerCell components to display ranger headers and PlanRecord Components to display plans.
- *  User with a HeadOfDistrict Role can make edits to the via the PlanRecord components.
+ *  User authorized as a ranger can edit plans that are not locked, in the past and are his own.
+ *  User authorized as head of district can edit all plans.
  * 
  */
 const PlanTable: React.FC = () : JSX.Element => {
     const { user, hasRole } = useAuth();
     const { rangers, locks, removeLock, addLock  } = useDistrict();
-    const { schedules, dateRange } = useSchedule();
+    const { schedules, dateRange, weekBack, weekForward } = useSchedule();
 
     const dateArray = useMemo(() => {
         return dateRange.start && dateRange.end ? generateDateRange(dateRange.start, dateRange.end) : [];
@@ -33,8 +34,20 @@ const PlanTable: React.FC = () : JSX.Element => {
         return generateLocksArray()
     }, [locks, dateArray]);
 
+    const dateForMonthLabel = useMemo(() => {
+        return getShiftedDate(dateRange.start, 6);
+    }, [dateRange]);
+
+
     return (
+        <>
+        <div className="range-control">
+            <button onClick={weekBack}>◀</button>
+            <strong className="month-label">{nameOfMonthsCZ[dateForMonthLabel.getMonth()]} {dateForMonthLabel.getFullYear()}</strong>
+            <button onClick={weekForward}>▶</button>
+        </div>
         <div className="table-container">
+
             {dateArray.length > 0 && (
                 <table className="plan-table">
                     <thead>
@@ -99,6 +112,7 @@ const PlanTable: React.FC = () : JSX.Element => {
                 </table>
             )}
         </div>
+        </>
     );
 }
 export default PlanTable;

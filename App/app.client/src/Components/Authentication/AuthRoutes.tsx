@@ -20,7 +20,7 @@ function AuthRoute({ roles }: { roles?: string[] }) {
 
     if (roles && !roles.includes(user.role)) {
         // TODO add some alert unauthorized/ different page
-        return <Navigate to="/" replace />;
+        return <Navigate to="/planovani" replace />;
     }
 
     return <Outlet/>

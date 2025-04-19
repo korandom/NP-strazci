@@ -9,24 +9,25 @@ const SourceManagement = (): JSX.Element => {
 
     return (
         <>
-            {(error || !district) ? (
+            {error ? (
                 <div className="error">
                     {error.message}
                 </div>
+            ) : !district ? (
+                <div className="error">
+                    <p>Není vybrán žádný obvod, vyberte obvod z menu.</p>
+                </div>
             ) : (
-                    <div className="district-container" >
+                <div className="district-container">
 
-                        <h2 className="district-name">Oblast {district?.name}</h2>
+                    <h2 className="district-name">Obvod {district.name}</h2>
 
-                        <div className="sources-container">
-
-                            <RoutesManager districtId={district.id} />
-
-                            <VehicleManager districtId={district.id} /> 
-
-                            <RangerManager districtId={district.id} />
-                        </div>
+                    <div className="sources-container">
+                        <RoutesManager districtId={district.id} />
+                        <VehicleManager districtId={district.id} />
+                        <RangerManager districtId={district.id} />
                     </div>
+                </div>
             )}
         </>
     );

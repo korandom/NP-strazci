@@ -2,7 +2,7 @@ import { ReasonOfAbsence } from "./AttendenceService";
 import { Ranger } from "./RangerService";
 
 
-const BASE_URL = '/api/RangerSchedule';
+const BASE_URL = '/api/Plan';
 export interface RangerSchedule {
     date: string;
     ranger: Ranger;

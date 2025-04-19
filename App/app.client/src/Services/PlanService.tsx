@@ -155,6 +155,12 @@ export const generateRoutePlanMock = async (startDate: string, rangers: Ranger[]
     return fakePlans;
 }
 
+/**
+ * Generate a week long route plan from district with id districtId that starts at date start.
+ * @param districtId Id of district.
+ * @param start Start of the week.
+ * @returns A Generate result with generated plans if succesfull.
+ */
 export const fetchGeneratedRoutePlan = async (districtId: number, start: string): Promise<GenerateResult> => {
     const response = await fetch(`${BASE_URL}/generate/${districtId}/${start}`);
     if (!response.ok) {

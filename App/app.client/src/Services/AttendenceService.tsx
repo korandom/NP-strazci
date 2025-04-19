@@ -22,6 +22,11 @@ export interface Attendence {
     reasonOfAbsence: ReasonOfAbsence;
 };
 
+/**
+ * Update Attendence on the server. If Attendence does not exist, it creates it.
+ * @param attendence Attendence being updated.
+ * @returns Updated Attendence
+ */
 export const updateAttendence = async (attendence: Attendence): Promise<Attendence> => {
     const transformedAttendence = {
         ...attendence,
@@ -41,13 +46,3 @@ export const updateAttendence = async (attendence: Attendence): Promise<Attenden
     const result = await response.json();
     return result;
 }
-/* unnecessary
-export const fetchAttendenceByDateRange = async (districtId: number, start: string, end: string): Promise<Attendence[]> => {
-    const response = await fetch(`${BASE_URL}/by-dates/${districtId}/${start}/${end}`);
-    if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message);
-    }
-    const result = await response.json();
-    return result;
-};*/

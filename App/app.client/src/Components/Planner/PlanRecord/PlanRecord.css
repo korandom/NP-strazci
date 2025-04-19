@@ -29,7 +29,7 @@
     flex: 0 1 auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-end;
     box-sizing: border-box;
     gap: 0.3em;
 }
@@ -160,5 +160,20 @@
     color: #226c38;
     border: 1px solid #226c38;
     cursor: not-allowed;
+}
+
+button.delete-source {
+    display: flex;
+    line-height: 1em;
+    text-align: center;
+    padding-bottom: 0.2em;
+    font-size: large;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.5em;
+}
+.edit {
+    margin-left: 0.1em;
+    margin-right: 0.2em;
 }
 

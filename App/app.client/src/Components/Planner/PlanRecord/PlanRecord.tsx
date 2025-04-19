@@ -137,7 +137,7 @@ const PlanRecord: React.FC<{ schedule: RangerSchedule, includeRangerName: boolea
                             return (
                                 <div className='vehicle' key={index}>
                                     <div className='identification'>
-                                        {/* change for picture of the vehicle based on type/ what is detail what is shown?*/}
+                                        {/* change for picture of the vehicle based on type/ what is detail what is shown in the future dev?*/}
                                         {vehicle.type}
 
                                     </div>
@@ -150,7 +150,7 @@ const PlanRecord: React.FC<{ schedule: RangerSchedule, includeRangerName: boolea
                                     {
 
                                         hasRole("HeadOfDistrict") && editing &&
-                                        <button onClick={() => deleteVehicleFromPlan(vehicle.id)}>×</button>
+                                        <button className="delete-source" onClick={() => deleteVehicleFromPlan(vehicle.id)}>×</button>
                                     }
                                 </div>
                             )
@@ -197,7 +197,7 @@ const PlanRecord: React.FC<{ schedule: RangerSchedule, includeRangerName: boolea
                                     )}
                                     {
                                         editing &&
-                                        <button onClick={() => deleteRouteFromPlan(route.id)}>×</button>
+                                        <button className="delete-source" onClick={() => deleteRouteFromPlan(route.id)}>×</button>
                                     }
                                 </div>
                             )})

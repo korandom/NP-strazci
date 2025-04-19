@@ -126,6 +126,7 @@
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
+    justify-self: center;
 }
 
 .control-day {
