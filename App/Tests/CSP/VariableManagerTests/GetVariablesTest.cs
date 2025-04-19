@@ -12,11 +12,12 @@ namespace Tests.CSP.VariableManagerTests
             _mockDeterminer = new Mock<IRouteTypeDeterminer>();
             _mockDeterminer.Setup(d => d.DetermineRouteType(It.IsAny<RouteDto>()))
               .Returns(RouteType.Once);
+            _mockDeterminer.Setup(d => d.IsPreplanned(It.IsAny<int>(), It.IsAny<int>())).Returns(false);
         }
         [Fact]
         public void NoRoutes()
         {
-            //assign
+            //arrange
             VariableManager variableManager = new(_mockDeterminer.Object, [], 2);
 
             //act
@@ -35,11 +36,11 @@ namespace Tests.CSP.VariableManagerTests
 
         public void CorrectVariableCount(int routeCount, int dayCount)
         {
-            //assign
+            //arrange
             List<RouteDto> routes = [];
             for (int i = 0; i < routeCount; i++)
             {
-                routes.Add(new RouteDto() { Id = i, Priority = 0, DistrictId = 1 });
+                routes.Add(new RouteDto( i, "a", 0,  null, 1 ));
             }
             VariableManager variableManager = new(_mockDeterminer.Object, routes, dayCount);
 
@@ -49,6 +50,39 @@ namespace Tests.CSP.VariableManagerTests
             //assert
             Assert.NotNull(variables);
             Assert.Equal(routeCount * dayCount, variables.Count);
+        }
+
+        [Fact]
+        public void FilterPreplannedVariables() 
+        {
+            //arrange
+            List<RouteDto> routes = [new RouteDto(1, "a", 0, null, 1)];
+            _mockDeterminer.Setup(d => d.IsPreplanned(1, 1)).Returns(true);
+            VariableManager variableManager = new(_mockDeterminer.Object, routes, 5);
+
+            //act
+            List<Variable> variables = variableManager.GetVariables();
+
+            //assert
+            Assert.NotNull(variables);
+            Assert.Equal(4, variables.Count);
+        }
+
+        [Fact]
+        public void FilterNoneRoutes()
+        {
+            //arrange
+            List<RouteDto> routes = [new RouteDto(1, "a", 0, null, 1)];
+            _mockDeterminer.Setup(d => d.DetermineRouteType(It.IsAny<RouteDto>()))
+              .Returns(RouteType.None);
+            VariableManager variableManager = new(_mockDeterminer.Object, routes, 5);
+
+            //act
+            List<Variable> variables = variableManager.GetVariables();
+
+            //assert
+            Assert.NotNull(variables);
+            Assert.Empty(variables);
         }
     }
 }

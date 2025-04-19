@@ -11,7 +11,7 @@ namespace App.Server.Controllers
 {
 
     /// <summary>
-    /// API controller that updates attendence and manages locks.
+    /// API controller that updates attendence.
     /// </summary>
     /// <param name="unitOfWork">Injected Unit of Work, for accessing repositories.</param>
     /// <param name="authenticationService">Injected authentication service</param>
@@ -75,29 +75,6 @@ namespace App.Server.Controllers
             await _unitOfWork.SaveAsync();
 
             return Ok(attend.ToDto());
-        }
-
-        /// <summary>
-        /// Get attendence by district and date range.
-        /// </summary>
-        /// <param name="districtId"> Id of the district.</param>
-        /// <param name="startDate">Start date of the range.</param>
-        /// <param name="endDate">End date of the range</param>
-        /// <returns>
-        /// A list of AttendenceDto representing the found attendence in the given range and district.
-        /// Status Code 200 Ok, if succesful, else NotFound.     
-        /// </returns>
-        [Authorize(Roles = "Ranger,HeadOfDistrict,Admin")]
-        [HttpGet("by-dates/{districtId}/{startDate}/{endDate}")]
-        public async Task<ActionResult<IEnumerable<AttendenceDto>>> GetAttendenceByDateRange(int districtId, DateOnly startDate, DateOnly endDate)
-        {
-            var attendences = await _unitOfWork.AttendenceRepository.Get(attend => attend.Ranger.DistrictId == districtId && attend.Date >= startDate && attend.Date <= endDate, null, "Ranger");
-            if (attendences == null)
-            {
-                return NotFound("No attendences found in range");
-            }
-            var attendencesDtos = attendences.Select(attend => attend.ToDto()).ToList();
-            return Ok(attendencesDtos);
         }
     }
 }

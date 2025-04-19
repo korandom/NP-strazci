@@ -9,5 +9,14 @@ namespace App.Server.DTOs
         public int Priority { get; set; }
         public ControlPlace? ControlPlace { get; set; }
         public int DistrictId { get; set; }
+
+        public RouteDto(int id, string name, int priority, ControlPlace? controlPlace, int districtId)
+        {
+            Id = id;
+            Name = name;
+            Priority = priority;
+            ControlPlace = controlPlace;
+            DistrictId = districtId;
+        }
     }
 }

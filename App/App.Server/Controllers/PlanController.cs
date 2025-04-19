@@ -227,48 +227,6 @@ namespace App.Server.Controllers
             return Ok(plan.ToDto());
         }
 
-
-        /// <summary>
-        /// Get plans by district and date range.
-        /// </summary>
-        /// <param name="districtId"> Id of the district.</param>
-        /// <param name="startDate">Start date of the range.</param>
-        /// <param name="endDate">End date of the range</param>
-        /// <returns>
-        /// A list of PlanDto representing the found plans in the given range and district.
-        /// Status Code 200 Ok, if succesful, else NotFound.     
-        /// </returns>
-        [Authorize(Roles = "Ranger,HeadOfDistrict,Admin")]
-        [HttpGet("by-dates/{districtId}/{startDate}/{endDate}")]
-        public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDateRange(int districtId, DateOnly startDate, DateOnly endDate)
-        {
-            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Ranger.DistrictId == districtId && plan.Date >= startDate && plan.Date <= endDate, null, "Routes,Vehicles,Ranger");
-            if (plans == null)
-            {
-                return NotFound("No plans found in range");
-            }
-            var planDtos = plans.Select(plan => plan.ToDto()).ToList();
-            return Ok(planDtos);
-        }
-
-        /// <summary>
-        /// Get plans by date in district.
-        /// </summary>
-        /// <param name="districtId">Id of the district.</param>
-        /// <param name="date">Date of the plans.</param>
-        /// <returns>
-        /// A list of PlanDto representing the found plans in that date and district.
-        /// Status Code 200 Ok, if succesful.</returns>
-        [Authorize(Roles = "Ranger,HeadOfDistrict,Admin")]
-        [HttpGet("{districtId}/{date}")]
-        public async Task<ActionResult<IEnumerable<PlanDto>>> GetPlansByDate(int districtId, DateOnly date)
-        {
-            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Ranger.DistrictId == districtId && plan.Date == date, null, "Routes,Vehicles,Ranger");
-
-            var planDtos = plans.Select(plan => plan.ToDto()).ToList();
-            return Ok(planDtos);
-        }
-
         /// <summary>
         /// Function that updates or creates multiple plans at once.
         /// Useful for automatic generation of plans, to lessen the load of requests.
@@ -385,6 +343,70 @@ namespace App.Server.Controllers
             var vehicles = await _unitOfWork.VehicleRepository.Get(v => planDto.VehicleIds.Contains(v.Id));
             plan.Vehicles = new List<Vehicle>(vehicles);
             _unitOfWork.PlanRepository.Update(plan);
+        }
+
+
+        /// <summary>
+        /// Get rangerSchedules - plans and attendences merged -  by district and date range.
+        /// </summary>
+        /// <param name="districtId"> Id of the district.</param>
+        /// <param name="startDate">Start date of the range.</param>
+        /// <param name="endDate">End date of the range</param>
+        /// <returns>
+        /// A list of RangerScheduleDto representing the found attendences and plans in the given range and district.
+        /// Status Code 200 Ok, if succesful, else NotFound.     
+        /// </returns>
+        [Authorize(Roles = "Ranger,HeadOfDistrict,Admin")]
+        [HttpGet("by-dates/{districtId}/{startDate}/{endDate}")]
+        public async Task<ActionResult<IEnumerable<RangerScheduleDto>>> GetRangerSchedulesInRange(int districtId, DateOnly startDate, DateOnly endDate)
+        {
+            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Ranger.DistrictId == districtId && plan.Date >= startDate && plan.Date <= endDate, null, "Routes,Vehicles,Ranger");
+
+            var attendances = await _unitOfWork.AttendenceRepository.Get(attend => attend.Ranger.DistrictId == districtId && attend.Date >= startDate && attend.Date <= endDate, null, "Ranger");
+
+            var mergeDict = new Dictionary<string, RangerScheduleDto>();
+
+            // add plans to dictionary
+            foreach (var plan in plans)
+            {
+                string key = $"{plan.Date}-{plan.RangerId}";
+
+                mergeDict[key] = new RangerScheduleDto
+                {
+                    Ranger = plan.Ranger.ToDto(),
+                    Date = plan.Date,
+                    VehicleIds = plan.Vehicles.Select(v => v.Id).ToArray(),
+                    RouteIds = plan.Routes.Select(r => r.Id).ToArray(),
+                };
+            }
+
+            // merge attendance into dictionary
+            foreach (var attend in attendances)
+            {
+                string key = $"{attend.Date}-{attend.RangerId}";
+
+                if (!mergeDict.ContainsKey(key))
+                {
+                    mergeDict[key] = new RangerScheduleDto
+                    {
+                        Ranger = attend.Ranger.ToDto(),
+                        Date = attend.Date,
+                        Working = attend.Working,
+                        From = attend.From,
+                        ReasonOfAbsence = attend.ReasonOfAbsenceEnum
+                    };
+                }
+                else
+                {
+                    mergeDict[key].Working = attend.Working;
+                    mergeDict[key].From = attend.From;
+                    mergeDict[key].ReasonOfAbsence = attend.ReasonOfAbsenceEnum;
+                }
+            }
+
+            var schedules = mergeDict.Values.ToList();
+
+            return Ok(schedules);
         }
     }
 }

@@ -1,6 +1,7 @@
 
 using App.Server.CSP;
 using App.Server.DTOs;
+using System.Collections.Generic;
 
 namespace Tests.CSP.DataProcessorTests
 {
@@ -11,20 +12,8 @@ namespace Tests.CSP.DataProcessorTests
         {
             routes =
             [
-                new() {
-                    Id= 1,
-                    Name = "route1",
-                    DistrictId= 1,
-                    Priority = 1,
-                    ControlPlace= null
-                },
-                new() {
-                    Id= 2,
-                    Name = "route2",
-                    DistrictId= 1,
-                    Priority = 2,
-                    ControlPlace= null
-                }
+                new RouteDto(1, "route1", 1, null, 1),
+                new RouteDto(2, "route2", 2, null, 1)
             ];
         }
 

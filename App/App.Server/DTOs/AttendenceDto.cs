@@ -19,7 +19,9 @@ namespace App.Server.DTOs
 
     public class LockDto
     {
+        [Required]
         public DateOnly Date { get; set; }
+        [Required]
         public int DistrictId { get; set; }
     }
 }

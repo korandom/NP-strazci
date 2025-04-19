@@ -86,7 +86,7 @@ namespace App.Server.CSP
         /// </summary>
         /// <param name="routeId">Id of route.</param>
         /// <param name="dayNumber">Number of days from start.</param>
-        /// <returns></returns>
+        /// <returns>True if route is planned on that day, else false. </returns>
         public bool IsPreplanned(int routeId, int dayNumber)
         {
             return _plans.Any(

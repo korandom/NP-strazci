@@ -24,14 +24,7 @@ namespace App.Server.Models.AppData
     {
         public static RouteDto ToDto(this Route route)
         {
-            return new RouteDto
-            {
-                Id = route.Id,
-                Name = route.Name,
-                Priority = route.Priority,
-                ControlPlace = route.ControlPlace,
-                DistrictId = route.DistrictId,
-            };
+            return new RouteDto(route.Id, route.Name, route.Priority, route.ControlPlace, route.DistrictId);
         }
     }
 }
