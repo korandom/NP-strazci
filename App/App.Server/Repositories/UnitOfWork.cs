@@ -14,7 +14,7 @@ namespace App.Server.Repositories
         private PlanRepository? planRepository;
         private AttendenceRepository? attendenceRepository;
 
-        public GenericRepository<District> DistrictRepository
+        public IGenericRepository<District> DistrictRepository
         {
             get
             {
@@ -23,7 +23,7 @@ namespace App.Server.Repositories
             }
         }
 
-        public GenericRepository<Models.AppData.Route> RouteRepository
+        public IGenericRepository<Models.AppData.Route> RouteRepository
         {
             get
             {
@@ -32,7 +32,7 @@ namespace App.Server.Repositories
             }
         }
 
-        public GenericRepository<Vehicle> VehicleRepository
+        public IGenericRepository<Vehicle> VehicleRepository
         {
             get
             {
@@ -41,7 +41,7 @@ namespace App.Server.Repositories
             }
         }
 
-        public GenericRepository<Ranger> RangerRepository
+        public IGenericRepository<Ranger> RangerRepository
         {
             get
             {
@@ -50,7 +50,7 @@ namespace App.Server.Repositories
             }
         }
 
-        public GenericRepository<Lock> LockRepository
+        public IGenericRepository<Lock> LockRepository
         {
             get
             {
@@ -59,7 +59,7 @@ namespace App.Server.Repositories
             }
         }
 
-        public PlanRepository PlanRepository
+        public IGenericRepository<Plan> PlanRepository
         {
             get
             {
@@ -68,7 +68,7 @@ namespace App.Server.Repositories
             }
         }
 
-        public AttendenceRepository AttendenceRepository
+        public IGenericRepository<Attendence> AttendenceRepository
         {
             get
             {

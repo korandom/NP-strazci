@@ -3,8 +3,6 @@ using App.Server.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-
-
 namespace App.Server.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
@@ -27,7 +25,7 @@ namespace App.Server.Repositories
             _dbSet.Remove(entityToDelete);
         }
 
-        public async Task<IEnumerable<T>> Get(Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, string includeProperties = "")
+        public async Task<IEnumerable<T>> Get(Expression<Func<T, bool>>? filter = null, string includeProperties = "")
         {
             IQueryable<T> query = _dbSet;
 
@@ -42,14 +40,7 @@ namespace App.Server.Repositories
                 query = query.Include(includeProperty);
             }
 
-            if (orderBy != null)
-            {
-                return await orderBy(query).ToListAsync();
-            }
-            else
-            {
-                return await query.ToListAsync();
-            }
+            return await query.ToListAsync();
         }
 
         public virtual async Task<T?> GetById(params object[] id)
@@ -67,5 +58,6 @@ namespace App.Server.Repositories
             _dbSet.Attach(entityToUpdate);
             _context.Entry(entityToUpdate).State = EntityState.Modified;
         }
+
     }
 }

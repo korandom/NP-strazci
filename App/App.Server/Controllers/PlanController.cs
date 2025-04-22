@@ -275,8 +275,7 @@ namespace App.Server.Controllers
             var preexistingPlans = await _unitOfWork.PlanRepository.Get(
                 plan => plan.Ranger.DistrictId == districtId &&
                 plan.Date >= startDate &&
-                plan.Date < startDate.AddDays(planningPeriod),
-                null, "Routes,Vehicles,Ranger");
+                plan.Date < startDate.AddDays(planningPeriod), "Routes,Vehicles,Ranger");
             if (preexistingPlans == null)
             {
                 return NotFound("Getting previous plans was not successful.");
@@ -286,8 +285,7 @@ namespace App.Server.Controllers
             var previousPlans = await _unitOfWork.PlanRepository.Get(
                 plan => plan.Ranger.DistrictId == districtId &&
                 plan.Date < startDate &&
-                plan.Date >= startDate.AddDays(-numberOfDaysPreprocess),
-                null, "Routes,Vehicles,Ranger");
+                plan.Date >= startDate.AddDays(-numberOfDaysPreprocess), "Routes,Vehicles,Ranger");
             if (previousPlans == null)
             {
                 return NotFound("Getting previous plans was not successful.");
@@ -298,8 +296,7 @@ namespace App.Server.Controllers
                 (
                     att => att.Ranger.DistrictId == districtId &&
                     att.Date >= startDate &&
-                    att.Date < startDate.AddDays(planningPeriod),
-                    null, "Ranger"
+                    att.Date < startDate.AddDays(planningPeriod), "Ranger"
                 );
             if (attendence == null)
             {
@@ -360,9 +357,9 @@ namespace App.Server.Controllers
         [HttpGet("by-dates/{districtId}/{startDate}/{endDate}")]
         public async Task<ActionResult<IEnumerable<RangerScheduleDto>>> GetRangerSchedulesInRange(int districtId, DateOnly startDate, DateOnly endDate)
         {
-            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Ranger.DistrictId == districtId && plan.Date >= startDate && plan.Date <= endDate, null, "Routes,Vehicles,Ranger");
+            var plans = await _unitOfWork.PlanRepository.Get(plan => plan.Ranger.DistrictId == districtId && plan.Date >= startDate && plan.Date <= endDate, "Routes,Vehicles,Ranger");
 
-            var attendances = await _unitOfWork.AttendenceRepository.Get(attend => attend.Ranger.DistrictId == districtId && attend.Date >= startDate && attend.Date <= endDate, null, "Ranger");
+            var attendances = await _unitOfWork.AttendenceRepository.Get(attend => attend.Ranger.DistrictId == districtId && attend.Date >= startDate && attend.Date <= endDate, "Ranger");
 
             var mergeDict = new Dictionary<string, RangerScheduleDto>();
 

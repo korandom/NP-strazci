@@ -1,8 +1,6 @@
 ﻿using App.Server.DTOs;
 using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
-using App.Server.Services.Authentication;
-using App.Server.Services.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,18 +9,14 @@ namespace App.Server.Controllers
 {
 
     /// <summary>
-    /// API controller that updates attendence and manages locks.
+    /// API controller that manages locks.
     /// </summary>
     /// <param name="unitOfWork">Injected Unit of Work, for accessing repositories.</param>
-    /// <param name="authenticationService">Injected authentication service</param>
-    /// <param name="authorizationService">Injected authorization service</param>
     [ApiController]
     [Route("api/[controller]")]
-    public class LockController(IUnitOfWork unitOfWork, IAppAuthenticationService authenticationService, IAppAuthorizationService authorizationService) : ControllerBase
+    public class LockController(IUnitOfWork unitOfWork) : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly IAppAuthenticationService _authenticationService = authenticationService;
-        private readonly IAppAuthorizationService _authorizationService = authorizationService;
 
 
         /// <summary>
@@ -33,12 +27,12 @@ namespace App.Server.Controllers
         /// <returns>Status Code 200 Ok, if succesful, else 400 Bad Request</returns>
         [Authorize(Roles = "HeadOfDistrict")]
         [HttpPost("lock/{districtId}/{date}")]
-        public async Task<IActionResult> LockAttendence(DateOnly date, int districtId)
+        public async Task<IActionResult> Lock(DateOnly date, int districtId)
         {
             var district = await _unitOfWork.DistrictRepository.GetById(districtId);
             if (district == null)
             {
-                return BadRequest("District id not found");
+                return BadRequest("District id not found.");
             }
             Lock newLock = new()
             {
@@ -60,7 +54,7 @@ namespace App.Server.Controllers
         /// <returns>Status Code 200 Ok, if succesful, else 400 Bad Request (lock doesnt exist)</returns>
         [Authorize(Roles = "HeadOfDistrict")]
         [HttpDelete("unlock/{districtId}/{date}")]
-        public async Task<IActionResult> UnlockAttendence(DateOnly date, int districtId)
+        public async Task<IActionResult> Unlock(DateOnly date, int districtId)
         {
             var deleteLock = await _unitOfWork.LockRepository.Get(l => l.Date == date && l.DistrictId == districtId);
             if (deleteLock == null || !deleteLock.Any())
@@ -90,7 +84,7 @@ namespace App.Server.Controllers
             {
                 return BadRequest("Locks not found.");
             }
-            return Ok(locks.Select(l => new LockDto { Date = l.Date, DistrictId = l.DistrictId }));
+            return Ok(locks.Select(l => new LockDto { Date = l.Date, DistrictId = l.DistrictId }).ToList());
         }
     }
 }

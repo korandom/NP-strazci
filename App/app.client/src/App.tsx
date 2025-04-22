@@ -20,8 +20,7 @@ function App() {
                         <Routes>
                             <Route path="/prihlasit" element={<Login />} />
                             <Route element={<AuthRoute />}>
-                                <Route element={<Menu />}>
-                                    <Route path="/"/>
+                                <Route path="/" element={<Menu />}>
                                     <Route path="/planovani" element={<Planner />} />
                                     <Route element={<AuthRoute roles={["Admin", "HeadOfDistrict"]} />}>
                                         <Route path="/sprava" element={<SourceManagement />} />

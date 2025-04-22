@@ -1,8 +1,6 @@
 ﻿using App.Server.DTOs;
 using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
-using App.Server.Services.Authentication;
-using App.Server.Services.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,11 +16,9 @@ namespace App.Server.Controllers
     /// <param name="authorizationService">Injected authorization service</param>
     [ApiController]
     [Route("api/[controller]")]
-    public class AttendenceController(IUnitOfWork unitOfWork, IAppAuthenticationService authenticationService, IAppAuthorizationService authorizationService) : ControllerBase
+    public class AttendenceController(IUnitOfWork unitOfWork) : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly IAppAuthenticationService _authenticationService = authenticationService;
-        private readonly IAppAuthorizationService _authorizationService = authorizationService;
 
 
         /// <summary>
@@ -46,7 +42,7 @@ namespace App.Server.Controllers
         }
 
         /// <summary>
-        /// Updates Attendenc.
+        /// Updates Attendence.
         /// If attendence for that date and ranger is not yet marked, tries to create a new one.
         /// </summary>
         /// <param name="attendenceDto">Attendce to be updated.</param>
