@@ -45,7 +45,7 @@ namespace Tests.Controllers.DistrictControllerTests
         }
 
         [Fact]
-        public async Task GetAllDistricts_ReturnsNotFound_WhenNoDistrictsExist()
+        public async Task NoDistrictsFound()
         {
             // arrange
             _mockDistrictRepository.Setup(r => r.Get(null, "")).ReturnsAsync([]);

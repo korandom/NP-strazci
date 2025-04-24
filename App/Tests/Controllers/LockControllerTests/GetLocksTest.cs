@@ -36,7 +36,8 @@ namespace Tests.Controllers.LockControllerTests
             // arrange
             var date = new DateOnly(2025, 1, 1);
             var districtId = 1;
-            _mockLockRepository.Setup(r => r.Get(l =>  l.DistrictId == districtId, "")).ReturnsAsync((IEnumerable<Lock>?)null);
+            IEnumerable<Lock>? locks = [];
+            _mockLockRepository.Setup(r => r.Get(l =>  l.DistrictId == districtId, "")).ReturnsAsync((IEnumerable<Lock>?)null!);
 
             // act
             var result = await _lockController.GetLocks(districtId);
