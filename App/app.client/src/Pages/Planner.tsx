@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import './Style/Planner.css'; 
-import useSchedule from '../Components/DataProviders/ScheduleDataProvider';
-import { useMediaQuery } from '../Util/Hooks';
+import useSchedule from '../Hooks/useSchedule';
+import { useMediaQuery } from '../Hooks/useMediaQuery';
 import PlanTable from '../Components/Planner/PlanTable/PlanTable';
 import DailyPlanner from '../Components/Planner/DailyPlanner/DailyPlanner';
 import { formatDate, getShiftedDate } from '../Util/DateUtil';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../Components/Authentication/AuthProvider';
+import useAuth from '../Hooks/useAuth';
 
 
 

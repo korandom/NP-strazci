@@ -1,4 +1,4 @@
-import useDistrict from "../Components/DataProviders/DistrictDataProvider";
+import useDistrict from '../Hooks/useDistrict';
 import "./Style/SourceManagement.css"
 import RoutesManager from "../Components/Sources/Routes/RoutesManager";
 import VehicleManager from "../Components/Sources/Vehicles/VehicleManager";

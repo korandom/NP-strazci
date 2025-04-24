@@ -1,5 +1,5 @@
 import { Outlet, Navigate} from 'react-router-dom';
-import useAuth from './AuthProvider';
+import useAuth from '../../Hooks/useAuth';
 
 /** 
  * A route protection component that restricts access based on user authentication and roles.

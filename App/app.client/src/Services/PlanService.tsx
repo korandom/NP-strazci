@@ -12,10 +12,10 @@ export interface Plan {
     ranger: Ranger;
     routeIds: number[];
     vehicleIds: number[];
-};
+}
 
 export interface GenerateResult {
-    success: Boolean;
+    success: boolean;
     message: string;
     plans: Plan[];
 }

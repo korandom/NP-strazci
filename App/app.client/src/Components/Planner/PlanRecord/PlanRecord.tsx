@@ -1,9 +1,9 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import './PlanRecord.css';
-import useDistrict from '../../DataProviders/DistrictDataProvider';
-import useAuth from '../../Authentication/AuthProvider';
-import useSchedule from '../../DataProviders/ScheduleDataProvider';
+import useDistrict from '../../../Hooks/useDistrict';
+import useAuth from '../../../Hooks/useAuth';
+import useSchedule from '../../../Hooks/useSchedule';
 import { RangerSchedule } from '../../../Services/RangerScheduleService';
 import { ReasonOfAbsence } from '../../../Services/AttendenceService';
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Vehicle } from "../../../Services/VehicleService";
 import VehicleForm from "./VehicleForm";
-import useDistrict from "../../DataProviders/DistrictDataProvider";
+import useDistrict from '../../../Hooks/useDistrict';
 
 /**
  * Route item manages and displays information of a single vehicle.

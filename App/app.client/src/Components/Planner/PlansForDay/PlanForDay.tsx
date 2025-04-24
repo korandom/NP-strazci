@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 import './PlanForDay.css';
 import PlanRecord from '../PlanRecord/PlanRecord';
-import useSchedule from '../../DataProviders/ScheduleDataProvider';
+import useSchedule from '../../../Hooks/useSchedule';
 import { formatDate } from '../../../Util/DateUtil';
-import useDistrict from '../../DataProviders/DistrictDataProvider';
+import useDistrict from '../../../Hooks/useDistrict';
 import { ReasonOfAbsence } from '../../../Services/AttendenceService';
-import useAuth from '../../Authentication/AuthProvider';
+import useAuth from '../../../Hooks/useAuth';
 import { Ranger } from '../../../Services/RangerService';
 import { RangerSchedule } from '../../../Services/RangerScheduleService';
 

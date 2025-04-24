@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Route } from "../../../Services/RouteService";
 import RouteForm from "./RouteForm";
-import useDistrict from "../../DataProviders/DistrictDataProvider";
+import useDistrict from '../../../Hooks/useDistrict';
 
 /**
  * Route item manages and displays information of a single route.

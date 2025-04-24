@@ -1,19 +1,19 @@
 import { User, getCurrentUser, signIn, signOut } from '../../Services/UserService';
 import { getCurrentRanger } from '../../Services/RangerService';
-import  { createContext, useContext, ReactNode, useState, useMemo, useEffect, useRef} from 'react';
+import  { createContext, ReactNode, useState, useMemo, useEffect, useRef, useCallback} from 'react';
 import { useNavigate } from 'react-router-dom';
-import useDistrict from '../DataProviders/DistrictDataProvider';
+import useDistrict from '../../Hooks/useDistrict';
 
 interface AuthContextType {
     user: User | undefined,
     loading: boolean,
-    error: any,
+    error: Error | null,
     signin: (email: string, password: string) => void,
     signout: () => void,
     hasRole: (role: string) => boolean
  }
 
-const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 /**
  * AuthProvider manages the user state and provides functions to sign up and sign out.
@@ -27,10 +27,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     const [loading, setLoading] = useState<boolean>(false);
     const [initialLoading, setInitialLoading] = useState<boolean>(true);
     const isInitializing = useRef(false);
-    const [error, setError] = useState<any>();
+    const [error, setError] = useState<Error|null>(null);
     const navigate = useNavigate();
     const { assignDistrict, clearDistrict } = useDistrict();
 
+    // initial load of all data + assigning a district if user is a ranger (therefor has a district)
     useEffect(() => {
         const fetchInitialData = async () => {
             if (isInitializing.current) return;
@@ -45,7 +46,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                 }
                 setUser(user);
             } catch (error) {
-                {}
+                console.error('Error during initialization:', error);
             } finally {
                 setInitialLoading(false);
                 isInitializing.current = false;
@@ -53,8 +54,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
         };
 
         fetchInitialData();
-    }, []);
+    },[assignDistrict]);
 
+    // sign in with email and password, after is redirect to /planovani
     async function signin(email: string, password: string) {
         setLoading(true);
         try {
@@ -68,12 +70,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
             navigate("/planovani");
         }
         catch (error) {
-            setError(error);
+            if (error instanceof Error) {
+                console.error('Error during sign-in:', error.message);
+                setError(error);
+            } else {
+                console.error('Unknown error during sign-in:', error);
+                setError(new Error('Neznámý error pøi pøihlašování'));
+            }
         }
         finally {
             setLoading(false);
         }
     }
+
+    // signs out and clears data
     async function signout() {
         signOut()
             .then( () =>{
@@ -82,10 +92,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
             })
     }
 
-    function hasRole(role: string): boolean {
-        return user?.role == role;
-        
-    }
+    // check if user has specific role
+    const hasRole = useCallback((role: string): boolean => {
+        return user?.role === role;
+    }, [user]);
 
     const memoValue = useMemo(
         () => ({
@@ -96,7 +106,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
             signout,
             hasRole
         }),
-        [user, loading, error]
+        [user, loading, error, hasRole]
     );
 
     return (
@@ -106,6 +116,3 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
     );
 };
 
-export default function useAuth() {
-    return useContext(AuthContext);
-}

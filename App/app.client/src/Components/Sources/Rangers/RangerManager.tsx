@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useDistrict from "../../DataProviders/DistrictDataProvider";
+import useDistrict from '../../../Hooks/useDistrict';
 import RangerItem from "./RangerItem";
 import RangerForm from "./RangerForm";
 import { Ranger } from "../../../Services/RangerService";

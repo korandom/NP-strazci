@@ -1,9 +1,9 @@
 import  { useState, useEffect } from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import useAuth from './Authentication/AuthProvider';
+import useAuth from '../Hooks/useAuth';
 import './Menu.css';
 import { District, fetchAllDistricts } from '../Services/DistrictService';
-import useDistrict from './DataProviders/DistrictDataProvider';
+import useDistrict from '../Hooks/useDistrict';
 
 /**
  * Menu is a responsive component that allows redirecting between "pages".
@@ -30,7 +30,7 @@ const Menu = () => {
         if (hasRole("Admin")) {
             fetchDistricts();
         }
-    }, []);
+    }, [hasRole]);
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -44,9 +44,6 @@ const Menu = () => {
     const toggleDistrictDropdown = () => {
         setIsDistrictDropdownOpen(!isDistrictDropdownOpen);
     }
-
-
-
 
     return (
         <>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useDistrict from "../../DataProviders/DistrictDataProvider";
+import useDistrict from '../../../Hooks/useDistrict';
 import VehicleItem from "./VehicleItem";
 import VehicleForm from "./VehicleForm";
 import { Vehicle } from "../../../Services/VehicleService";

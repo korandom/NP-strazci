@@ -17,10 +17,10 @@ export enum ReasonOfAbsence {
 export interface Attendence {
     date: string;
     ranger: Ranger;
-    working: Boolean;
+    working: boolean;
     from: string | null;
     reasonOfAbsence: ReasonOfAbsence;
-};
+}
 
 /**
  * Update Attendence on the server. If Attendence does not exist, it creates it.

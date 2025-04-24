@@ -2,9 +2,10 @@ import { Route, createRoute, deleteRoute, fetchRoutesByDistrict, updateRoute } f
 import { Vehicle, createVehicle, deleteVehicle, fetchVehiclesByDistrict, updateVehicle } from '../../Services/VehicleService';
 import { Ranger, createRanger, deleteRanger, fetchRangersByDistrict, updateRanger} from '../../Services/RangerService';
 import { District, fetchDistrictById} from '../../Services/DistrictService';
-import { createContext, useContext, ReactNode, useState, useMemo } from 'react';
+import { createContext, ReactNode, useState, useMemo, useCallback } from 'react';
 import { Locked, fetchLocks, lockPlans, unlockPlans } from '../../Services/LockService';
 import { HubConnection, HubConnectionBuilder, LogLevel} from '@microsoft/signalr';
+import { toError } from '../../Util/toError';
 
 interface DistrictContextType {
     district: District|undefined, 
@@ -32,10 +33,10 @@ interface DistrictContextType {
     removeLock: (date:string)=> void,
 
     loading: boolean,
-    error: any,
+    error: Error| null,
 }
 
-const DistrictContext = createContext<DistrictContextType>({} as DistrictContextType);
+export const DistrictContext = createContext<DistrictContextType>({} as DistrictContextType);
 
 /**
  * DistrictDataProvider manages the sources of a district - routes, vehicles, rangers and their operations in a centralized way.
@@ -53,13 +54,13 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
     const [rangers, setRangers] = useState<Ranger[]>([]);
     const [locks, setLocks] = useState<Locked[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<any>();
+    const [error, setError] = useState<Error|null>(null);
     const [hubConnection, setHubConnection] = useState<HubConnection>();
 
-    const connect = async (districtId: number) => {
+    const connect = useCallback(async (districtId: number) => {
         const connection = new HubConnectionBuilder()
             .withUrl('/districtHub')
-            .configureLogging(LogLevel.Information) 
+            .configureLogging(LogLevel.Information)
             .build();
 
         connection.on('RouteUpdated', (route: Route) => {
@@ -113,12 +114,12 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
 
 
         setHubConnection(connection);
-    };
+    }, []);
 
        
  
     // District
-    async function assignDistrict(districtId: number) {
+    const assignDistrict = useCallback(async (districtId: number) => {
         setLoading(true);
         try {
             const fetchedDistrict = await fetchDistrictById(districtId);
@@ -136,13 +137,15 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
             setLocks(fetchedLocks);
 
         }
-        catch (error: any) {
-            setError(error);
+        catch (error) {
+            setError(toError(error));
         }
         finally {
             setLoading(false);
         }
-    }
+    }, [connect]);
+
+
     async function clearDistrict() {
         if (hubConnection) {
             hubConnection.stop();
@@ -162,7 +165,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
             hubConnection?.invoke("SendRouteNotification", "RouteAdded", newRoute.districtId, newRoute);
             setRoutes([...routes, newRoute]);
         } catch (error) {
-            setError(error);
+            setError(toError(error));
         }
     };
 
@@ -177,7 +180,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         } catch (error) {
             // rollback in case of error
             setRoutes(originalRoutes);
-            setError(error);
+            setError(toError(error));
         }
     };
 
@@ -192,7 +195,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         } catch (error) {
             // rollback in case of error
             setRoutes(originalRoutes);
-            setError(error);
+            setError(toError(error));
         }
     };
 
@@ -203,7 +206,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
             hubConnection?.invoke("SendVehicleNotification", "VehicleAdded", newVehicle.districtId, newVehicle);
             setVehicles([...vehicles, newVehicle]);
         } catch (error) {
-            setError(error);
+            setError(toError(error));
         }
     };
 
@@ -218,7 +221,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         } catch (error) {
             // rollback in case of error
             setVehicles(originalVehicles);
-            setError(error);
+            setError(toError(error));
         }
     };
     const changeVehicle = async (vehicle: Vehicle) => {
@@ -232,7 +235,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         } catch (error) {
             // rollback in case of error
             setVehicles(originalVehicles);
-            setError(error);
+            setError(toError(error));
         }
     }
 
@@ -243,7 +246,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
             hubConnection?.invoke("SendRangerNotification", "RangerAdded", newRanger.districtId, newRanger);
             setRangers([...rangers, newRanger]);
         } catch (error) {
-            setError(error);
+            setError(toError(error));
         }
     };
 
@@ -257,7 +260,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         } catch (error) {
             // rollback in case of error
             setRangers(originalRangers);
-            setError(error);
+            setError(toError(error));
         }
     };
     const changeRanger = async (ranger: Ranger) => {
@@ -270,7 +273,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         } catch (error) {
             // rollback in case of error
             setRangers(originalRangers);
-            setError(error);
+            setError(toError(error));
         }
     };
     const addLock = async (date: string) => {
@@ -283,7 +286,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         } catch (error) {
             // rollback in case of error
             setLocks(locks.filter(l => l.date !== date));
-            setError(error);
+            setError(toError(error));
         }
     };
     const removeLock = async (date: string) => {
@@ -297,9 +300,10 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         } catch (error) {
             // rollback in case of error
             setLocks([...locks, { date: date, districtId: district?.id }]);
-            setError(error);
+            setError(toError(error));
         }
     };
+
     const memoValue = useMemo(
         () => ({
             district,
@@ -333,6 +337,3 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
     );
 };
 
-export default function useDistrict() {
-    return useContext(DistrictContext);
-}

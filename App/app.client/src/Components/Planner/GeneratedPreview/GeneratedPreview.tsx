@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Plan, fetchGeneratedRoutePlan,  updatePlans } from "../../../Services/PlanService";
 import { formatDate, generateDateRange, getShiftedDate, nameOfDaysCZ } from "../../../Util/DateUtil";
-import useDistrict from "../../DataProviders/DistrictDataProvider";
+import useDistrict from '../../../Hooks/useDistrict';
 import RangerCell from "../RangerCell";
-import useSchedule from "../../DataProviders/ScheduleDataProvider";
+import useSchedule from '../../../Hooks/useSchedule';
 
 
 /**
@@ -17,25 +17,31 @@ const GeneratedPreview: React.FC = (): JSX.Element => {
     const { triggerReload } = useSchedule();
     const parsedDate = new Date(date!);
     const navigate = useNavigate();
-    const [generating, setGenerating] = useState<Boolean>(true);
+    const [generating, setGenerating] = useState<boolean>(true);
     const [generatedPlan, setGeneratedPlan] = useState<Plan[]>([]);
-    const [message, setMessage] = useState<String>("");
-    const [success, setSuccess] = useState<Boolean>(false);
+    const [message, setMessage] = useState<string>("");
+    const [success, setSuccess] = useState<boolean>(false);
 
     useEffect(() => {
-        generatePlans();
-    }, [])
+        const fetchRoutePlan = async () => {
+            setGenerating(true);
+            if (district !== undefined && date !== null) {
+                try {
+                    const fetchedResult = await fetchGeneratedRoutePlan(district?.id, date!);
+                    setMessage(fetchedResult.message);
+                    setSuccess(fetchedResult.success);
+                    setGeneratedPlan(fetchedResult.plans);
+                } catch (error) {
+                    console.error("Error fetching generated route plan", error);
+                    setSuccess(false);
+                    setMessage("Neznámý error při generování plánu tras.")
+                }
+            }
+            setGenerating(false);
+        };
 
-    const generatePlans = async () => {
-        setGenerating(true);
-        if (district != undefined) {
-            const fetchedResult = await fetchGeneratedRoutePlan(district?.id, date!);
-            setMessage(fetchedResult.message);
-            setSuccess(fetchedResult.success);
-            setGeneratedPlan(fetchedResult.plans);
-        }
-        setGenerating(false);
-    }
+        fetchRoutePlan(); 
+    }, [district, date]);
 
     const save = async () => {
         await updatePlans(generatedPlan);

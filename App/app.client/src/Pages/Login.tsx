@@ -1,4 +1,4 @@
-import useAuth from '../Components/Authentication/AuthProvider';
+import useAuth from '../Hooks/useAuth';
 import React, { useState } from 'react';
 import './Style/Login.css';
 

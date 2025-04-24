@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Ranger } from "../../../Services/RangerService";
 import RangerForm from "./RangerForm";
-import useDistrict from "../../DataProviders/DistrictDataProvider";
+import useDistrict from '../../../Hooks/useDistrict';
 
 /**
  * Ranger item manages and displays information of a single ranger.

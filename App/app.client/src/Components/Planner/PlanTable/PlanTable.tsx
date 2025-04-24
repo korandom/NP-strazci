@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import useAuth from "../../Authentication/AuthProvider";
-import useDistrict from "../../DataProviders/DistrictDataProvider";
-import useSchedule from "../../DataProviders/ScheduleDataProvider";
+import useAuth from '../../../Hooks/useAuth';
+import useDistrict from '../../../Hooks/useDistrict';
+import useSchedule from '../../../Hooks/useSchedule';
 import { formatDate, generateDateRange, getShiftedDate, nameOfDaysCZ, nameOfMonthsCZ } from "../../../Util/DateUtil";
 import RangerCell from "../RangerCell";
 import PlanRecord from "../PlanRecord/PlanRecord";
@@ -25,13 +25,11 @@ const PlanTable: React.FC = () : JSX.Element => {
         return dateRange.start && dateRange.end ? generateDateRange(dateRange.start, dateRange.end) : [];
     }, [dateRange]);
 
-    const generateLocksArray = (): boolean[] => {
-        const locksArray = dateArray.map((date) => { return date < new Date || locks.some(l => l.date == formatDate(date)) });
-        return locksArray;
-    };
-
     const isLockedArray = useMemo(() => {
-        return generateLocksArray()
+        const locksArray = dateArray.map((date) => {
+            return date < new Date || locks.some(l => l.date === formatDate(date));
+        });
+        return locksArray;
     }, [locks, dateArray]);
 
     const dateForMonthLabel = useMemo(() => {
