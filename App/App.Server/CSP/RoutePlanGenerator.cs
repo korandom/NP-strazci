@@ -110,7 +110,18 @@ namespace App.Server.CSP
             int rangerDaysCount = workingRangers.SelectMany(workingRangers => workingRangers.Value).Count();
 
             // each day has at least enough working rangers to cover daily routes
-            bool satisfiesMinDayCapacity = workingRangers.All(rangers => rangers.Value.Count >= dailyVariables[rangers.Key]);
+            bool satisfiesMinDayCapacity = workingRangers.All(rangers =>
+            {
+                // check if any daily in the day
+                if (dailyVariables.TryGetValue(rangers.Key, out int requiredCapacity))
+                {
+                    return rangers.Value.Count >= requiredCapacity;
+                }
+                else
+                {
+                    return true;
+                }
+            });
 
             // enough working rangers in whole to cover daily and at least once routes
             int minimalCoverage = dailyVariables.Sum(daily => daily.Value) + onceVariableCount;
