@@ -10,7 +10,7 @@ namespace App.Server.CSP
     /// <summary>
     /// Generates new route plan according to previous data, new preselected routes, route fairness distribution, attendence and route priorities.
     /// </summary>
-    public class RoutePlanGenerator
+    public class RoutePlanGenerator : IRoutePlanGenerator
     {
         private static readonly int dayCount = 7;
 

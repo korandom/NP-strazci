@@ -6,7 +6,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Server.Controllers
-{
+{   
+
+    /// <summary>
+    /// Api controller for managing users, their roles and signing in/out.
+    /// </summary>
+    /// <param name="authenticationService">Injecting authentication service.</param>
+    /// <param name="authorizationService">Injecting authorization service.</param>
     [ApiController]
     [Route("api/[controller]")]
     public class UserController(IAppAuthenticationService authenticationService, IAppAuthorizationService authorizationService) : ControllerBase
@@ -14,32 +20,48 @@ namespace App.Server.Controllers
         private readonly IAppAuthenticationService _authenticationService = authenticationService;
         private readonly IAppAuthorizationService _authorizationService = authorizationService;
 
-        // Registering a new user connected to ranger
+        /// <summary>
+        /// Registering a new user connected to ranger.
+        /// </summary>
+        /// <param name="rangerDto">Ranger that represents the user.</param>
+        /// <returns>Status code 200 when succesfful.</returns>
         [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpPut("register-user")]
-        public async Task<IActionResult> RegisterRangerUser(RangerDto rangerDto)
+        public async Task<ActionResult> RegisterRangerUser(RangerDto rangerDto)
         {
             var user = new ApplicationUser
             {
                 UserName = rangerDto.Email,
                 Email = rangerDto.Email,
-                EmailConfirmed = true, // TODO: implement email confiramtions?
+                EmailConfirmed = true, // TODO: implement email confirmations?
                 RangerId = rangerDto.Id
             };
             var result = await _authenticationService.RegisterUserAsync(user);
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                await _authorizationService.AssignRoleAsync(user, "Ranger");
+                return BadRequest("User registration failed.");
             }
 
-            return Ok($"Succesfully registered user {rangerDto.Email}.");
+            var roleResult = await _authorizationService.AssignRoleAsync(user, "Ranger");
+
+            if (roleResult == null || !roleResult.Succeeded)
+            {
+                return BadRequest("Failed to assign role ranger to user.");
+            }
+
+            return Ok($"Successfully registered user {rangerDto.Email}.");
         }
 
-        // Admin can assign roles to users
+        /// <summary>
+        /// Admin user can assign roles to users.
+        /// </summary>
+        /// <param name="userEmail">User being assigned the role.</param>
+        /// <param name="role">The role being assigned.</param>
+        /// <returns>Status code 200 Ok, 404 Not found if no user with said email exists, 400 BaddRequest if assinging role was not possible.</returns>
         [Authorize(Roles = "Admin")]
         [HttpPut("assign-role/{userEmail}")]
-        public async Task<IActionResult> AssignRole(string userEmail, string role)
+        public async Task<ActionResult> AssignRole(string userEmail, string role)
         {
             var user = await _authenticationService.GetUserAsync(userEmail);
             if (user == null)
@@ -62,7 +84,13 @@ namespace App.Server.Controllers
             return BadRequest(result.ToString());
         }
 
-        // signin
+        /// <summary>
+        /// Attempts to sign in a user.
+        /// </summary>
+        /// <param name="request">SigninRequest - email and password.</param>
+        /// <returns>Status code 200 and a UserDto of the signed in user, 
+        /// or 401 Unauthorized if wrong email/password,
+        /// or 400 BadRequest if user with said email was not found.</returns>
         [HttpPost("signin")]
         public async Task<ActionResult<UserDto>> SignIn([FromBody] SignInRequest request)
         {
@@ -73,7 +101,7 @@ namespace App.Server.Controllers
                 var user = await _authenticationService.GetUserAsync(request.Email);
                 if (user == null)
                 {
-                    return StatusCode(500, $"Internal Error occured, user {request.Email} not found.");
+                    return BadRequest($"Internal Error occured, user {request.Email} not found.");
                 }
                 string role = await _authorizationService.GetRoleAsync(user);
                 if (role == "")
@@ -85,15 +113,24 @@ namespace App.Server.Controllers
 
             return Unauthorized("Nesprávný email nebo heslo.");
         }
-        // signout
+        /// <summary>
+        /// Sign out user.
+        /// </summary>
+        /// <returns>Status code 200 Ok.</returns>
         [Authorize]
         [HttpPost("signout")]
-        public async Task<IActionResult> SignOutt()
+        public async Task<ActionResult> SignOutt()
         {
             await _authenticationService.SignOutAsync();
             return Ok("Sign-out successful");
         }
 
+        /// <summary>
+        /// Gets the currently signed in user.
+        /// </summary>
+        /// <returns>Status code 200 Ok and signed in user,
+        /// or 404 NotFound if no user was signed in,
+        /// or 500 If user was signed in, but without a role.</returns>
         [HttpGet]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
@@ -109,8 +146,8 @@ namespace App.Server.Controllers
             }
             return Ok(new UserDto { Email = user.Email, RangerId = user.RangerId, Role = role });
         }
-        // set password -- user created with admin and is setting up first passwrod via link with token and email ? 
-        // change password
+
+        // Future Todo: setting (link), changing passwords.
 
     }
 }

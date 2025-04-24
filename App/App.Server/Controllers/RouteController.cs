@@ -4,14 +4,24 @@ using App.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace App.Server.Controllers
 {
+    /// <summary>
+    /// Api controller for Creating, Updating, Deleting and getting routes in certain district.
+    /// </summary>
+    /// <param name="unitOfWork">Injected Unit Of Work, for accessing repositories</param>
     [ApiController]
     [Route("api/[controller]")]
     public class RouteController(IUnitOfWork unitOfWork) : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
+        /// <summary>
+        /// Gets all routes in certain district with Id DistrictId.
+        /// </summary>
+        /// <param name="DistrictId">Id of district of the routes</param>
+        /// <returns>Status code 200 ok and a IEnumerable of all the routes, or 404 Not found, if getting routes fails.</returns>
         [Authorize]
         [HttpGet("in-district/{DistrictId}")]
         public async Task<ActionResult<IEnumerable<RouteDto>>> GetRoutesInDistrict(int DistrictId)
@@ -19,12 +29,18 @@ namespace App.Server.Controllers
             var routes = await _unitOfWork.RouteRepository.Get(route => route.DistrictId == DistrictId);
             if (routes == null)
             {
-                return NotFound("Error getting routes.");
+                return NotFound("Failed to fetch routes.");
             }
             var routesDtos = routes.Select(route => route.ToDto()).ToList();
             return Ok(routesDtos);
         }
 
+
+        /// <summary>
+        /// Creates new route, only HeadofDistrict and Admin are authorized.
+        /// </summary>
+        /// <param name="routeDto">New Route.</param>
+        /// <returns>Status code 200 OK and the new Route, or 400 BadRequest if the district of the new route could not be found.</returns>
         [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpPost("create")]
         public async Task<ActionResult<RouteDto>> Create(RouteDto routeDto)
@@ -32,7 +48,7 @@ namespace App.Server.Controllers
             var district = await _unitOfWork.DistrictRepository.GetById(routeDto.DistrictId);
             if (district == null)
             {
-                return BadRequest("District id not found");
+                return BadRequest("District id not found.");
             }
             Models.AppData.Route route = new()
             {
@@ -48,6 +64,11 @@ namespace App.Server.Controllers
             return Ok(route.ToDto());
         }
 
+        /// <summary>
+        /// Delete a route by its Id.
+        /// </summary>
+        /// <param name="RouteId">Id of the route being deleted.</param>
+        /// <returns>Status Code 200 oK, or 400 BadRequest if no route with RouteId was found.</returns>
         [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpDelete("delete/{RouteId}")]
         public async Task<ActionResult> Delete(int RouteId)
@@ -55,7 +76,7 @@ namespace App.Server.Controllers
             var route = await _unitOfWork.RouteRepository.GetById(RouteId);
             if (route == null)
             {
-                return BadRequest("Route id not found");
+                return BadRequest("Route id not found.");
             }
 
             _unitOfWork.RouteRepository.Delete(route);
@@ -63,6 +84,11 @@ namespace App.Server.Controllers
             return Ok("Succesfully deleted route");
         }
 
+        /// <summary>
+        /// Update route, route must already exist.
+        /// </summary>
+        /// <param name="routeDto">New updated route.</param>
+        /// <returns>Status code 200 Ok, or 404 not found if route was not found by the id.</returns>
         [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpPut("update")]
         public async Task<ActionResult<RouteDto>> Update(RouteDto routeDto)
@@ -70,7 +96,7 @@ namespace App.Server.Controllers
             var route = await _unitOfWork.RouteRepository.GetById(routeDto.Id);
             if (route == null)
             {
-                return NotFound("Ranger not found");
+                return NotFound("Route not found.");
             }
 
             route.Name = routeDto.Name;
@@ -83,6 +109,5 @@ namespace App.Server.Controllers
 
             return Ok(route.ToDto());
         }
-
     }
 }

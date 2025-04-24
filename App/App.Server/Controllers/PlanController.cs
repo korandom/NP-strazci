@@ -18,11 +18,12 @@ namespace App.Server.Controllers
     /// <param name="authorizationService">Injected authorization service</param>
     [ApiController]
     [Route("api/[controller]")]
-    public class PlanController(IUnitOfWork unitOfWork, IAppAuthenticationService authenticationService, IAppAuthorizationService authorizationService) : ControllerBase
+    public class PlanController(IUnitOfWork unitOfWork, IAppAuthenticationService authenticationService, IAppAuthorizationService authorizationService, IRoutePlanGenerator routePlanGenerator) : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IAppAuthenticationService _authenticationService = authenticationService;
         private readonly IAppAuthorizationService _authorizationService = authorizationService;
+        private readonly IRoutePlanGenerator _routePlanGenerator = routePlanGenerator;
 
         /// <summary>
         /// Creates a new plan, is a private function.
@@ -232,30 +233,53 @@ namespace App.Server.Controllers
         /// Useful for automatic generation of plans, to lessen the load of requests.
         /// </summary>
         /// <param name="plans">Updated plans</param>
-        /// <returns></returns>
+        /// <returns>Status Code 200 Ok, if succesful, else 400 Bad Request if unknown ranger id, else 500 </returns>
         [Authorize(Roles = "HeadOfDistrict")]
         [HttpPost("updateAll")]
         public async Task<IActionResult> UpdatePlans(IEnumerable<PlanDto> planDtos)
         {
-            foreach (var planDto in planDtos)
+            try
             {
-                await UpdatePlanInternal(planDto);
+                foreach (var planDto in planDtos)
+                {
+                    await UpdatePlanInternal(planDto);
+                }
+
+                await _unitOfWork.SaveAsync();
+                return Ok();
             }
-            await _unitOfWork.SaveAsync();
-            return Ok();
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message); // creating of new plans not succesfull - bad ranger data
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while updating the plans.");
+            }
         }
         /// <summary>
         /// Creates a new plan or updates it if it already exists.
         /// </summary>
         /// <param name="planDto">Plan to be updated</param>
-        /// <returns></returns>
+        /// <returns>Status Code 200 Ok, if succesful, else 400 Bad Request if unknown ranger id, else 500</returns>
         [Authorize(Roles = "HeadOfDistrict,Ranger")]
         [HttpPost("update")]
         public async Task<IActionResult> UpdatePlan(PlanDto planDto)
         {
-            await UpdatePlanInternal(planDto);
-            await _unitOfWork.SaveAsync();
-            return Ok();
+            try
+            {
+                await UpdatePlanInternal(planDto);
+                await _unitOfWork.SaveAsync();
+                return Ok();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while updating the plan.");
+            }
         }
 
 
@@ -278,7 +302,7 @@ namespace App.Server.Controllers
                 plan.Date < startDate.AddDays(planningPeriod), "Routes,Vehicles,Ranger");
             if (preexistingPlans == null)
             {
-                return NotFound("Getting previous plans was not successful.");
+                return NotFound("Getting preexisting plans was not successful.");
             }
             List<PlanDto> preexistingPlansDto = preexistingPlans.Select(plan => plan.ToDto()).ToList();
 
@@ -307,19 +331,18 @@ namespace App.Server.Controllers
             var routes = await _unitOfWork.RouteRepository.Get(route => route.DistrictId == districtId);
             if (routes == null)
             {
-                return NotFound("Getting routes of district was not succesfull");
+                return NotFound("Getting routes of district was not successfull");
             }
             List<RouteDto> routeDto = routes.Select(r => r.ToDto()).ToList();
 
             var rangers = await _unitOfWork.RangerRepository.Get(ranger => ranger.DistrictId == districtId);
             if (rangers == null)
             {
-                return NotFound("Getting rangers of district was not succesfull");
+                return NotFound("Getting rangers of district was not successfull");
             }
             List<RangerDto> rangersDto = rangers.Select(r => r.ToDto()).ToList();
 
-            var routePlanGenerator = new RoutePlanGenerator();
-            var result = routePlanGenerator.Generate(previousPlansDto, preexistingPlansDto, attendenceDtos, routeDto, rangersDto, startDate);
+            var result = _routePlanGenerator.Generate(previousPlansDto, preexistingPlansDto, attendenceDtos, routeDto, rangersDto, startDate);
 
             return Ok(result);
         }

@@ -1,3 +1,4 @@
+using App.Server.CSP;
 using App.Server.Models.AppData;
 using App.Server.Models.Identity;
 using App.Server.Repositories;
@@ -42,6 +43,10 @@ namespace App.Server
             .AddDefaultTokenProviders();
 
 
+            // For Injecting into PlanController
+            builder.Services.AddScoped<IRoutePlanGenerator, RoutePlanGenerator>();
+
+            // Authorization and Authentications
             builder.Services.AddAuthorization();
             builder.Services.AddScoped<IAppAuthenticationService, InternalAuthenticationService>();
             builder.Services.AddScoped<IAppAuthorizationService, InternalAuthorizationService>();
@@ -51,6 +56,7 @@ namespace App.Server
             // SignalR for realTime updates
             builder.Services.AddSignalR();
 
+            // Controllers
             builder.Services.AddControllers();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

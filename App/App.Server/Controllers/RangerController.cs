@@ -7,6 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace App.Server.Controllers
 {
+    /// <summary>
+    /// API controller for managing rangers - creating new, deleting, updating, get all rangers in district, or get ranger who is the currently signed in user.
+    /// </summary>
+    /// <param name="unitOfWork">Injected Unit Of Work, for accesing repositories</param>
+    /// <param name="authenticationService">Injected authentication service</param>
     [ApiController]
     [Route("api/[controller]")]
     public class RangerController(IUnitOfWork unitOfWork, IAppAuthenticationService authenticationService) : ControllerBase
@@ -15,6 +20,11 @@ namespace App.Server.Controllers
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IAppAuthenticationService _authenticationService = authenticationService;
 
+        /// <summary>
+        /// Get the ranger, that is the current user - assigned.
+        /// </summary>
+        /// <returns>Status Code 200 and the ranger if success,
+        /// else 404 not found (no user signed in, or signed in user has no ranger assigned or assigned ranger does not exist)</returns>
         [Authorize]
         [HttpGet]
         public async Task<ActionResult<RangerDto>> GetCurrentRanger()
@@ -36,6 +46,11 @@ namespace App.Server.Controllers
             return Ok(ranger.ToDto());
         }
 
+        /// <summary>
+        /// Get all rangers in certain district.
+        /// </summary>
+        /// <param name="DistrictId">Id of said district</param>
+        /// <returns>Status code 200 and IEnumerable of RangerDtos in the district, or 404 Not Found when failed to get rangers.</returns>
         [Authorize]
         [HttpGet("in-district/{DistrictId}")]
         public async Task<ActionResult<IEnumerable<RangerDto>>> GetRangersInDistrict(int DistrictId)
@@ -49,6 +64,11 @@ namespace App.Server.Controllers
             return Ok(rangerDtos);
         }
 
+        /// <summary>
+        /// Create new Ranger.
+        /// </summary>
+        /// <param name="rangerDto">New Ranger.</param>
+        /// <returns>Status 200 Ok when success, else if ranger belongs to non-existent district 400 BadRequest.</returns>
         [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpPost("create")]
         public async Task<ActionResult<RangerDto>> Create(RangerDto rangerDto)
@@ -56,7 +76,7 @@ namespace App.Server.Controllers
             var district = await _unitOfWork.DistrictRepository.GetById(rangerDto.DistrictId);
             if (district == null)
             {
-                return BadRequest("District id not found");
+                return BadRequest("District id not found.");
             }
             Ranger ranger = new()
             {
@@ -72,6 +92,11 @@ namespace App.Server.Controllers
             return Ok(ranger.ToDto());
         }
 
+        /// <summary>
+        ///  Attempts to delete a ranger with said id.
+        /// </summary>
+        /// <param name="RangerId"> Id of ranger being deleted/</param>
+        /// <returns>Status code 200 ok, if succesfully deleted, or 400 BadRequest if the rangerId is not found.</returns>
         [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpDelete("delete/{RangerId}")]
         public async Task<ActionResult> Delete(int RangerId)
@@ -79,7 +104,7 @@ namespace App.Server.Controllers
             var ranger = await _unitOfWork.RangerRepository.GetById(RangerId);
             if (ranger == null)
             {
-                return BadRequest("Ranger id not found");
+                return BadRequest("Ranger id not found.");
             }
 
             _unitOfWork.RangerRepository.Delete(ranger);
@@ -87,6 +112,11 @@ namespace App.Server.Controllers
             return Ok("Succesfully deleted ranger");
         }
 
+        /// <summary>
+        /// Update data of Ranger.
+        /// </summary>
+        /// <param name="rangerDto">Updated Ranger</param>
+        /// <returns>Status code 200 ok, if successfully updated, else if ranger was not found in repository by the given id, status code 400 Bad Request. </returns>
         [Authorize(Roles = "Admin,HeadOfDistrict")]
         [HttpPut("update")]
         public async Task<ActionResult<RangerDto>> Update(RangerDto rangerDto)
@@ -94,7 +124,7 @@ namespace App.Server.Controllers
             var ranger = await _unitOfWork.RangerRepository.GetById(rangerDto.Id);
             if (ranger == null)
             {
-                return NotFound("Ranger not found");
+                return NotFound("Ranger not found.");
             }
 
             ranger.FirstName = rangerDto.FirstName;
