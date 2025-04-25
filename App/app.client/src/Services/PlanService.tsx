@@ -33,7 +33,8 @@ export const updatePlan = async (plan: Plan) => {
         body: JSON.stringify(plan)
     });
     if (!response.ok) {
-        throw new Error("Při updatování plánu nastala chyba.");
+        const message = await response.text();
+        throw new Error(message);
     }
 }
 
@@ -50,7 +51,8 @@ export const updatePlans = async (plans: Plan[]) => {
         body: JSON.stringify(plans)
     });
     if (!response.ok) {
-        throw new Error("Při updatování plánu nastala chyba.");
+        const message = await response.text();
+        throw new Error(message);
     }
 }
 

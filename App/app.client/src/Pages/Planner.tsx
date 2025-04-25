@@ -64,7 +64,6 @@ const Planner: React.FC = () : JSX.Element=> {
                                 }
 
                             </div>
-
                             <PlanTable />
                             </>
                         ) : (

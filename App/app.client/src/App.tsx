@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route} from 'react-router-dom';
 import './App.css';
 import Login from './Pages/Login';
-import Menu from './Components/Menu';
+import Menu from './Components/Menu/Menu';
 import Planner from './Pages/Planner';
 import SourceManagement from './Pages/SourceManagement'
 import { AuthProvider } from './Components/Authentication/AuthProvider';

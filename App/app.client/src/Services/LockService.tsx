@@ -15,7 +15,6 @@ export const lockPlans = async (date: string, districtId: number) => {
 
     if (!response.ok) {
         const message = await response.text();
-        console.error(message);
         throw new Error(message);
     }
 }

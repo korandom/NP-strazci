@@ -159,7 +159,7 @@ const PlanRecord: React.FC<{ schedule: RangerSchedule, includeRangerName: boolea
                         { hasRole("HeadOfDistrict") && editing && (
                             <div className="add">
                                 <select
-                                    className='dropdown'
+                                    className='dropdown vehicles'
                                     defaultValue=""
                                     onChange={handleVehicleSelect}
                                 >
@@ -205,7 +205,7 @@ const PlanRecord: React.FC<{ schedule: RangerSchedule, includeRangerName: boolea
                         {editing && (
                             <div className="add">
                                 <select
-                                    className='dropdown'
+                                    className='dropdown routes'
                                     defaultValue=""
                                     onChange={handleRouteSelect}
                                 >
@@ -230,7 +230,7 @@ const PlanRecord: React.FC<{ schedule: RangerSchedule, includeRangerName: boolea
                 <div className="container">
                         {isEditable ? (
                             <select
-                                className='dropdown'
+                                className='dropdown absence'
                                 value={reasonOfAbsence}
                                 onChange={handleReasonOfAbsenceSelect}
                             >

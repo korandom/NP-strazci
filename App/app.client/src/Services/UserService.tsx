@@ -5,6 +5,12 @@ export interface User {
     rangerId: number | undefined
 }
 
+/**
+ * Sign in user with email and password.
+ * @param email Email of the user.
+ * @param password Password of the user
+ * @returns A Promise of signed in User.
+ */
 export const signIn = async (email: string, password: string): Promise<User> => {
     const response = await fetch(`${BASE_URL}/signin`, {
         method: 'POST',
@@ -22,6 +28,7 @@ export const signIn = async (email: string, password: string): Promise<User> => 
     return result;
 };
 
+/** Sign out user.*/
 export const signOut = async () => {
     const response = await fetch(`${BASE_URL}/signout`, { method: 'POST' });
 
@@ -29,9 +36,12 @@ export const signOut = async () => {
         const errorMessage = await response.text();
         throw new Error(errorMessage);
     }
-    // log success?
 };
 
+/**
+ * Get currently signed in user.
+ * @returns A promise of user.
+ */
 export const getCurrentUser = async (): Promise<User> => {
     const response = await fetch(`${BASE_URL}`);
 

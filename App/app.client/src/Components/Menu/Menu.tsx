@@ -1,9 +1,9 @@
 import  { useState, useEffect } from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import useAuth from '../Hooks/useAuth';
+import useAuth from '../../Hooks/useAuth';
 import './Menu.css';
-import { District, fetchAllDistricts } from '../Services/DistrictService';
-import useDistrict from '../Hooks/useDistrict';
+import { District, fetchAllDistricts } from '../../Services/DistrictService';
+import useDistrict from '../../Hooks/useDistrict';
 
 /**
  * Menu is a responsive component that allows redirecting between "pages".

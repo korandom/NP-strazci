@@ -12,15 +12,26 @@ export interface Route {
     controlPlace: controlPlace | undefined;
     districtId: number;
 }
+
+/**
+ * Get all routes in district.
+ * @param districtId Id of district.
+ * @returns An array of routes.
+ */
 export const fetchRoutesByDistrict = async (districtId: number): Promise<Route[]> => {
     const response = await fetch(`${BASE_URL}/in-district/${districtId}`);
     if (!response.ok) {
-        throw new Error('Failed to fetch routes');
+        const message = await response.text();
+        throw new Error(message);
     }
     const routes = await response.json();
     return routes;
 }
 
+/**
+ * Update route information, route must be already created.
+ * @param route Route being updated.
+ */
 export const updateRoute = async (route: Route) => {
     const response = await fetch(`${BASE_URL}/update`, {
         method: 'PUT',
@@ -35,6 +46,10 @@ export const updateRoute = async (route: Route) => {
     }
 }
 
+/**
+ * Delete route, is irreversible.
+ * @param route Route being deleted.
+ */
 export const deleteRoute = async (route: Route) => {
     const response = await fetch(`${BASE_URL}/delete/${route.id}`, {method: 'DELETE'});
     if (!response.ok) {
@@ -42,7 +57,11 @@ export const deleteRoute = async (route: Route) => {
         throw new Error(message);
     }
 }
-
+/**
+ * Create new route, route Id can be 0.
+ * @param route Route being created.
+ * @returns New created route.
+ */
 export const createRoute = async (route: Route) : Promise<Route> => {
     const response = await fetch(`${BASE_URL}/create`, {
         method: 'POST',

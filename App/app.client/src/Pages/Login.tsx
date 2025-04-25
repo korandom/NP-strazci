@@ -2,6 +2,10 @@ import useAuth from '../Hooks/useAuth';
 import React, { useState } from 'react';
 import './Style/Login.css';
 
+/**
+ * Login Page, just a form for email and password. If Successful redirects to /planovani.
+ * @returns A JSX.Element of the login form.
+ */
  const Login = () : JSX.Element => {
      const { signin, loading, error } = useAuth();
      const [email, setEmail] = useState("");

@@ -57,7 +57,7 @@ const RangerForm: React.FC<RangerFormProps> = ({ initialRanger, onSave, onCancel
                 onChange={handleInputChange}
                 required
             />
-            <label className="item-edit-label" htmlFor="type">Email:</label>
+            <label className="item-edit-label" htmlFor="email">Email:</label>
             <input
                 className="item-edit-input"
                 type="email"
