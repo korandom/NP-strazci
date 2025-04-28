@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { AuthContext } from '../Components/Authentication/AuthProvider';
+import { AuthContext } from '../Providers/Authentication/AuthProvider';
 
 /**
  * Use Authentication Hook.

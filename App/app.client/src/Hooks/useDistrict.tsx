@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { DistrictContext } from '../Components/DataProviders/DistrictDataProvider';
+import { DistrictContext } from '../Providers/DataProviders/DistrictDataProvider';
 
 /**
  * Use District data context.

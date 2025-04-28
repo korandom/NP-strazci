@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { ScheduleContext } from '../Components/DataProviders/ScheduleDataProvider';
+import { ScheduleContext } from '../Providers/DataProviders/ScheduleDataProvider';
 
 /**
  * Use Schedule data context.

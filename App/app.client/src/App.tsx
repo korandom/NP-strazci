@@ -4,10 +4,10 @@ import Login from './Pages/Login';
 import Menu from './Components/Menu/Menu';
 import Planner from './Pages/Planner';
 import SourceManagement from './Pages/SourceManagement'
-import { AuthProvider } from './Components/Authentication/AuthProvider';
-import AuthRoute from './Components/Authentication/AuthRoutes';
-import { DistrictDataProvider } from './Components/DataProviders/DistrictDataProvider';
-import { SchedulesProvider } from './Components/DataProviders/ScheduleDataProvider';
+import { AuthProvider } from './Providers/Authentication/AuthProvider';
+import AuthRoute from './Providers/Authentication/AuthRoutes';
+import { DistrictDataProvider } from './Providers/DataProviders/DistrictDataProvider';
+import { SchedulesProvider } from './Providers/DataProviders/ScheduleDataProvider';
 import GeneratedPreview from './Components/Planner/GeneratedPreview/GeneratedPreview';
 
 
