@@ -2,7 +2,6 @@
 using App.Server.DTOs;
 using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
-using App.Server.Services.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 

@@ -1,18 +1,12 @@
 ﻿using App.Server.Controllers;
+using App.Server.CSP;
 using App.Server.DTOs;
 using App.Server.Models.AppData;
-using App.Server.Models.Identity;
 using App.Server.Repositories.Interfaces;
 using App.Server.Services.Authentication;
 using App.Server.Services.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Tests.Controllers.PlanControllerTests
 {
@@ -28,12 +22,13 @@ namespace Tests.Controllers.PlanControllerTests
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockAuthService = new Mock<IAppAuthenticationService>();
             _mockAuthorizationService = new Mock<IAppAuthorizationService>();
+            var generator = new Mock<IRoutePlanGenerator>();
 
             _controller = new PlanController(
                 _mockUnitOfWork.Object,
                 _mockAuthService.Object,
                 _mockAuthorizationService.Object,
-                null!
+                generator.Object
             );
         }
 
@@ -48,7 +43,7 @@ namespace Tests.Controllers.PlanControllerTests
 
             _mockUnitOfWork.Setup(u => u.PlanRepository.GetById(date, rangerId)).ReturnsAsync((Plan?)null);
             _mockUnitOfWork.Setup(u => u.RangerRepository.GetById(rangerId)).ReturnsAsync((Ranger?)null);
-           
+
             // act
             var result = await _controller.AddVehicle(date, rangerId, vehicleId);
 
@@ -90,7 +85,7 @@ namespace Tests.Controllers.PlanControllerTests
             var vehicle = new Vehicle { Id = vehicleId };
 
             _mockUnitOfWork.Setup(u => u.PlanRepository.GetById(date, rangerId)).ReturnsAsync(plan);
-            _mockUnitOfWork.Setup(u => u.VehicleRepository.GetById(vehicleId)) .ReturnsAsync(vehicle);
+            _mockUnitOfWork.Setup(u => u.VehicleRepository.GetById(vehicleId)).ReturnsAsync(vehicle);
 
             // act
             var result = await _controller.AddVehicle(date, rangerId, vehicleId);

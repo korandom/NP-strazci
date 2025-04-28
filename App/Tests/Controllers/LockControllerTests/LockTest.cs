@@ -1,7 +1,6 @@
 ﻿
 
 using App.Server.Controllers;
-using App.Server.DTOs;
 using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +8,12 @@ using Moq;
 
 namespace Tests.Controllers.LockControllerTests
 {
+    using LockModel = App.Server.Models.AppData.Lock;
+
     public class LockTest
     {
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-        private readonly Mock<IGenericRepository<Lock>> _mockLockRepository;
+        private readonly Mock<IGenericRepository<LockModel>> _mockLockRepository;
         private readonly Mock<IGenericRepository<District>> _mockDistrictRepository;
 
         private readonly LockController _lockController;
@@ -20,7 +21,7 @@ namespace Tests.Controllers.LockControllerTests
         public LockTest()
         {
             _mockUnitOfWork = new Mock<IUnitOfWork>();
-            _mockLockRepository = new Mock<IGenericRepository<Lock>>();
+            _mockLockRepository = new Mock<IGenericRepository<LockModel>>();
             _mockDistrictRepository = new Mock<IGenericRepository<District>>();
             _mockUnitOfWork.Setup(u => u.DistrictRepository).Returns(_mockDistrictRepository.Object);
             _mockUnitOfWork.Setup(u => u.LockRepository).Returns(_mockLockRepository.Object);
@@ -36,7 +37,7 @@ namespace Tests.Controllers.LockControllerTests
             _mockDistrictRepository.Setup(r => r.GetById(districtId)).ReturnsAsync((District?)null);
 
             // act
-            var result = await _lockController.Lock(date, districtId);
+            var result = await _lockController.Lock(districtId, date);
 
             // assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
@@ -53,12 +54,13 @@ namespace Tests.Controllers.LockControllerTests
             _mockDistrictRepository.Setup(r => r.GetById(districtId)).ReturnsAsync(district);
 
             // act
-            var result = await _lockController.Lock(date, districtId);
+            var result = await _lockController.Lock(districtId, date);
 
             // assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            _mockLockRepository.Verify(r => r.Add(It.IsAny<Lock>()), Times.Once);
+            _mockLockRepository.Verify(r => r.Add(It.IsAny<LockModel>()), Times.Once);
             _mockUnitOfWork.Verify(u => u.SaveAsync(), Times.Once);
         }
+
     }
 }

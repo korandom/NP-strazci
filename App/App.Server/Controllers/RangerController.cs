@@ -55,6 +55,11 @@ namespace App.Server.Controllers
         [HttpGet("in-district/{DistrictId}")]
         public async Task<ActionResult<IEnumerable<RangerDto>>> GetRangersInDistrict(int DistrictId)
         {
+            var district = await _unitOfWork.DistrictRepository.GetById(DistrictId);
+            if (district == null)
+            {
+                return NotFound("District not found.");
+            }
             var rangers = await _unitOfWork.RangerRepository.Get(ranger => ranger.DistrictId == DistrictId);
             if (rangers == null)
             {

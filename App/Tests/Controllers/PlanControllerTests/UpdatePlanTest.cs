@@ -48,11 +48,11 @@ namespace Tests.Controllers.PlanControllerTests
             var date = new DateOnly(2025, 1, 1);
             var ranger = new Ranger { Id = 1, Email = "abc@gmail.com", FirstName = "a", LastName = "b" };
             var plan = new Plan(date, ranger);
-            var planDto = new PlanDto (date,ranger.ToDto(), [1], [1] );
+            var planDto = new PlanDto(date, ranger.ToDto(), [1], [1]);
 
             _mockPlanRepository.Setup(p => p.GetById(date, ranger.Id)).ReturnsAsync(plan);
             _mockRouteRepository.Setup(r => r.Get(r => planDto.RouteIds.Contains(r.Id), "")).ReturnsAsync(new List<Route> { new Route { Id = 1 } });
-            _mockVehicleRepository.Setup(v => v.Get(v => planDto.VehicleIds.Contains(v.Id), "")).ReturnsAsync(new List<Vehicle> { new Vehicle { Id = 1 } });
+            _mockVehicleRepository.Setup(v => v.Get(v => planDto.VehicleIds.Contains(v.Id), "")).ReturnsAsync(new List<Vehicle> { new() { Id = 1 } });
 
             // act
             var result = await _controller.UpdatePlan(planDto);

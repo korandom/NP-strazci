@@ -2,16 +2,8 @@
 using App.Server.DTOs;
 using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
-using App.Server.Repositories;
-using App.Server.Services.Authentication;
-using App.Server.Services.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Tests.Controllers.AttendenceControllerTests
 {

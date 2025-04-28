@@ -26,6 +26,11 @@ namespace App.Server.Controllers
         [HttpGet("in-district/{DistrictId}")]
         public async Task<ActionResult<IEnumerable<RouteDto>>> GetRoutesInDistrict(int DistrictId)
         {
+            var district = await _unitOfWork.DistrictRepository.GetById(DistrictId);
+            if (district == null)
+            {
+                return NotFound("District not found.");
+            }
             var routes = await _unitOfWork.RouteRepository.Get(route => route.DistrictId == DistrictId);
             if (routes == null)
             {
@@ -52,7 +57,7 @@ namespace App.Server.Controllers
             }
             Models.AppData.Route route = new()
             {
-                Id = routeDto.Id,
+                Id = 0,
                 Name = routeDto.Name,
                 Priority = routeDto.Priority,
                 ControlPlace = routeDto.ControlPlace,

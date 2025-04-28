@@ -12,13 +12,16 @@ namespace Tests.Controllers.VehicleControllerTests
     {
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<IGenericRepository<Vehicle>> _mockVehicleRepo;
+        private readonly Mock<IGenericRepository<District>> _mockDistrictRepo;
         private readonly VehicleController _controller;
 
         public GetVehiclesInDistrictTest()
         {
             _mockUnitOfWork = new Mock<IUnitOfWork>();
+            _mockDistrictRepo = new Mock<IGenericRepository<District>>();
             _mockVehicleRepo = new Mock<IGenericRepository<Vehicle>>();
             _mockUnitOfWork.Setup(u => u.VehicleRepository).Returns(_mockVehicleRepo.Object);
+            _mockUnitOfWork.Setup(u => u.DistrictRepository).Returns(_mockDistrictRepo.Object);
 
             _controller = new VehicleController(
                 _mockUnitOfWork.Object
@@ -30,14 +33,14 @@ namespace Tests.Controllers.VehicleControllerTests
         {
             // arrange
             var districtId = 1;
-            _mockVehicleRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Vehicle, bool>>>(),"")).ReturnsAsync((IEnumerable<Vehicle>?)null!);
+            _mockVehicleRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Vehicle, bool>>>(), "")).ReturnsAsync((IEnumerable<Vehicle>?)null!);
 
             // act
             var result = await _controller.GetVehiclesInDistrict(districtId);
 
             // assert
             var badReq = Assert.IsType<NotFoundObjectResult>(result.Result);
-            Assert.Equal("Failed to fetch vehicles.", badReq.Value);
+            Assert.Equal("District not found.", badReq.Value);
         }
 
         [Fact]
@@ -47,6 +50,7 @@ namespace Tests.Controllers.VehicleControllerTests
             var districtId = 1;
             var vehicle = new Vehicle { DistrictId = 1, Id = 1, Type = "car", Name = "skoda" };
 
+            _mockDistrictRepo.Setup(r => r.GetById(districtId)).ReturnsAsync(new District { Id = districtId, Name = "district" });
             _mockVehicleRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Vehicle, bool>>>(), "")).ReturnsAsync([vehicle]);
 
             // act

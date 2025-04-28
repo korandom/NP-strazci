@@ -16,7 +16,7 @@ namespace App.Server.DTOs
 
         public ReasonOfAbsence ReasonOfAbsence { get; set; }
 
-        public int[] RouteIds { get; set; } = new int[0];
-        public int[] VehicleIds { get; set; } = new int[0];
+        public int[] RouteIds { get; set; } = [];
+        public int[] VehicleIds { get; set; } = [];
     }
 }

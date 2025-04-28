@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Server.Controllers
-{   
+{
 
     /// <summary>
     /// Api controller for managing users, their roles and signing in/out.
@@ -144,7 +144,7 @@ namespace App.Server.Controllers
             {
                 return StatusCode(500, "Internal Error occured, no role is assigned to user");
             }
-            return Ok(new UserDto { Email = user.Email, RangerId = user.RangerId, Role = role });
+            return Ok(new UserDto { Email = user.Email ?? "", RangerId = user.RangerId, Role = role });
         }
 
         // Future Todo: setting (link), changing passwords.

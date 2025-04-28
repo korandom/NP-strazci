@@ -27,14 +27,14 @@ namespace App.Server.Controllers
         /// <returns>Status Code 200 Ok, if succesful, else 400 Bad Request</returns>
         [Authorize(Roles = "HeadOfDistrict")]
         [HttpPost("lock/{districtId}/{date}")]
-        public async Task<IActionResult> Lock(DateOnly date, int districtId)
+        public async Task<IActionResult> Lock(int districtId, DateOnly date)
         {
             var district = await _unitOfWork.DistrictRepository.GetById(districtId);
             if (district == null)
             {
                 return BadRequest("District id not found.");
             }
-            Lock newLock = new()
+            Models.AppData.Lock newLock = new()
             {
                 Date = date,
                 DistrictId = districtId,
@@ -43,7 +43,7 @@ namespace App.Server.Controllers
 
             _unitOfWork.LockRepository.Add(newLock);
             await _unitOfWork.SaveAsync();
-            return Ok("Attendence succesfully locked.");
+            return Ok($"Succesfully locked {date} against changes.");
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace App.Server.Controllers
 
             _unitOfWork.LockRepository.Delete(deleteLock.First());
             await _unitOfWork.SaveAsync();
-            return Ok("Succesfully unlocked attendence.");
+            return Ok($"Succesfully unlocked {date} for changes.");
         }
 
         /// <summary>

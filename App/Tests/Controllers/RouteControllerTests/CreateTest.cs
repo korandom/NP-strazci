@@ -2,7 +2,6 @@
 using App.Server.DTOs;
 using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
-using App.Server.Services.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -35,7 +34,7 @@ namespace Tests.Controllers.RouteControllerTests
         {
             // arrange
             var districtId = 1;
-            var routeDto = new RouteDto (2, "route",  2, null, districtId );
+            var routeDto = new RouteDto(2, "route", 2, null, districtId);
             _mockDistrictRepo.Setup(r => r.GetById(districtId)).ReturnsAsync((District?)null);
 
             // act
@@ -46,13 +45,13 @@ namespace Tests.Controllers.RouteControllerTests
             Assert.Equal("District id not found.", badReq.Value);
         }
 
-        [Fact] 
+        [Fact]
         public async Task CreateSucess()
         {
             // arrange
             var districtId = 1;
             var district = new District { Id = districtId, Name = "District" };
-            var routeDto = new RouteDto (2, "route",  2, null, districtId );
+            var routeDto = new RouteDto(2, "route", 2, null, districtId);
             _mockDistrictRepo.Setup(r => r.GetById(districtId)).ReturnsAsync(district);
 
             // act

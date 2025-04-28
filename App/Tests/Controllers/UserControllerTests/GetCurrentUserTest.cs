@@ -1,10 +1,8 @@
 ﻿
 using App.Server.Controllers;
-using App.Server.DTOs;
 using App.Server.Models.Identity;
 using App.Server.Services.Authentication;
 using App.Server.Services.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Security.Claims;
@@ -33,7 +31,7 @@ namespace Tests.Controllers.UserControllerTests
 
             //act
             var result = await _controller.GetCurrentUser();
-            
+
             //assert
             Assert.IsType<NotFoundObjectResult>(result.Result);
         }

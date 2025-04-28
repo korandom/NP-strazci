@@ -24,8 +24,15 @@ namespace App.Server.Util
         public static async Task SeedAdminUserAsync(IServiceProvider serviceProvider)
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
-            string adminEmail = "admin@admin.com";
+            string? adminEmail = configuration.GetSection("SeedAdminUser")["Email"];
+            string? adminPass = configuration.GetSection("SeedAdminUser")["Password"];
+
+            if (string.IsNullOrEmpty(adminEmail) || string.IsNullOrEmpty(adminPass))
+            {
+                throw new Exception("Admin email or password not configured in appsettings.json.");
+            }
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
             // Admin is already seeded in system
@@ -41,8 +48,7 @@ namespace App.Server.Util
                 EmailConfirmed = true
             };
 
-
-            var result = await userManager.CreateAsync(adminUser, "DebugAdminPass123.");
+            var result = await userManager.CreateAsync(adminUser, adminPass);
 
             if (result.Succeeded)
             {

@@ -8,7 +8,7 @@ namespace App.Server.Models.AppData
     {
         public DateOnly Date { get; set; }
         public int RangerId { get; set; }
-        public Ranger Ranger { get; set; }
+        public Ranger Ranger { get; set; } = new Ranger();
 
         public ICollection<Route> Routes { get; set; } = [];
         public ICollection<Vehicle> Vehicles { get; set; } = [];

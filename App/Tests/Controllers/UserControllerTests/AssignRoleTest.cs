@@ -49,10 +49,10 @@ namespace Tests.Controllers.UserControllerTests
             });
             _mockAuthenticationService.Setup(s => s.GetUserAsync(email)).ReturnsAsync(user);
             _mockAuthorizationService.Setup(s => s.AssignRoleAsync(user, "HeadOfDistrict")).ReturnsAsync(failedResult);
-            
+
             //act
             var result = await _controller.AssignRole(user.Email, "HeadOfDistrict");
-            
+
             // assert
             Assert.IsType<BadRequestObjectResult>(result);
         }
@@ -68,7 +68,7 @@ namespace Tests.Controllers.UserControllerTests
 
             //act
             var result = await _controller.AssignRole(user.Email, "HeadOfDistrict");
-            
+
             //assert
             Assert.IsType<OkObjectResult>(result);
         }

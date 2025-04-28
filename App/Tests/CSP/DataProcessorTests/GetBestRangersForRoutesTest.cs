@@ -1,7 +1,6 @@
 
 using App.Server.CSP;
 using App.Server.DTOs;
-using System.Collections.Generic;
 
 namespace Tests.CSP.DataProcessorTests
 {

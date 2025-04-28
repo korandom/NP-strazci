@@ -11,7 +11,7 @@ namespace Tests.Controllers.VehicleControllerTests
     {
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<IGenericRepository<Vehicle>> _mockVehicleRepo;
-        
+
         private readonly VehicleController _controller;
 
         public DeleteTest()
@@ -31,7 +31,7 @@ namespace Tests.Controllers.VehicleControllerTests
         {
             // arrange
             var vehicleId = 1;
-            var vehicleDto = new VehicleDto { DistrictId= 1, Id = vehicleId, Name = "skoda", Type = "car" };
+            var vehicleDto = new VehicleDto { DistrictId = 1, Id = vehicleId, Name = "skoda", Type = "car" };
 
             _mockVehicleRepo.Setup(r => r.GetById(vehicleId)).ReturnsAsync((Vehicle?)null);
 
@@ -50,7 +50,7 @@ namespace Tests.Controllers.VehicleControllerTests
             var vehicleId = 1;
             var vehicle = new Vehicle { DistrictId = 1, Id = vehicleId, Type = "car", Name = "skoda" };
             _mockVehicleRepo.Setup(r => r.GetById(vehicleId)).ReturnsAsync(vehicle);
-            
+
 
             // act
             var result = await _controller.Delete(vehicleId);

@@ -5,11 +5,6 @@ using App.Server.Repositories.Interfaces;
 using App.Server.Services.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Tests.Controllers.RangerControllerTests
 {
@@ -57,7 +52,7 @@ namespace Tests.Controllers.RangerControllerTests
             var rangerId = 1;
             var ranger = new Ranger { Id = rangerId, DistrictId = 1, Email = "abc@gmail.com", FirstName = "a", LastName = "a" };
             _mockRangerRepo.Setup(r => r.GetById(rangerId)).ReturnsAsync(ranger);
-            
+
 
             // act
             var result = await _controller.Delete(rangerId);

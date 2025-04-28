@@ -24,7 +24,7 @@ namespace App.Server.Services.Authentication
             var result = await _userManager.CreateAsync(user);
             if (result.Succeeded)
             {
-                await _userManager.AddPasswordAsync(user, user.UserName ?? "tempPass123.");
+                await _userManager.AddPasswordAsync(user, "tempPass123.");
                 // TODO: instead send an email to the user to set their password?
             }
             return result;

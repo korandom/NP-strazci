@@ -8,7 +8,7 @@ namespace App.Server.Models.AppData
 
         public ICollection<Ranger> Rangers { get; } = [];
         public ICollection<Vehicle> Vehicles { get; } = [];
-        public required string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 
     public static class DistrictExtensions

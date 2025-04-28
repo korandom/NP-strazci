@@ -22,7 +22,7 @@ namespace App.Server.Models.AppData
     {
         public DateOnly Date { get; set; }
         public int RangerId { get; set; }
-        public Ranger Ranger { get; set; }
+        public Ranger Ranger { get; set; } = new Ranger();
 
         public bool Working { get; set; } = false;
         public TimeOnly? From { get; set; } = null;

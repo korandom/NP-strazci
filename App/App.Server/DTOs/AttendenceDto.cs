@@ -7,6 +7,7 @@ namespace App.Server.DTOs
     {
         [Required]
         public DateOnly Date { get; set; }
+
         [Required]
         public RangerDto Ranger { get; set; }
 

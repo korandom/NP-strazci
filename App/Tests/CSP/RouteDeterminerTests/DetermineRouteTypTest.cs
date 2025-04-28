@@ -7,10 +7,10 @@ namespace Tests.CSP.RouteDeterminerTests
     {
         public static IEnumerable<object[]> GetRouteTypesForNoPlans()
         {
-            yield return new object[] { 0, RouteType.Once};
-            yield return new object[] { 1, RouteType.Once};
-            yield return new object[] { 2, RouteType.MinOnce};
-            yield return new object[] { 3, RouteType.Daily};
+            yield return new object[] { 0, RouteType.Once };
+            yield return new object[] { 1, RouteType.Once };
+            yield return new object[] { 2, RouteType.MinOnce };
+            yield return new object[] { 3, RouteType.Daily };
 
         }
 
@@ -54,7 +54,7 @@ namespace Tests.CSP.RouteDeterminerTests
             //daily
             yield return new object[] { 3, new int[] { 0 }, RouteType.Daily };
             yield return new object[] { 3, new int[] { -6 }, RouteType.Daily };
-            yield return new object[] { 3, new int[] { -7 }, RouteType.Daily};
+            yield return new object[] { 3, new int[] { -7 }, RouteType.Daily };
             yield return new object[] { 3, new int[] { -20 }, RouteType.Daily };
             yield return new object[] { 3, new int[] { -25, 0 }, RouteType.Daily };
         }
@@ -75,8 +75,8 @@ namespace Tests.CSP.RouteDeterminerTests
             };
             var route = new RouteDto(1, "route", priority, null, 1);
 
-            List<PlanDto> plans = [ new PlanDto(start, ranger, [2], []) ];
-            foreach( var days in daysPlanned)
+            List<PlanDto> plans = [new PlanDto(start, ranger, [2], [])];
+            foreach (var days in daysPlanned)
             {
                 plans.Add(new PlanDto(start.AddDays(days), ranger, [1], []));
             }

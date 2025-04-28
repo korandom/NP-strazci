@@ -40,7 +40,7 @@ namespace Tests.CSP.VariableManagerTests
             List<RouteDto> routes = [];
             for (int i = 0; i < routeCount; i++)
             {
-                routes.Add(new RouteDto( i, "a", 0,  null, 1 ));
+                routes.Add(new RouteDto(i, "a", 0, null, 1));
             }
             VariableManager variableManager = new(_mockDeterminer.Object, routes, dayCount);
 
@@ -53,7 +53,7 @@ namespace Tests.CSP.VariableManagerTests
         }
 
         [Fact]
-        public void FilterPreplannedVariables() 
+        public void FilterPreplannedVariables()
         {
             //arrange
             List<RouteDto> routes = [new RouteDto(1, "a", 0, null, 1)];

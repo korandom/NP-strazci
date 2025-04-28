@@ -20,12 +20,12 @@ namespace Tests.CSP.RouteDeterminerTests
 
         // One plan exists on the correct day, testing correct detection
         [Theory]
-        [InlineData( 1, new int[] {1}, true)]
+        [InlineData(1, new int[] { 1 }, true)]
         [InlineData(1, new int[] { 1, 2 }, true)]
         [InlineData(1, new int[] { 2 }, false)]
         [InlineData(1, new int[] { }, false)]
 
-        public void OnePlanExists(int routeId, int[] plannedRoutes, bool result )
+        public void OnePlanExists(int routeId, int[] plannedRoutes, bool result)
         {
             //arrange
             var date = new DateOnly(2025, 1, 1);

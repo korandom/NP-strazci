@@ -34,7 +34,7 @@ namespace Tests.Controllers.VehicleControllerTests
         {
             // arrange
             var districtId = 1;
-            var vehicleDto = new VehicleDto { DistrictId = districtId, Id = 1, Name = "skoda", Type="car" };
+            var vehicleDto = new VehicleDto { DistrictId = districtId, Id = 1, Name = "skoda", Type = "car" };
             _mockDistrictRepo.Setup(r => r.GetById(districtId)).ReturnsAsync((District?)null);
 
             // act
@@ -45,7 +45,7 @@ namespace Tests.Controllers.VehicleControllerTests
             Assert.Equal("District id not found.", badReq.Value);
         }
 
-        [Fact] 
+        [Fact]
         public async Task CreateSucess()
         {
             // arrange

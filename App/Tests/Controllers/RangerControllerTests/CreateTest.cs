@@ -1,10 +1,8 @@
 ﻿using App.Server.Controllers;
-using App.Server.CSP;
 using App.Server.DTOs;
 using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
 using App.Server.Services.Authentication;
-using App.Server.Services.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -51,7 +49,7 @@ namespace Tests.Controllers.RangerControllerTests
             Assert.Equal("District id not found.", badReq.Value);
         }
 
-        [Fact] 
+        [Fact]
         public async Task CreateSucess()
         {
             // arrange

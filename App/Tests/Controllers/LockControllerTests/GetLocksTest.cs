@@ -4,18 +4,14 @@ using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Tests.Controllers.LockControllerTests
 {
+    using LockModel = App.Server.Models.AppData.Lock;
     public class GetLocksTest
     {
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-        private readonly Mock<IGenericRepository<Lock>> _mockLockRepository;
+        private readonly Mock<IGenericRepository<LockModel>> _mockLockRepository;
         private readonly Mock<IGenericRepository<District>> _mockDistrictRepository;
 
         private readonly LockController _lockController;
@@ -23,7 +19,7 @@ namespace Tests.Controllers.LockControllerTests
         public GetLocksTest()
         {
             _mockUnitOfWork = new Mock<IUnitOfWork>();
-            _mockLockRepository = new Mock<IGenericRepository<Lock>>();
+            _mockLockRepository = new Mock<IGenericRepository<LockModel>>();
             _mockDistrictRepository = new Mock<IGenericRepository<District>>();
             _mockUnitOfWork.Setup(u => u.DistrictRepository).Returns(_mockDistrictRepository.Object);
             _mockUnitOfWork.Setup(u => u.LockRepository).Returns(_mockLockRepository.Object);
@@ -36,8 +32,8 @@ namespace Tests.Controllers.LockControllerTests
             // arrange
             var date = new DateOnly(2025, 1, 1);
             var districtId = 1;
-            IEnumerable<Lock>? locks = [];
-            _mockLockRepository.Setup(r => r.Get(l =>  l.DistrictId == districtId, "")).ReturnsAsync((IEnumerable<Lock>?)null!);
+            IEnumerable<LockModel>? locks = [];
+            _mockLockRepository.Setup(r => r.Get(l => l.DistrictId == districtId, "")).ReturnsAsync((IEnumerable<LockModel>?)null!);
 
             // act
             var result = await _lockController.GetLocks(districtId);
@@ -69,7 +65,7 @@ namespace Tests.Controllers.LockControllerTests
             // arrange
             var date = new DateOnly(2025, 1, 1);
             var districtId = 1;
-            var lockIt = new Lock { Date = date, DistrictId = districtId };
+            var lockIt = new App.Server.Models.AppData.Lock { Date = date, DistrictId = districtId };
             _mockLockRepository.Setup(r => r.Get(l => l.DistrictId == districtId, "")).ReturnsAsync([lockIt]);
 
             // act

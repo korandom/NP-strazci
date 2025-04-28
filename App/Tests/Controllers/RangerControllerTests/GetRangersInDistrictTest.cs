@@ -39,14 +39,15 @@ namespace Tests.Controllers.RangerControllerTests
         {
             // arrange
             var districtId = 1;
-            _mockRangerRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Ranger, bool>>>(),"")).ReturnsAsync((IEnumerable<Ranger>?)null!);
+            _mockDistrictRepo.Setup(r => r.Get(It.IsAny<Expression<Func<District, bool>>>(), "")).ReturnsAsync((IEnumerable<District>?)null!);
+            _mockRangerRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Ranger, bool>>>(), "")).ReturnsAsync((IEnumerable<Ranger>?)null!);
 
             // act
             var result = await _controller.GetRangersInDistrict(districtId);
 
             // assert
             var badReq = Assert.IsType<NotFoundObjectResult>(result.Result);
-            Assert.Equal("Failed to fetch rangers.", badReq.Value);
+            Assert.Equal("District not found.", badReq.Value);
         }
 
         [Fact]
@@ -55,6 +56,8 @@ namespace Tests.Controllers.RangerControllerTests
             // arrange
             var districtId = 1;
             var ranger = new Ranger { Id = 0, DistrictId = 1, Email = "abc@gmail.com", FirstName = "a", LastName = "a" };
+
+            _mockDistrictRepo.Setup(r => r.GetById(1)).ReturnsAsync(new District { Id=1, Name = "district"});
             _mockRangerRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Ranger, bool>>>(), "")).ReturnsAsync([ranger]);
 
             // act

@@ -4,7 +4,6 @@ using App.Server.Models.AppData;
 using App.Server.Models.Identity;
 using App.Server.Repositories.Interfaces;
 using App.Server.Services.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Security.Claims;
@@ -31,7 +30,7 @@ namespace Tests.Controllers.RangerControllerTests
             );
         }
 
-        
+
         [Fact]
         public async Task UserIsNotAuthenticated()
         {
@@ -66,7 +65,7 @@ namespace Tests.Controllers.RangerControllerTests
         public async Task RangerDoesNotExist()
         {
             var rangerId = 1;
-            var user = new ApplicationUser { Id = "1", Email = "abcR@gmail.com", RangerId=rangerId };
+            var user = new ApplicationUser { Id = "1", Email = "abcR@gmail.com", RangerId = rangerId };
             _mockAuthService.Setup(s => s.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(user);
             _mockRangerRepo.Setup(r => r.GetById(rangerId)).ReturnsAsync((Ranger?)null);
 

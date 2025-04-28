@@ -31,7 +31,7 @@ namespace Tests.Controllers.UserControllerTests
             _mockAuthenticationService.Setup(s => s.SignInAsync(request.Email, request.Password)).ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
             _mockAuthenticationService.Setup(s => s.GetUserAsync(request.Email)).ReturnsAsync(user);
             _mockAuthorizationService.Setup(s => s.GetRoleAsync(user)).ReturnsAsync("Ranger");
-            
+
             //act
             var result = await _controller.SignIn(request);
 
@@ -47,7 +47,7 @@ namespace Tests.Controllers.UserControllerTests
         {
             //act
             var result = await _controller.SignOutt();
-            
+
             //assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             _mockAuthenticationService.Verify(service => service.SignOutAsync(), Times.Once);

@@ -11,7 +11,7 @@ namespace App.Server.Repositories.Interfaces
         public IGenericRepository<Vehicle> VehicleRepository { get; }
 
         public IGenericRepository<Ranger> RangerRepository { get; }
-        public IGenericRepository<Lock> LockRepository { get; }
+        public IGenericRepository<Models.AppData.Lock> LockRepository { get; }
         public IGenericRepository<Plan> PlanRepository { get; }
 
         public IGenericRepository<Attendence> AttendenceRepository { get; }

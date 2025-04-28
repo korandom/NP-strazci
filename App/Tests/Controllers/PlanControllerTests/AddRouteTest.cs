@@ -40,7 +40,7 @@ namespace Tests.Controllers.PlanControllerTests
             // arrange
             int rangerId = 1;
             int routeId = 10;
-            DateOnly date = new DateOnly(2025,1,1);
+            DateOnly date = new DateOnly(2025, 1, 1);
 
             _mockAuthService.Setup(s => s.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync((ApplicationUser?)null);
 
@@ -59,7 +59,7 @@ namespace Tests.Controllers.PlanControllerTests
             int rangerId = 1;
             int routeId = 10;
             DateOnly date = new DateOnly(2025, 1, 1);
-            var user = new ApplicationUser {RangerId = 2, Id = "3", Email="abc@gmail.com" };
+            var user = new ApplicationUser { RangerId = 2, Id = "3", Email = "abc@gmail.com" };
 
             _mockAuthService.Setup(s => s.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(user);
             _mockAuthorizationService.Setup(a => a.IsUserOwner(user, rangerId)).Returns(false);
@@ -76,11 +76,11 @@ namespace Tests.Controllers.PlanControllerTests
         {
             // arrange
             int rangerId = 1;
-            int  routeId = 10;
+            int routeId = 10;
             DateOnly date = new DateOnly(2025, 1, 1);
             var user = new ApplicationUser();
             var ranger = new Ranger { Id = 1, Email = "abc@gmail.com", FirstName = "a", LastName = "b" };
-            var plan = new Plan(date,ranger);
+            var plan = new Plan(date, ranger);
             _mockAuthService.Setup(s => s.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
                             .ReturnsAsync(user);
             _mockAuthorizationService.Setup(a => a.IsUserOwner(user, rangerId)).Returns(true);
@@ -110,7 +110,7 @@ namespace Tests.Controllers.PlanControllerTests
             _mockAuthorizationService.Setup(a => a.IsUserOwner(user, rangerId)).Returns(true);
             _mockUnitOfWork.Setup(u => u.PlanRepository.GetById(date, rangerId)).ReturnsAsync((Plan?)null);
 
-            _mockUnitOfWork.Setup(u=> u.RangerRepository.GetById(ranger.Id)).ReturnsAsync(ranger);
+            _mockUnitOfWork.Setup(u => u.RangerRepository.GetById(ranger.Id)).ReturnsAsync(ranger);
             _mockUnitOfWork.Setup(u => u.RouteRepository.GetById(routeId)).ReturnsAsync(route);
 
             // act
@@ -130,7 +130,7 @@ namespace Tests.Controllers.PlanControllerTests
             var date = new DateOnly(2025, 1, 1);
             var ranger = new Ranger { Id = 1, Email = "abc@gmail.com", FirstName = "a", LastName = "b" };
             var plan = new Plan(date, ranger);
-            var route = new App.Server.Models.AppData.Route { Id = 1, DistrictId =1, Name= "a", Priority=2};
+            var route = new App.Server.Models.AppData.Route { Id = 1, DistrictId = 1, Name = "a", Priority = 2 };
 
             _mockAuthService.Setup(s => s.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(appUser);
             _mockAuthorizationService.Setup(a => a.IsUserOwner(appUser, 1)).Returns(true);

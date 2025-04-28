@@ -25,6 +25,11 @@ namespace App.Server.Controllers
         [HttpGet("in-district/{DistrictId}")]
         public async Task<ActionResult<IEnumerable<VehicleDto>>> GetVehiclesInDistrict(int DistrictId)
         {
+            var district = await _unitOfWork.DistrictRepository.GetById(DistrictId);
+            if (district == null)
+            {
+                return NotFound("District not found.");
+            }
             var vehicles = await _unitOfWork.VehicleRepository.Get(vehicle => vehicle.DistrictId == DistrictId);
             if (vehicles == null)
             {
@@ -50,7 +55,7 @@ namespace App.Server.Controllers
             }
             Vehicle vehicle = new()
             {
-                Id = vehicleDto.Id,
+                Id = 0,
                 Name = vehicleDto.Name,
                 Type = vehicleDto.Type,
                 DistrictId = vehicleDto.DistrictId,
@@ -60,7 +65,7 @@ namespace App.Server.Controllers
             await _unitOfWork.SaveAsync();
             return Ok(vehicle.ToDto());
         }
-        
+
         /// <summary>
         /// Delete a vehicle by its Id. Irreversible.
         /// </summary>

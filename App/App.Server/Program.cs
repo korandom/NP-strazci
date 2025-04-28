@@ -23,7 +23,7 @@ namespace App.Server
             // Database context for app data
             builder.Services.AddDbContext<PlannerNPContext>(options =>
             {
-                var connectionString = builder.Configuration.GetConnectionString("DebugConnection") ?? throw new InvalidOperationException("Connection string not found.");
+                var connectionString = builder.Configuration.GetConnectionString("PlannerNPConnection") ?? throw new InvalidOperationException("Connection string not found.");
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             });
 

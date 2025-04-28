@@ -4,6 +4,10 @@ using App.Server.CSP;
 using App.Server.DTOs;
 using App.Server.Models.AppData;
 using App.Server.Repositories.Interfaces;
+using App.Server.Services.Authentication;
+using App.Server.Services.Authorization;
+
+
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Linq.Expressions;
@@ -29,13 +33,15 @@ namespace Tests.Controllers.PlanControllerTests
             _mockRouteRepo = new Mock<IGenericRepository<Route>>();
             _mockRangerRepo = new Mock<IGenericRepository<Ranger>>();
             _mockPlanRouteGenerator = new Mock<IRoutePlanGenerator>();
+            var authMock = new Mock<IAppAuthenticationService>();
+            var authorMock = new Mock<IAppAuthorizationService>();
 
             _mockUnitOfWork.Setup(u => u.PlanRepository).Returns(_mockPlanRepo.Object);
             _mockUnitOfWork.Setup(u => u.AttendenceRepository).Returns(_mockAttendenceRepo.Object);
             _mockUnitOfWork.Setup(u => u.RouteRepository).Returns(_mockRouteRepo.Object);
             _mockUnitOfWork.Setup(u => u.RangerRepository).Returns(_mockRangerRepo.Object);
 
-            _controller = new PlanController(_mockUnitOfWork.Object, null!, null!, _mockPlanRouteGenerator.Object);
+            _controller = new PlanController(_mockUnitOfWork.Object, authMock.Object, authorMock.Object, _mockPlanRouteGenerator.Object);
         }
 
         [Fact]
@@ -52,11 +58,11 @@ namespace Tests.Controllers.PlanControllerTests
 
             _mockPlanRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Plan, bool>>>(), It.IsAny<string>())).ReturnsAsync(new List<Plan> { plan });
 
-            _mockAttendenceRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Attendence, bool>>>(), It.IsAny<string>())).ReturnsAsync(new List<Attendence> { attendence });
+            _mockAttendenceRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Attendence, bool>>>(), It.IsAny<string>())).ReturnsAsync([attendence]);
 
-            _mockRouteRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Route, bool>>>(), "")).ReturnsAsync(new List<Route> { route });
+            _mockRouteRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Route, bool>>>(), "")).ReturnsAsync([route]);
 
-            _mockRangerRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Ranger, bool>>>(), "")).ReturnsAsync(new List<Ranger> { ranger });
+            _mockRangerRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Ranger, bool>>>(), "")).ReturnsAsync([ranger]);
 
             _mockPlanRouteGenerator.Setup(g => g.Generate(
                 It.IsAny<List<PlanDto>>(),          // previousPlans
@@ -108,16 +114,16 @@ namespace Tests.Controllers.PlanControllerTests
         private void SetupMocksToFailOn(string failPoint)
         {
             _mockPlanRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Plan, bool>>>(), It.IsAny<string>()))
-                         .ReturnsAsync(failPoint is "preexisting" or "previous" ? null : new List<Plan> { new Plan(new DateOnly(2025, 4, 28), new Ranger()) });
+                         .ReturnsAsync(failPoint is "preexisting" or "previous" ? null! : new List<Plan> { new Plan(new DateOnly(2025, 4, 28), new Ranger()) });
 
             _mockAttendenceRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Attendence, bool>>>(), It.IsAny<string>()))
-                               .ReturnsAsync(failPoint == "attendence" ? null : new List<Attendence> { new Attendence { Date = new DateOnly(2025, 4, 28), Ranger = new Ranger() } });
+                               .ReturnsAsync(failPoint == "attendence" ? null! : new List<Attendence> { new Attendence { Date = new DateOnly(2025, 4, 28), Ranger = new Ranger() } });
 
             _mockRouteRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Route, bool>>>(), ""))
-                          .ReturnsAsync(failPoint == "routes" ? null : new List<Route> { new Route { Id = 1 } });
+                          .ReturnsAsync(failPoint == "routes" ? null! : new List<Route> { new Route { Id = 1 } });
 
             _mockRangerRepo.Setup(r => r.Get(It.IsAny<Expression<Func<Ranger, bool>>>(), ""))
-                           .ReturnsAsync(failPoint == "rangers" ? null : new List<Ranger> { new Ranger { Id = 1 } });
+                           .ReturnsAsync(failPoint == "rangers" ? null! : new List<Ranger> { new Ranger { Id = 1 } });
         }
     }
 }

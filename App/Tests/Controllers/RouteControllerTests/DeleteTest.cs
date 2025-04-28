@@ -11,7 +11,7 @@ namespace Tests.Controllers.RouteControllerTests
     {
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<IGenericRepository<Route>> _mockRouteRepo;
-        
+
         private readonly RouteController _controller;
 
         public DeleteTest()
@@ -51,7 +51,7 @@ namespace Tests.Controllers.RouteControllerTests
             var route = new App.Server.Models.AppData.Route { Id = routeId, DistrictId = 1, Name = "route", Priority = 2, ControlPlace = null };
 
             _mockRouteRepo.Setup(r => r.GetById(routeId)).ReturnsAsync(route);
-            
+
 
             // act
             var result = await _controller.Delete(routeId);
