@@ -174,7 +174,7 @@ namespace Tests.Integration
             var dto = new AttendenceDto
             {
                 Date = _factory.Date,
-                Ranger = null,  // Missing ranger info
+                Ranger = null!,  // Missing ranger info
                 Working = true,
                 ReasonOfAbsence = ReasonOfAbsence.None,
                 From = null

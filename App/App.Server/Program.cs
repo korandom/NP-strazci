@@ -73,12 +73,15 @@ namespace App.Server
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-                app.UseCors(x => x
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .SetIsOriginAllowed(origin => true) // allow any origin
-                    .AllowCredentials());
             }
+
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials()
+            );
+
 
             // Seeding data
             using (var scope = app.Services.CreateScope())

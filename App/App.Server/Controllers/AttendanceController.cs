@@ -12,8 +12,6 @@ namespace App.Server.Controllers
     /// API controller that updates attendence.
     /// </summary>
     /// <param name="unitOfWork">Injected Unit of Work, for accessing repositories.</param>
-    /// <param name="authenticationService">Injected authentication service</param>
-    /// <param name="authorizationService">Injected authorization service</param>
     [ApiController]
     [Route("api/[controller]")]
     public class AttendenceController(IUnitOfWork unitOfWork) : ControllerBase

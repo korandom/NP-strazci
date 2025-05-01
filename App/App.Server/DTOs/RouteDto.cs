@@ -10,8 +10,14 @@ namespace App.Server.DTOs
 
         [Required]
         public string Name { get; set; }
+
+        [Required]
+        [Range(0, 3)]
         public int Priority { get; set; }
         public ControlPlace? ControlPlace { get; set; }
+
+        [Required]
+        [Range(0, int.MaxValue)]
         public int DistrictId { get; set; }
 
         public RouteDto(int id, string name, int priority, ControlPlace? controlPlace, int districtId)

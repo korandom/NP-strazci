@@ -60,7 +60,7 @@ namespace App.Server.Controllers
         /// <param name="role">The role being assigned.</param>
         /// <returns>Status code 200 Ok, 404 Not found if no user with said email exists, 400 BaddRequest if assinging role was not possible.</returns>
         [Authorize(Roles = "Admin")]
-        [HttpPut("assign-role/{userEmail}")]
+        [HttpPut("assign-role/{userEmail}/{role}")]
         public async Task<ActionResult> AssignRole(string userEmail, string role)
         {
             var user = await _authenticationService.GetUserAsync(userEmail);

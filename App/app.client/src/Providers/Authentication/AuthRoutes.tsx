@@ -8,7 +8,7 @@ import useAuth from '../../Hooks/useAuth';
  * @param param0.roles - Optional array of roles that are allowed to access the route.
  * @returns 
  * - Redirects to the login page ("/prihlasit") if the user is not authenticated.  
- * - Redirects to the homepage ("/") if the user does not have the required role.  
+ * - Redirects to the planner page ("/planovani") if the user does not have the required role.  
  * - Renders the nested routes (`<Outlet />`) if the user is authenticated and authorized.
  */
 function AuthRoute({ roles }: { roles?: string[] }) {
@@ -19,7 +19,6 @@ function AuthRoute({ roles }: { roles?: string[] }) {
     }
 
     if (roles && !roles.includes(user.role)) {
-        // TODO add some alert unauthorized/ different page
         return <Navigate to="/planovani" replace />;
     }
 

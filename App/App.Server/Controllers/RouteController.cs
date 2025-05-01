@@ -20,18 +20,18 @@ namespace App.Server.Controllers
         /// <summary>
         /// Gets all routes in certain district with Id DistrictId.
         /// </summary>
-        /// <param name="DistrictId">Id of district of the routes</param>
+        /// <param name="districtId">Id of district of the routes</param>
         /// <returns>Status code 200 ok and a IEnumerable of all the routes, or 404 Not found, if getting routes fails.</returns>
         [Authorize]
-        [HttpGet("in-district/{DistrictId}")]
-        public async Task<ActionResult<IEnumerable<RouteDto>>> GetRoutesInDistrict(int DistrictId)
+        [HttpGet("in-district/{districtId}")]
+        public async Task<ActionResult<IEnumerable<RouteDto>>> GetRoutesInDistrict(int districtId)
         {
-            var district = await _unitOfWork.DistrictRepository.GetById(DistrictId);
+            var district = await _unitOfWork.DistrictRepository.GetById(districtId);
             if (district == null)
             {
                 return NotFound("District not found.");
             }
-            var routes = await _unitOfWork.RouteRepository.Get(route => route.DistrictId == DistrictId);
+            var routes = await _unitOfWork.RouteRepository.Get(route => route.DistrictId == districtId);
             if (routes == null)
             {
                 return NotFound("Failed to fetch routes.");
@@ -72,13 +72,13 @@ namespace App.Server.Controllers
         /// <summary>
         /// Delete a route by its Id.
         /// </summary>
-        /// <param name="RouteId">Id of the route being deleted.</param>
+        /// <param name="routeId">Id of the route being deleted.</param>
         /// <returns>Status Code 200 oK, or 400 BadRequest if no route with RouteId was found.</returns>
         [Authorize(Roles = "Admin,HeadOfDistrict")]
-        [HttpDelete("delete/{RouteId}")]
-        public async Task<ActionResult> Delete(int RouteId)
+        [HttpDelete("delete/{routeId}")]
+        public async Task<ActionResult> Delete(int routeId)
         {
-            var route = await _unitOfWork.RouteRepository.GetById(RouteId);
+            var route = await _unitOfWork.RouteRepository.GetById(routeId);
             if (route == null)
             {
                 return BadRequest("Route id not found.");

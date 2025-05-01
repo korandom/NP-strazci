@@ -49,18 +49,18 @@ namespace App.Server.Controllers
         /// <summary>
         /// Get all rangers in certain district.
         /// </summary>
-        /// <param name="DistrictId">Id of said district</param>
+        /// <param name="districtId">Id of said district</param>
         /// <returns>Status code 200 and IEnumerable of RangerDtos in the district, or 404 Not Found when failed to get rangers.</returns>
         [Authorize]
-        [HttpGet("in-district/{DistrictId}")]
-        public async Task<ActionResult<IEnumerable<RangerDto>>> GetRangersInDistrict(int DistrictId)
+        [HttpGet("in-district/{districtId}")]
+        public async Task<ActionResult<IEnumerable<RangerDto>>> GetRangersInDistrict(int districtId)
         {
-            var district = await _unitOfWork.DistrictRepository.GetById(DistrictId);
+            var district = await _unitOfWork.DistrictRepository.GetById(districtId);
             if (district == null)
             {
                 return NotFound("District not found.");
             }
-            var rangers = await _unitOfWork.RangerRepository.Get(ranger => ranger.DistrictId == DistrictId);
+            var rangers = await _unitOfWork.RangerRepository.Get(ranger => ranger.DistrictId == districtId);
             if (rangers == null)
             {
                 return NotFound("Failed to fetch rangers.");
@@ -100,13 +100,13 @@ namespace App.Server.Controllers
         /// <summary>
         ///  Attempts to delete a ranger with said id.
         /// </summary>
-        /// <param name="RangerId"> Id of ranger being deleted/</param>
+        /// <param name="rangerId"> Id of ranger being deleted/</param>
         /// <returns>Status code 200 ok, if succesfully deleted, or 400 BadRequest if the rangerId is not found.</returns>
         [Authorize(Roles = "Admin,HeadOfDistrict")]
-        [HttpDelete("delete/{RangerId}")]
-        public async Task<ActionResult> Delete(int RangerId)
+        [HttpDelete("delete/{rangerId}")]
+        public async Task<ActionResult> Delete(int rangerId)
         {
-            var ranger = await _unitOfWork.RangerRepository.GetById(RangerId);
+            var ranger = await _unitOfWork.RangerRepository.GetById(rangerId);
             if (ranger == null)
             {
                 return BadRequest("Ranger id not found.");

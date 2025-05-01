@@ -57,7 +57,7 @@ namespace App.Server.CSP
             var bestRangersForRoutes = DataProcessor.GetBestRangersForRoutes(routeDistributions, routes, preplanned);
             var workingRangers = DataProcessor.GetWorkingRangers(attendences, dayCount, start);
 
-            // set up variables and check 
+            // set up variables  
             var variables = variableManager.GetVariables();
 
             // check if possible to solve 
@@ -77,6 +77,7 @@ namespace App.Server.CSP
             var constraints = GetConstraints(orderedVariables);
             Solver solver = new(orderedVariables, workingRangers, bestRangersForRoutes, constraints);
 
+            // solve
             var assignedVariables = solver.Solve();
 
             if (assignedVariables == null)

@@ -75,7 +75,7 @@ namespace App.Server.Controllers
         /// LockDto representing locks in district with DistrictId.
         /// Status Code 200 Ok, if succesful, else 400 Bad Request
         /// </returns>
-        [Authorize()]
+        [Authorize]
         [HttpGet("locks/{districtId}")]
         public async Task<ActionResult<IEnumerable<LockDto>>> GetLocks(int districtId)
         {

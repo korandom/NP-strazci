@@ -75,7 +75,7 @@ describe('PlanService', () => {
 
             //assert
             expect(fetch).toHaveBeenCalledWith(
-                '/api/Plan/updateAll',
+                '/api/Plan/update-all',
                 expect.objectContaining({
                     method: 'POST',
                     body: JSON.stringify([mockPlan])
@@ -96,7 +96,7 @@ describe('PlanService', () => {
 
             //assert
             expect(fetch).toHaveBeenCalledWith(
-                '/api/Plan/updateAll',
+                '/api/Plan/update-all',
                 expect.objectContaining({
                     method: 'POST',
                     body: JSON.stringify([mockPlan])

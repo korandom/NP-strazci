@@ -33,7 +33,7 @@ namespace Tests.Controllers.UserControllerTests
 
             //assert
             var notFound = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Contains("not found", notFound.Value.ToString());
+            Assert.Contains("not found", notFound?.Value?.ToString());
         }
 
         [Fact]

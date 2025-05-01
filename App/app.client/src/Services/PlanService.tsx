@@ -43,7 +43,7 @@ export const updatePlan = async (plan: Plan) => {
  * @param plans Plans being updated.
  */
 export const updatePlans = async (plans: Plan[]) => {
-    const response = await fetch(`${BASE_URL}/updateAll`, {
+    const response = await fetch(`${BASE_URL}/update-all`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

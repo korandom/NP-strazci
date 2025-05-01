@@ -19,18 +19,18 @@ namespace App.Server.Controllers
         /// <summary>
         /// Get all vehicles, that belong to a district with ID DistrictId.
         /// </summary>
-        /// <param name="DistrictId">Id of the district</param>
+        /// <param name="districtId">Id of the district</param>
         /// <returns>Status code 200 Ok and a IEnumerable<Vehicle> of all vehicles, or 404 Not Found, if getting vehicles was not successful</returns>
         [Authorize]
-        [HttpGet("in-district/{DistrictId}")]
-        public async Task<ActionResult<IEnumerable<VehicleDto>>> GetVehiclesInDistrict(int DistrictId)
+        [HttpGet("in-district/{districtId}")]
+        public async Task<ActionResult<IEnumerable<VehicleDto>>> GetVehiclesInDistrict(int districtId)
         {
-            var district = await _unitOfWork.DistrictRepository.GetById(DistrictId);
+            var district = await _unitOfWork.DistrictRepository.GetById(districtId);
             if (district == null)
             {
                 return NotFound("District not found.");
             }
-            var vehicles = await _unitOfWork.VehicleRepository.Get(vehicle => vehicle.DistrictId == DistrictId);
+            var vehicles = await _unitOfWork.VehicleRepository.Get(vehicle => vehicle.DistrictId == districtId);
             if (vehicles == null)
             {
                 return NotFound("Failed to fetch vehicles.");

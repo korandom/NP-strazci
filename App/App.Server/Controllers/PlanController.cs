@@ -235,7 +235,7 @@ namespace App.Server.Controllers
         /// <param name="plans">Updated plans</param>
         /// <returns>Status Code 200 Ok, if succesful, else 400 Bad Request if unknown ranger id, else 500 </returns>
         [Authorize(Roles = "HeadOfDistrict")]
-        [HttpPost("updateAll")]
+        [HttpPost("update-all")]
         public async Task<IActionResult> UpdatePlans(IEnumerable<PlanDto> planDtos)
         {
             try
