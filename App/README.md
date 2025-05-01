@@ -18,7 +18,7 @@ V souboru `.\App.Server\appsettings.json` je potøeba aktualizovat
 
 ## Visual Studio
 Ve Visual Studiu je možné nakonfigurovat "startup project" tak, aby spouštìl více projektù souèasnì (frontend i backend).
-C
+
 ## Backend
 Spuštìní backendu ze složky  `.\App.Server`:
 ```shell
@@ -27,7 +27,7 @@ dotnet run
 Po spuštìní backendu se automaticky pøipojí frontendová aplikace a otevøe se Vite terminál s odkazem na localhost adresu,
 na které bude aplikace k dispozici:[https://localhost:5173/planovani](https://localhost:5173/planovani).
 
-Pro spuštìní testù, spouštìt uvnitø složky `.\Tests`
+Pro spuštìní testù, spouštìt uvnitø složky `.\Tests` 
 ```shell
 dotnet test
 ```
@@ -40,8 +40,9 @@ Obnovení instalace balíèkù:
 npm install
 ```
 Spustit frontend samostatnì -  v rootu složky `.\app.client`:
-`npm run dev`
-
+```shell
+npm run dev
+```
 
 Pro spuštìní testù frontendu:
 ```shell
@@ -69,7 +70,7 @@ Pro sestavení frontendu použijte následující pøíkaz v root složce .\app.client:
     npm run build
 ```
 Tento pøíkaz vytvoøí statickou verzi aplikace do složky .\app.client\dist.
-Obsah této složky pak mùže být nasazen na backend server do složky wwwroot, nebo na externí server podle pokynù v Vite Guide pro statické nasazení.
+Obsah této složky pak mùže být nasazen na backend server do složky wwwroot, nebo na externí server.
 
 Poté mùžeme spustit release build aplikace z `.\App.Server\`:
 ```shell
