@@ -24,7 +24,7 @@ namespace App.Server.CSP
         /// </returns>
         public GenerateResultDto Generate(List<PlanDto> previousPlans, List<PlanDto> preexistingPlans, List<AttendenceDto> attendences, List<RouteDto> routes, List<RangerDto> rangers, DateOnly start)
         {
-            List<PlanDto> fixedPlans = DataProcessor.GetFixedPreviousPlans(preexistingPlans);
+            List<PlanDto> fixedPlans = DataProcessor.GetFixedPlans(preexistingPlans);
 
             // try to generate a result that accomodates all preexistingPlans
             List<AttendenceDto> filteredAttendence = attendences.Where(att => !preexistingPlans.Any(plan => plan.Date == att.Date && plan.Ranger.Id == att.Ranger.Id && plan.RouteIds.Length > 0)).ToList();

@@ -1,4 +1,4 @@
-﻿using App.Server.DTOs;
+﻿    using App.Server.DTOs;
 
 namespace App.Server.CSP
 {
@@ -131,7 +131,7 @@ namespace App.Server.CSP
         /// </summary>
         /// <param name="preexistingPlans"></param>
         /// <returns></returns>
-        public static List<PlanDto> GetFixedPreviousPlans(List<PlanDto> preexistingPlans)
+        public static List<PlanDto> GetFixedPlans(List<PlanDto> preexistingPlans)
         {
             return preexistingPlans.Where(plan =>
                 plan.RouteIds.Length >= 2 ||

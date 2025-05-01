@@ -9,7 +9,7 @@ namespace Tests.CSP.DataProcessorTests
         public void NoDataTest()
         {
             //act
-            var fixedPlans = DataProcessor.GetFixedPreviousPlans([]);
+            var fixedPlans = DataProcessor.GetFixedPlans([]);
 
             //assert
             Assert.NotNull(fixedPlans);
@@ -66,7 +66,7 @@ namespace Tests.CSP.DataProcessorTests
                 )
             ];
             //act
-            var fixedPlans = DataProcessor.GetFixedPreviousPlans(plans);
+            var fixedPlans = DataProcessor.GetFixedPlans(plans);
 
             //assert
             Assert.NotNull(fixedPlans);
@@ -109,7 +109,7 @@ namespace Tests.CSP.DataProcessorTests
                 )
             ];
             //act
-            var fixedPlans = DataProcessor.GetFixedPreviousPlans(plans);
+            var fixedPlans = DataProcessor.GetFixedPlans(plans);
 
             //assert
             Assert.NotNull(fixedPlans);
@@ -161,7 +161,7 @@ namespace Tests.CSP.DataProcessorTests
                 )
             ];
             //act
-            var fixedPlans = DataProcessor.GetFixedPreviousPlans(plans);
+            var fixedPlans = DataProcessor.GetFixedPlans(plans);
 
             //assert
             Assert.NotNull(fixedPlans);
