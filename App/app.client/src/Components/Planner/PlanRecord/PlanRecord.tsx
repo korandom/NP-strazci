@@ -28,7 +28,7 @@ const PlanRecord: React.FC<{ schedule: RangerSchedule, includeRangerName: boolea
 
     const [working, setWorking] = useState(schedule.working);
     const [reasonOfAbsence, setReasonOfAbsence] = useState(schedule.reasonOfAbsence);
-
+    const reasonOfAbsenceCZ: string[] = ["", "N. volno", "Dovolená", "Nemoc", "Pr. volno", "Propustka"];
     const toggleEdit = () => {
         isEditable ? setEditing(!editing) : null;
     };
@@ -238,12 +238,12 @@ const PlanRecord: React.FC<{ schedule: RangerSchedule, includeRangerName: boolea
                                     .filter(value => typeof value === "number")
                                     .map((reason) => (
                                         <option key={reason} value={reason}>
-                                            {reason === ReasonOfAbsence.None ? "" : ReasonOfAbsence[reason as number]}
+                                            {reasonOfAbsenceCZ[reason as number]}
                                         </option>
                                     ))}
                             </select>
                         ): (
-                                <div>{reasonOfAbsence === ReasonOfAbsence.None ? "" : ReasonOfAbsence[reasonOfAbsence as number]}</div>
+                                <div>{reasonOfAbsenceCZ[reasonOfAbsence as number]}</div>
                         )}
                     
                 </div>

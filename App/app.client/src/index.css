@@ -24,6 +24,7 @@ h1 {
 }
 
 button {
+    color:#213547;
     border-radius: 8px;
     border: 1px solid transparent;
     font-size: 1em;
@@ -39,3 +40,10 @@ button:hover {
 .error {
     align-self: center;
 }
+
+@media screen and (max-width: 560px) {
+    select {
+        font-size: 1rem;
+    }
+}
+

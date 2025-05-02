@@ -36,9 +36,17 @@ const PlansForDay: React.FC<{ date: Date, onlyWorking: boolean}> = ({ date, only
     }, [dayPlans, onlyWorking]);
 
 
-    const getRangersSchedule = (ranger: Ranger) : RangerSchedule | undefined => {
+    const getRangersSchedule = (ranger: Ranger): RangerSchedule | undefined => {
         const schedule = filteredDayPlans.find(schedule => schedule.ranger.id === ranger.id);
         if (schedule == undefined && !onlyWorking) {
+            return { date: formatDate(date), ranger: ranger, routeIds: [], vehicleIds: [], working: false, from: null, reasonOfAbsence: ReasonOfAbsence.None }
+        }
+        return schedule;
+    }
+
+    const getUserRangerSchedule = (ranger: Ranger): RangerSchedule => {
+        const schedule = dayPlans.find(schedule => schedule.ranger.id === ranger.id);
+        if (schedule == undefined) {
             return { date: formatDate(date), ranger: ranger, routeIds: [], vehicleIds: [], working: false, from: null, reasonOfAbsence: ReasonOfAbsence.None }
         }
         return schedule;
@@ -52,9 +60,9 @@ const PlansForDay: React.FC<{ date: Date, onlyWorking: boolean}> = ({ date, only
         <div className="plan-for-day">
             <div className="records">
                 {rangers.map((ranger, index) => {
-                    const schedule = getRangersSchedule(ranger);
-                    const isheadOfDistrict = hasRole("HeadOfDistrict");
                     const isOwner = user?.rangerId == ranger.id;
+                    const schedule = isOwner ? getUserRangerSchedule(ranger) : getRangersSchedule(ranger);
+                    const isheadOfDistrict = hasRole("HeadOfDistrict");
                     if (schedule != undefined) {
                         return (
                             <PlanRecord

@@ -62,50 +62,51 @@
     justify-content: space-between;
 }
 
-    .date-pick-element.weekend > * {
-        color: #646464;
-        background-color: transparent;
-    }
+.date-pick-element.weekend > * {
+    color: #646464;
+    background-color: transparent;
+}
 
-    .date-pick-element > .date {
-        font-size: larger;
-        border-radius: 50%;
-        align-content: center;
-        width: 33px;
-        height: 30px;
-        border: 1px solid transparent;
-        background-color: transparent;
-    }
-
-    .date-pick-element > .current-date {
-    background-color: black;
-    color: white;
+.date-pick-element > .date {
+    display: flex;
+    color: black;
+    font-size: larger;
     border-radius: 50%;
-    }
+    width: 2em;
+    height: 1.9em;
+    border: 1px solid transparent;
+    background-color: transparent;
+    align-items: center;
+    justify-content: center;
+}
+.date-pick-element > .current-date {
+background-color: black;
+color: white;
+}
 
-    .date-pick-element.weekend > .current-date {
-        background-color: #646464;
-    }
+.date-pick-element.weekend > .current-date {
+    background-color: #646464;
+}
 
-    .date-pick-element.weekend > .current-date.today {
-        background-color: #f02c2c;
-    }
+.date-pick-element.weekend > .current-date.today {
+    background-color: #f02c2c;
+}
 
-    .today {
-        color: #f02c2c;
-    }
+.today {
+    color: #f02c2c;
+}
 
-    .today.current-date {
-        background-color: #f02c2c;
-        color: white;
-    }
+.today.current-date {
+    background-color: #f02c2c;
+    color: white;
+}
 
-    .date-pick-element >  .dayOfWeek {
-        text-align: center;
-        margin-bottom: 0.3em;
-        font-size: small;
-        font-weight: 650;
-    }
+.date-pick-element >  .dayOfWeek {
+    text-align: center;
+    margin-bottom: 0.3em;
+    font-size: small;
+    font-weight: 650;
+}
 
 .range-movement {
     display: flex;

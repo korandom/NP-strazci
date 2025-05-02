@@ -6,12 +6,9 @@ export enum ReasonOfAbsence {
     None = 0,
     NV = 1,
     D = 2,
-    S = 3,
-    ST = 4,
-    N = 5,
-    PV = 6,
-    P = 7,
-    X = 8
+    N = 3,
+    PV = 4,
+    P = 5
 }
 
 export interface Attendence {

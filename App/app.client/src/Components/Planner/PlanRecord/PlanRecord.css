@@ -129,7 +129,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 1em;
+    width: 1.2em;
     line-height: 1em;
     text-align: center;
     height: 1em;
@@ -173,7 +173,13 @@ button.delete-source {
     margin-left: 0.5em;
 }
 .edit {
+    font-size: 1.2rem;
     margin-left: 0.1em;
     margin-right: 0.2em;
 }
 
+@media screen and (max-width: 560px) {
+    .edit {
+        font-size: 1.6rem;
+    }
+}
