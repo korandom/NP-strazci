@@ -1,3 +1,0 @@
-### Uživatelská dokumentace
-***
-<!-- TODO -->
