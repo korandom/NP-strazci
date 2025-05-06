@@ -1,4 +1,5 @@
-﻿using App.Server.Models.Identity;
+﻿using App.Server.Models.AppData;
+using App.Server.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 
 namespace App.Server.Util
@@ -55,5 +56,25 @@ namespace App.Server.Util
                 await userManager.AddToRoleAsync(adminUser, "Admin");
             }
         }
+
+        public static async Task SeedDistrictsAsync(IServiceProvider serviceProvider)
+        {
+            var db = serviceProvider.GetRequiredService<PlannerNPContext>();
+
+            District[] districts = [
+                new District { Id = 1, Name = "Stožec" },
+                new District { Id = 2, Name = "Modrava" }
+            ];
+            foreach (var district in districts)
+            {
+                var d = db.Districts.Find(district.Id);
+                if(d == null)
+                {
+                    db.Add(district);
+                }
+            }
+            await db.SaveChangesAsync();
+        }
+
     }
 }

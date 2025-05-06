@@ -58,9 +58,9 @@ const PlanTable: React.FC = () : JSX.Element => {
                                         {hasRole("HeadOfDistrict") && (date > new Date) &&
                                             <div className="lock" >
                                                 {isLockedArray[index] ?
-                                                    <button onClick={() => removeLock(formatDate(date))}>🔒</button>
+                                                    <button title="Odemknout" aria-label="Odemknout" onClick={() => removeLock(formatDate(date))}>🔒</button>
                                                     :
-                                                    <button onClick={() => addLock(formatDate(date))}>🔓</button>
+                                                    <button title="Zamknout" aria-label="Zamknout" onClick={() => addLock(formatDate(date))}>🔓</button>
                                                 }
                                             </div>
                                         }

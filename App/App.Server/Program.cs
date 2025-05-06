@@ -91,6 +91,7 @@ namespace App.Server
                 {
                     await DataSeeder.SeedRolesAsync(services);
                     await DataSeeder.SeedAdminUserAsync(services);
+                    await DataSeeder.SeedDistrictsAsync(services);
                 }).GetAwaiter().GetResult();
             }
 

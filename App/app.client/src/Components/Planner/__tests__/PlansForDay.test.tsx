@@ -4,6 +4,7 @@ import { vi } from 'vitest';
 
 import { ReasonOfAbsence } from '../../../Services/AttendenceService';
 import { Locked } from '../../../Services/LockService';
+import { RangerSchedule } from '../../../Services/RangerScheduleService';
 
 
 // data
@@ -12,6 +13,7 @@ const mockRanger = {
     firstName: 'Name',
     lastName: 'Surname',
     email: 'test@email.com',
+    districtId: 1
 };
 
 const schedule = {
@@ -24,10 +26,20 @@ const schedule = {
     reasonOfAbsence: ReasonOfAbsence.None,
 };
 
+const otherschedule : RangerSchedule = {
+    date: '2025-04-01',
+    ranger: {id:2, firstName:"Other", lastName:"Ranger", email:"abc@gmail.com", districtId:1},
+    routeIds: [],
+    vehicleIds: [],
+    working: true,
+    from: null,
+    reasonOfAbsence: ReasonOfAbsence.None,
+};
+
 // mock schedules
 vi.mock('../../../Hooks/useSchedule', () => ({
     default: () => ({
-        schedules: [schedule]
+        schedules: [schedule, otherschedule]
     })
 }));
 
@@ -64,9 +76,15 @@ describe('<PlansForDay />', () => {
     });
 
     it('does not display non working when only working', () => {
-        schedule.working = false;
+        otherschedule.working = false;
         render(<PlansForDay date={new Date('2025-04-01')} onlyWorking={true} />);
-        expect(screen.queryByText(/Name Surname/)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Other Ranger/)).not.toBeInTheDocument();
+    });
+
+    it('displays owners schedule non working even when only working', () => {
+        otherschedule.working = false;
+        render(<PlansForDay date={new Date('2025-04-01')} onlyWorking={true} />);
+        expect(screen.queryByText(/Name Surname/)).toBeInTheDocument();
     });
 
     it('displays non-working schedule if onlyWorking=false', () => {
@@ -84,7 +102,7 @@ describe('<PlansForDay />', () => {
         expect(button).not.toBeDisabled();
     });
 
-    it('disables editing if user is locked', () => {
+    it('disables editing if plan is locked', () => {
         schedule.working = true;
         mockHasRole.mockReturnValue(false);
         locks = [{ date: '2025-04-01', districtId: 1 }];
