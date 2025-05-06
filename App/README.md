@@ -1,62 +1,62 @@
-# Návod spuštìní
-Aplikace byla vyvíjena ve Visual Studiu a testována na Windows. 
+ï»¿# NÃ¡vod spuÅ¡tÄ›nÃ­
+Aplikace byla vyvÃ­jena ve Visual Studiu a testovÃ¡na na Windows. 
 
-## Poadavky
-- **.NET SDK** (verze 8.0) - dostupné z https://dotnet.microsoft.com/en-us/download
-- **MariaDB** (verze 11.x) - dostupné z https://mariadb.org/download/
+## PoÅ¾adavky
+- **.NET SDK** (verze 8.0) - dostupnÃ© z https://dotnet.microsoft.com/en-us/download
+- **MariaDB** (verze 11.x) - dostupnÃ© z https://mariadb.org/download/
 - **Node.js** (verze 20.11) a **npm** 
 
-## Konfigurace databáze
-V souboru `.\App.Server\appsettings.json` je potøeba aktualizovat 
-"connections stringy" pro databáze a pøihlašovací údaje administrátora.
+## Konfigurace databÃ¡ze
+V souboru `.\App.Server\appsettings.json` je potÅ™eba aktualizovat 
+"connections stringy" pro databÃ¡ze a pÅ™ihlaÅ¡ovacÃ­ Ãºdaje administrÃ¡tora.
 
-- Samotné databáze není tøeba vytváøet, o to se postaráme pozdìji.
-- Staèí upravit pøihlašovací údaje pro MariaDB server.
-- Údaje admina zahrnuje:
-    - Email : validní emailová adresa
-    - Heslo : musí odpovídat konvencím pro hesla - alespoò jedno velké a malé písmeno, èíslo, znak etc.
+- SamotnÃ© databÃ¡ze nenÃ­ tÅ™eba vytvÃ¡Å™et, o to se postarÃ¡me pozdÄ›ji.
+- StaÄÃ­ upravit pÅ™ihlaÅ¡ovacÃ­ Ãºdaje pro MariaDB server.
+- Ãšdaje admina zahrnuje:
+    - Email : validnÃ­ emailovÃ¡ adresa
+    - Heslo : musÃ­ odpovÃ­dat konvencÃ­m pro hesla - alespoÅˆ jedno velkÃ© a malÃ© pÃ­smeno, ÄÃ­slo, znak etc.
 
 ## Visual Studio
-Ve Visual Studiu je moné nakonfigurovat "startup project" tak, aby spouštìl více projektù souèasnì (frontend i backend).
+Ve Visual Studiu je moÅ¾nÃ© nakonfigurovat "startup project" tak, aby spouÅ¡tÄ›l vÃ­ce projektÅ¯ souÄasnÄ› (frontend i backend).
 
 ## Backend
-Spuštìní backendu ze sloky  `.\App.Server`:
+SpuÅ¡tÄ›nÃ­ backendu ze sloÅ¾ky  `.\App.Server`:
 ```shell
 dotnet run 
 ```
-Po spuštìní backendu se automaticky pøipojí frontendová aplikace a otevøe se Vite terminál s odkazem na localhost adresu,
-na které bude aplikace k dispozici:[https://localhost:5173/planovani](https://localhost:5173/planovani).
+Po spuÅ¡tÄ›nÃ­ backendu se automaticky pÅ™ipojÃ­ frontendovÃ¡ aplikace a otevÅ™e se Vite terminÃ¡l s odkazem na localhost adresu,
+na kterÃ© bude aplikace k dispozici:[https://localhost:5173/planovani](https://localhost:5173/planovani).
 
-Pro spuštìní testù, spouštìt uvnitø sloky `.\Tests` 
+Pro spuÅ¡tÄ›nÃ­ testÅ¯, spouÅ¡tÄ›t uvnitÅ™ sloÅ¾ky `.\Tests` 
 ```shell
 dotnet test
 ```
 
 ## Frontend
-Pro vıvoj a sestavování frontendu aplikace je pouit nástroj Vite.
+Pro vÃ½voj a sestavovÃ¡nÃ­ frontendu aplikace je pouÅ¾it nÃ¡stroj Vite.
 
-Obnovení instalace balíèkù:
+ObnovenÃ­ instalace balÃ­ÄkÅ¯:
 ```shell
 npm install
 ```
-Spustit frontend samostatnì -  v rootu sloky `.\app.client`:
+Spustit frontend samostatnÄ› -  v rootu sloÅ¾ky `.\app.client`:
 ```shell
 npm run dev
 ```
 
-Pro spuštìní testù frontendu:
+Pro spuÅ¡tÄ›nÃ­ testÅ¯ frontendu:
 ```shell
 npm run test
 ```
 
-## Setup Databáze 
-Pro vytvoøení databáze je nutné spustit následující pøíkaz,
+## Setup DatabÃ¡ze 
+Pro vytvoÅ™enÃ­ databÃ¡ze je nutnÃ© spustit nÃ¡sledujÃ­cÃ­ pÅ™Ã­kaz,
 v Package Manager Console (Visual Studio):
 ```shell
     Update-Database -context PlannerNP
     Update-Database -context ApplicationIdentity
 ```
-nebo v terminálu s instalovanım EF:
+nebo v terminÃ¡lu s instalovanÃ½m EF:
 ```shell
     dotnet ef database update --context PlannerNP
     dotnet ef database update --context ApplicationIdentity
@@ -65,14 +65,14 @@ nebo v terminálu s instalovanım EF:
 
 ## Build a Release
 
-Pro sestavení frontendu pouijte následující pøíkaz v root sloce .\app.client:
+Pro sestavenÃ­ frontendu pouÅ¾ijte nÃ¡sledujÃ­cÃ­ pÅ™Ã­kaz v root sloÅ¾ce .\app.client:
 ```shell
     npm run build
 ```
-Tento pøíkaz vytvoøí statickou verzi aplikace do sloky .\app.client\dist.
-Obsah této sloky pak mùe bıt nasazen na backend server do sloky wwwroot, nebo na externí server.
+Tento pÅ™Ã­kaz vytvoÅ™Ã­ statickou verzi aplikace do sloÅ¾ky .\app.client\dist.
+Obsah tÃ©to sloÅ¾ky pak mÅ¯Å¾e bÃ½t nasazen na backend server do sloÅ¾ky wwwroot, nebo na externÃ­ server.
 
-Poté mùeme spustit release build aplikace z `.\App.Server\`:
+PotÃ© mÅ¯Å¾eme spustit release build aplikace z `.\App.Server\`:
 ```shell
     dotnet publish -c Release -o ./publish
 ```
