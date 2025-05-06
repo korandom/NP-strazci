@@ -1,4 +1,4 @@
-const BASE_URL = '/api/Lock';
+﻿const BASE_URL = '/api/Lock';
 
 export interface Locked {
     date: string;
@@ -20,7 +20,7 @@ export const lockPlans = async (date: string, districtId: number) => {
 }
 
 /**
- * �nlock plans in district for a certain date.
+ * Únlock plans in district for a certain date.
  * @param date Date of plans to be unlocked.
  * @param districtId Id of district, where plans should be unlocked.
  */

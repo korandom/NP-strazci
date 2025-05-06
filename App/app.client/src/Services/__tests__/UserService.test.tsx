@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach, vi } from 'vitest';
+﻿import { describe, it, expect, afterEach, vi } from 'vitest';
 import { signIn, signOut, getCurrentUser, User } from '../UserService';
 
 describe('UserService', () => {

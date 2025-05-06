@@ -1,4 +1,4 @@
-const BASE_URL = '/api/User';
+﻿const BASE_URL = '/api/User';
 export interface User {
     email: string,
     role: string,

@@ -1,4 +1,4 @@
-import { vi , describe, it, expect, afterEach} from 'vitest';
+﻿import { vi , describe, it, expect, afterEach} from 'vitest';
 import { updateAttendence, Attendence, ReasonOfAbsence } from '../AttendenceService';
 
 describe('updateAttendence', () => {

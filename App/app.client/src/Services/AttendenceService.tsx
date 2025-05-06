@@ -1,4 +1,4 @@
-import { Ranger } from './RangerService';
+﻿import { Ranger } from './RangerService';
 
 const BASE_URL = '/api/Attendence';
 

@@ -1,4 +1,4 @@
-
+﻿
 const BASE_URL = '/api/Vehicle';
 export interface Vehicle {
     id: number;

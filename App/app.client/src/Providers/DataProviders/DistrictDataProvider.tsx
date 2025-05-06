@@ -1,4 +1,4 @@
-import { Route, createRoute, deleteRoute, fetchRoutesByDistrict, updateRoute } from '../../Services/RouteService';
+ï»¿import { Route, createRoute, deleteRoute, fetchRoutesByDistrict, updateRoute } from '../../Services/RouteService';
 import { Vehicle, createVehicle, deleteVehicle, fetchVehiclesByDistrict, updateVehicle } from '../../Services/VehicleService';
 import { Ranger, createRanger, deleteRanger, fetchRangersByDistrict, updateRanger} from '../../Services/RangerService';
 import { District, fetchDistrictById} from '../../Services/DistrictService';
@@ -277,7 +277,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         }
     };
     const addLock = async (date: string) => {
-        if (!district) throw new Error("Není pøiøazen obvod.");
+        if (!district) throw new Error("NenÃ­ pÅ™iÅ™azen obvod.");
 
         setLocks([...locks, { date: date, districtId: district?.id }]);
         try {
@@ -290,7 +290,7 @@ export const DistrictDataProvider = ({ children }: { children: ReactNode }): JSX
         }
     };
     const removeLock = async (date: string) => {
-        if (!district) throw new Error("Není pøiøazen obvod.");
+        if (!district) throw new Error("NenÃ­ pÅ™iÅ™azen obvod.");
 
         setLocks(locks.filter(l => l.date !== date));
         try {

@@ -1,4 +1,4 @@
-
+﻿
 const BASE_URL = '/api/Ranger';
 export interface Ranger {
     id: number;

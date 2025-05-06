@@ -1,4 +1,4 @@
-const BASE_URL = '/api/District';
+﻿const BASE_URL = '/api/District';
 
 export interface District {
     id: number,

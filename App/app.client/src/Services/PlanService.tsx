@@ -1,4 +1,4 @@
-import { formatDate, getShiftedDate } from '../Util/DateUtil';
+﻿import { formatDate, getShiftedDate } from '../Util/DateUtil';
 import { Ranger } from './RangerService';
 import { Route } from './RouteService';
 

@@ -1,4 +1,4 @@
-import { User, getCurrentUser, signIn, signOut } from '../../Services/UserService';
+ï»¿import { User, getCurrentUser, signIn, signOut } from '../../Services/UserService';
 import { getCurrentRanger } from '../../Services/RangerService';
 import  { createContext, ReactNode, useState, useMemo, useEffect, useRef, useCallback} from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element
                 setError(error);
             } else {
                 console.error('Unknown error during sign-in:', error);
-                setError(new Error('Neznámý error pøi pøihlašování'));
+                setError(new Error('NeznÃ¡mÃ½ error pÅ™i pÅ™ihlaÅ¡ovÃ¡nÃ­'));
             }
         }
         finally {

@@ -1,4 +1,4 @@
-
+﻿
 const BASE_URL = '/api/Route';
 
 type controlPlace = {

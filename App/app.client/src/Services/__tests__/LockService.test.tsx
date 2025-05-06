@@ -1,4 +1,4 @@
-import { vi, describe, it, expect, afterEach } from 'vitest';
+﻿import { vi, describe, it, expect, afterEach } from 'vitest';
 import { lockPlans, unlockPlans, fetchLocks, Locked } from '../LockService';
 
 describe('LockService', () => {

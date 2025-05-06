@@ -1,4 +1,4 @@
-import { vi, describe, it, expect, afterEach } from 'vitest';
+﻿import { vi, describe, it, expect, afterEach } from 'vitest';
 import { fetchDistrictById, fetchAllDistricts, District } from '../DistrictService';
 
 describe('DistrictService', () => {
