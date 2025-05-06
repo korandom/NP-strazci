@@ -3,6 +3,10 @@ using App.Server.Repositories.Interfaces;
 
 namespace App.Server.Repositories
 {
+    /// <summary>
+    /// Implements the Unit of Work pattern to provide repositories.
+    /// Provides a centralized point for committing data changes.
+    /// </summary>
     public class UnitOfWork(PlannerNPContext context) : IUnitOfWork
     {
         private readonly PlannerNPContext _context = context;
@@ -76,6 +80,10 @@ namespace App.Server.Repositories
                 return attendenceRepository;
             }
         }
+
+        /// <summary>
+        /// Persists all changes made through the repositories to the database.
+        /// </summary>
         public async Task SaveAsync()
         {
             await _context.SaveChangesAsync();

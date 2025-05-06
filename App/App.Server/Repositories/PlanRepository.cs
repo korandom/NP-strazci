@@ -4,6 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace App.Server.Repositories
 {
+    /// <summary>
+    /// PlanRepository is a specialized repository for mapping Plan to the database, with basic function.
+    /// It implements the IGenericRepository Interface by extending the GenericRepository<Plan>.
+    /// Only the GetById function is overriden, since plan has a composite key.
+    /// </summary>
+    /// <param name="context"> The database context for the app. </param>
     public class PlanRepository(PlannerNPContext context) : GenericRepository<Plan>(context), IGenericRepository<Plan>
     {
 

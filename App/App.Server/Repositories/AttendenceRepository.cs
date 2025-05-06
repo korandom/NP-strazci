@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 namespace App.Server.Repositories
 {
     /// <summary>
-    /// AttendenceRepository is a specialized repozitory for mapping Attendence to the database, with basic function.
+    /// AttendenceRepository is a specialized repository for mapping Attendence to the database, with basic function.
     /// It implements the IGenericRepository Interface by extending the GenericRepository<Attendence>.
-    /// Only the GetById function is overriden, since attendence has two primary keys.
+    /// Only the GetById function is overriden, since attendence has a composite key.
     /// </summary>
     /// <param name="context"> The database context for the app. </param>
     public class AttendenceRepository(PlannerNPContext context) : GenericRepository<Attendence>(context), IGenericRepository<Attendence>

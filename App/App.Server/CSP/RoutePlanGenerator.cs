@@ -46,6 +46,9 @@ namespace App.Server.CSP
             return resultWithoutPreferences;
         }
 
+        /// <summary>
+        /// Attempts to generate a solution for a weekly route plan, based on current input.
+        /// </summary>
         private GenerateResultDto TrySolving(List<PlanDto> allPlans, List<PlanDto> preplanned, List<AttendenceDto> attendences, List<RouteDto> routes, List<RangerDto> rangers, DateOnly start)
         {
 
@@ -101,7 +104,7 @@ namespace App.Server.CSP
         /// <summary>
         /// Checks if there is enough working rangers to cover the route priorities for this time period expressed in variables.
         /// </summary>
-        /// <param name="variables"></param>
+        /// <param name="variables">All variables</param>
         /// <param name="workingRangers">Lists of working rangers per day</param>
         /// <returns></returns>
         private static bool CheckEnoughAvailableRangers(List<Variable> variables, Dictionary<int, Rangers> workingRangers)
@@ -135,7 +138,6 @@ namespace App.Server.CSP
         /// <summary>
         /// Add all constraints derived from the variables.
         /// </summary>
-
         /// <param name="variables">Given Variables</param>
         private Dictionary<int, List<Constraint<int, int?>>> GetConstraints(List<Variable> variables)
         {
@@ -150,6 +152,11 @@ namespace App.Server.CSP
             return constraints;
         }
 
+        /// <summary>
+        /// Adds constraint for all variables that are affected to the variables list of constraints.
+        /// </summary>
+        /// <param name="constraint">New Constraint</param>
+        /// <param name="constraints">Dictionary of list of constraints for all variables.</param>
         private void AddConstraint(Constraint<int, int?> constraint, Dictionary<int, List<Constraint<int, int?>>> constraints)
         {
             foreach (var variable in constraint.Variables)
