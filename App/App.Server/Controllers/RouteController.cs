@@ -57,11 +57,11 @@ namespace App.Server.Controllers
             }
             Models.AppData.Route route = new()
             {
-                Id = 0,
                 Name = routeDto.Name,
                 Priority = routeDto.Priority,
                 ControlPlace = routeDto.ControlPlace,
                 DistrictId = routeDto.DistrictId,
+                District = district
             };
 
             _unitOfWork.RouteRepository.Add(route);

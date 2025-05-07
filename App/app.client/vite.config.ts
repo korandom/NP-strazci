@@ -82,12 +82,12 @@ export default defineConfig({
                 secure: false
             },
             '^/districtHub': {
-                target : hubTarget,
+                target : target,
                 secure: false,
                 ws: true
             },
             '^/rangerScheduleHub': {
-                target: hubTarget,
+                target: target,
                 secure: false,
                 ws: true
             },   
